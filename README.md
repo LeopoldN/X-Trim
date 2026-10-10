@@ -1,6 +1,6 @@
 # X Trim
 
-**v0.1.64** · Firefox / Zen 140+
+**v0.1.67** · Firefox / Zen 140+
 
 Tidy up X: hide promotions and sidebar items, change column widths, customize profiles, pick a theme, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
@@ -33,3 +33,7 @@ Palette credits: [Tokyo Night](https://github.com/folke/tokyonight.nvim), [Rosé
 X GIF MP4s (`/tweet_video/`) save as looping `.gif` files. Conversion runs in the extension using bundled gif.js 0.2.0; no conversion service or runtime code downloads are used. Ordinary videos remain MP4s. GIFs use up to 480 pixels on the longest edge and 12 frames per second; longer/larger clips may be scaled further to bound memory. Sources are limited to 32 MB and 30 seconds, with one conversion at a time. GIF files may be larger and have fewer colors than the MP4. The button shows fetching, frame extraction, encoding, and saving progress; these stages are not a time estimate.
 
 Bundled encoder: [gif.js](https://github.com/jnordberg/gif.js), v0.2.0, MIT (see `vendor/gif.js/LICENSE`). The unchanged npm release's source, build script, package metadata, and source maps are retained in the repository for review. Runtime packages include only its two distribution scripts and license. To reproduce the vendor files, extract `https://registry.npmjs.org/gif.js/-/gif.js-0.2.0.tgz`; the upstream MIT license is included separately. No build step is used for X Trim's own code.
+
+GIF setup: open the X Trim toolbar popup → Post page → Enable GIF downloads, then approve Firefox’s permission prompt for `video.twimg.com`. This is optional and normally only needed once; declining leaves the other features available. If you revoke access later, the same button lets you enable it again.
+
+Zen compatibility: GIF conversion opens a temporary extension tab with a video preview, because decoding in the hidden background page can fail on macOS. Keep it open until saving completes; it closes automatically afterward. Closing it during conversion cancels the operation.

@@ -9,3 +9,5 @@
 .xtrim-download[data-indeterminate]::before{width:40%;animation:xtrim-download-sweep 1.3s ease-in-out infinite}
 @keyframes xtrim-download-sweep{from{transform:translateX(-110%)}to{transform:translateX(360%)}}
 @media(prefers-reduced-motion:reduce){.xtrim-download[data-indeterminate]::before{animation:none;width:100%;opacity:.3}.xtrim-download[data-busy]::before{transition:none}}
+
+.xtrim-download[data-error]{max-width:280px;white-space:normal;text-align:left;border-color:#f08b71}

@@ -3,7 +3,10 @@ let gifConversionBusy=false;
 function gifMediaEvent(video,event,action){
   return new Promise((resolve,reject)=>{
     const timer=setTimeout(()=>finish(new Error('Video decoding timed out.')),15000);
-    const ready=()=>finish(),failed=()=>finish(new Error('Firefox could not decode this GIF video.'));
+    const ready=()=>finish(),failed=()=>{
+      const error=video.error;
+      finish(new Error(`GIF decoding failed (${error?.code??'unknown'}): ${error?.message||'Firefox provided no decoder details.'}`));
+    };
     function finish(error){clearTimeout(timer);video.removeEventListener(event,ready);video.removeEventListener('error',failed);error?reject(error):resolve();}
     video.addEventListener(event,ready,{once:true});video.addEventListener('error',failed,{once:true});
     try{action();}catch(error){finish(error);}
@@ -15,6 +18,7 @@ async function convertTwitterGif(url,notify){
   let inputURL,encoder,video;
   try{
     notify('Fetching GIF…',null);
+    if(!await browser.permissions.contains({origins:['https://video.twimg.com/*']}))throw new Error('Open X Trim → Post page → Enable GIF downloads, then retry.');
     const response=await fetch(url,{credentials:'omit',redirect:'error',signal:AbortSignal.timeout(60000)});
     if(!response.ok)throw new Error('Could not fetch GIF video.');
     const limit=32*1024*1024,total=Number(response.headers.get('content-length'));
@@ -24,6 +28,7 @@ async function convertTwitterGif(url,notify){
     finally{await reader.cancel().catch(()=>{});}
     inputURL=URL.createObjectURL(new Blob(parts,{type:'video/mp4'}));
     video=document.createElement('video');video.muted=true;video.preload='auto';
+    video.className='xtrim-conversion-video';document.body.append(video);
     await gifMediaEvent(video,'loadeddata',()=>{video.src=inputURL;video.load();});
     if(!Number.isFinite(video.duration)||video.duration<=0||video.duration>30)throw new Error('GIF conversion supports clips up to 30 seconds.');
     if(!video.videoWidth||!video.videoHeight)throw new Error('Invalid video dimensions.');
@@ -49,7 +54,7 @@ async function convertTwitterGif(url,notify){
     });
   }finally{
     if(encoder){for(const worker of [...(encoder.activeWorkers||[]),...(encoder.freeWorkers||[])])worker.terminate();}
-    if(video){video.removeAttribute('src');video.load();}
+    if(video){video.removeAttribute('src');video.load();video.remove();}
     if(inputURL)URL.revokeObjectURL(inputURL);
     gifConversionBusy=false;
   }

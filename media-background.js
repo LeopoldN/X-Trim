@@ -51,7 +51,7 @@ async function downloadProgress(message,sender){
   try{
     const [item]=await browser.downloads.search({id:message.id});if(!item){mediaJobs.delete(message.id);return {ok:false};}
     if(item.state!=='in_progress'||Date.now()-job.created>86400000)mediaJobs.delete(message.id);
-    if(item.state!=='in_progress'&&job.objectURL)URL.revokeObjectURL(job.objectURL);
+    if(item.state!=='in_progress'&&job.objectURL){URL.revokeObjectURL(job.objectURL);if(job.conversionTabId)browser.tabs.remove(job.conversionTabId).catch(()=>{});}
     return {ok:true,state:item.state,received:item.bytesReceived,total:item.totalBytes};
   }catch{return {ok:false};}
 }
@@ -75,19 +75,19 @@ browser.runtime.onMessage.addListener((message,sender)=>{
         url.searchParams.set('name','orig');
         if(!/\.(jpg|jpeg|png|webp)$/i.test(name))name+='.'+format;
       }
-      let downloadURL=url.href,objectURL;
+      let downloadURL=url.href,objectURL,conversionTabId;
       if(message.asGif){
         if(!video||!url.pathname.startsWith('/tweet_video/'))return {ok:false,error:'Only X GIF videos can be converted.'};
         const token=typeof message.token==='string'?message.token.slice(0,100):'';
         const notify=(stage,percent)=>browser.tabs.sendMessage(sender.tab.id,{type:'media-gif-progress',token,stage,percent}).catch(()=>{});
-        const blob=await convertTwitterGif(url.href,notify);
-        objectURL=URL.createObjectURL(blob);downloadURL=objectURL;name=name.replace(/\.mp4$/i,'.gif');
+        const converted=await startGifConversion(url.href,sender.tab.id,token);
+        objectURL=converted.objectURL;conversionTabId=converted.conversionTabId;downloadURL=objectURL;name=name.replace(/\.mp4$/i,'.gif');
         notify('Choose save location…',null);
       }
       let id;
       try{id=await browser.downloads.download({url:downloadURL,filename:`x-${message.postId}-${name}`,saveAs:true});}
-      catch(error){if(objectURL)URL.revokeObjectURL(objectURL);throw error;}
-      mediaJobs.set(id,{tabId:sender.tab.id,created:Date.now(),objectURL});
+      catch(error){if(objectURL)URL.revokeObjectURL(objectURL);if(conversionTabId)browser.tabs.remove(conversionTabId).catch(()=>{});throw error;}
+      mediaJobs.set(id,{tabId:sender.tab.id,created:Date.now(),objectURL,conversionTabId});
       return {ok:true,id};
     }catch(error){return {ok:false,error:error.message};}
   })();
@@ -96,6 +96,6 @@ browser.runtime.onMessage.addListener((message,sender)=>{
 // Release generated files even if the initiating post is no longer open.
 browser.downloads.onChanged.addListener(delta=>{
   if(delta.state&&delta.state.current!=='in_progress'){
-    const job=mediaJobs.get(delta.id);if(job?.objectURL){URL.revokeObjectURL(job.objectURL);delete job.objectURL;}
+    const job=mediaJobs.get(delta.id);if(job?.objectURL){URL.revokeObjectURL(job.objectURL);delete job.objectURL;if(job.conversionTabId)browser.tabs.remove(job.conversionTabId).catch(()=>{});}
   }
 });

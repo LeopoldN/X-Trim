@@ -39,7 +39,7 @@
 <p class="hint">Loads X’s About details beside the name. Results stay cached locally for 24 hours.</p>
 <button id="reset-profile">Reset profile settings</button>
 </div></details>
-<details data-section="post"><summary>Post page</summary><div class="section-content"><label><input type="checkbox" id="mediaDownloads"> Download buttons on images / GIFs / MP4 videos</label><p class="hint">On opened posts, saves original-resolution images and directly available MP4 files through the browser. GIFs save as MP4. Stream-only videos are not supported yet.</p><label><input type="checkbox" id="postAbout"> Show author account details</label><p class="hint">Shows the opened post author’s location and connection source beside their name. Uses the same 24-hour cache as profiles.</p></div></details>
+<details data-section="post"><summary>Post page</summary><div class="section-content"><label><input type="checkbox" id="mediaDownloads"> Download buttons on images / GIFs / MP4 videos</label><p class="hint">On opened posts, saves original-resolution images and available MP4 videos. X GIFs convert locally to looping GIF files. HLS-only videos are not supported.</p><p class="hint" id="gif-permission-status" role="status"></p><button type="button" id="enable-gif-downloads">Enable GIF downloads</button><label><input type="checkbox" id="postAbout"> Show author account details</label><p class="hint">Shows the opened post author’s location and connection source beside their name. Uses the same 24-hour cache as profiles.</p></div></details>
 <details data-section="floating"><summary>Floating controls</summary><div class="section-content">
 <label><input type="checkbox" id="floatingGrok"> Hide floating Grok</label>
 <label><input type="checkbox" id="floatingMessages"> Hide floating Messages / Chat</label>
@@ -47,4 +47,4 @@
 <details data-section="navigation"><summary>Sidebar navigation</summary><div class="section-content"><p class="hint">Uncheck an item to hide it. This list matches your X sidebar. Open X and reopen this popup to refresh it.</p>
 <div id="navigation"></div></div></details>
 <details data-section="more"><summary>Add from More</summary><div class="section-content"><p class="hint">Open More on X to discover its links, then reopen this popup. Expand any menu subsections to discover their links too. Turn off Replace More with Settings while discovering.</p><button id="read-more">Refresh More options</button><div id="more-options"></div></div></details>
-<button id="reset">Restore defaults</button><p id="status" role="status"></p><script src="theme-presets.js"></script><script src="popup.js"></script></body></html>
+<button id="reset">Restore defaults</button><p id="status" role="status"></p><script src="theme-presets.js"></script><script src="popup.js"></script><script src="media-permissions.js"></script></body></html>

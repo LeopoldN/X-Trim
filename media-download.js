@@ -15,7 +15,7 @@
   function bindDownload(button,url,postId,asGif=false) {
     button.onclick=async event=>{
       event.preventDefault();event.stopPropagation();if(button.disabled)return;
-      button.disabled=true;button.dataset.busy='true';button.dataset.indeterminate='true';
+      delete button.dataset.error;button.disabled=true;button.dataset.busy='true';button.dataset.indeterminate='true';
       button.textContent='Choose save location…';button.setAttribute('aria-busy','true');
       const token=crypto.randomUUID();if(asGif)gifButtons.set(token,button);
       button.style.setProperty('--download-progress','0%');
@@ -37,7 +37,7 @@
           }
           await pause(400);
         }
-      }catch(error){button.textContent='Try download again';button.title=error.message;button.style.setProperty('--download-progress','0%');}
+      }catch(error){button.dataset.error='true';button.textContent='Retry: '+error.message;button.title=error.message;button.style.setProperty('--download-progress','0%');}
       finally{gifButtons.delete(token);button.disabled=false;delete button.dataset.busy;delete button.dataset.indeterminate;button.removeAttribute('aria-busy');}
     };
   }
@@ -85,8 +85,8 @@
           }
           if(button.textContent==='Play or reload to find video'){button.disabled=false;button.textContent='Download';button.title='Download MP4';}
           const asGif=url.pathname.startsWith('/tweet_video/');
-          if(!['Downloaded','Try download again'].includes(button.textContent))button.textContent=asGif?'Download GIF':'Download';
-          button.title=asGif?'Convert locally to a looping GIF (up to 480px, 12 fps)':'Download MP4';
+          if(!button.dataset.error&&!['Downloaded','Try download again'].includes(button.textContent))button.textContent=asGif?'Download GIF':'Download';
+          if(!button.dataset.error)button.title=asGif?'Convert locally to a looping GIF (up to 480px, 12 fps)':'Download MP4';
           bindDownload(button,url.href,route[2],asGif);
         }
       }

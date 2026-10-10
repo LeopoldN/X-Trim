@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "X Trim",
-  "version": "0.1.64",
+  "version": "0.1.67",
   "description": "Hide Premium promotions, follow suggestions, and individual navigation items on X.",
   "permissions": [
     "storage",
@@ -12,8 +12,7 @@
   ],
   "host_permissions": [
     "https://x.com/*",
-    "https://twitter.com/*",
-    "https://video.twimg.com/*"
+    "https://twitter.com/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -53,9 +52,11 @@
   "background": {
     "scripts": [
       "about-background.js",
-      "vendor/gif.js/dist/gif.js",
-      "media-gif.js",
+      "gif-background.js",
       "media-background.js"
     ]
-  }
+  },
+  "optional_host_permissions": [
+    "https://video.twimg.com/*"
+  ]
 }
