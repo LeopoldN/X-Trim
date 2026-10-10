@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "X Clean Layout",
+  "version": "0.1.62",
+  "description": "Hide Premium promotions, follow suggestions, and individual navigation items on X.",
+  "permissions": [
+    "storage",
+    "webRequest",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://x.com/*",
+    "https://twitter.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "X Clean Layout"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://x.com/*",
+        "https://twitter.com/*"
+      ],
+      "js": [
+        "content.js",
+        "about-profile.js",
+        "theme.js",
+        "media-download.js"
+      ],
+      "run_at": "document_start",
+      "css": [
+        "about-profile.css",
+        "early-layout.css",
+        "media-download.css"
+      ]
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "x-clean-layout@local.example",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
+  },
+  "background": {
+    "scripts": [
+      "about-background.js",
+      "media-background.js"
+    ]
+  }
+}

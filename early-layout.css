@@ -1,0 +1,18 @@
+/* Runs at document_start. Preferences set root flags before X inserts its UI. */
+html[data-xclean-hide-right] [data-testid="sidebarColumn"]{display:none!important}
+html[data-xclean-hide-premium] [data-testid="sidebarColumn"] aside[aria-label="Subscribe to Premium"],
+html[data-xclean-hide-premium] [data-testid="sidebarColumn"] .r-rs99b7:has(aside[aria-label="Subscribe to Premium"]),
+html[data-xclean-hide-premium] [data-testid="premiumSignUp"],
+html[data-xclean-hide-premium] [data-testid="premiumSignup"]{display:none!important}
+html[data-xclean-hide-follow] [data-testid="sidebarColumn"] aside[aria-label="Who to follow"],
+html[data-xclean-hide-follow] [data-testid="sidebarColumn"] .r-rs99b7:has(aside[aria-label="Who to follow"]){display:none!important}
+html[data-xclean-hide-trends] [data-testid="sidebarColumn"] section:has([aria-label="Timeline: Trending now"]),
+html[data-xclean-hide-trends] [data-testid="sidebarColumn"] .r-rs99b7:has([aria-label="Timeline: Trending now"]){display:none!important}
+html[data-xclean-hide-grok] [data-testid="GrokDrawer"],
+html[data-xclean-hide-chat] [data-testid="chat-drawer-root"],
+html[data-xclean-hide-chat] [data-testid="DMDrawer"]{display:none!important}
+html[data-xclean-square-avatar] [data-testid="primaryColumn"] [data-testid^="UserAvatar-Container-"]:has(a[href$="/photo"]),
+html[data-xclean-square-avatar] [data-testid="primaryColumn"] [data-testid^="UserAvatar-Container-"]:has(a[href$="/photo"]) *{border-radius:0!important}
+html[data-xclean-settings-shortcut] header[role="banner"] nav button[data-testid="AppTabBar_More_Menu"]{display:none!important}
+
+header[role="banner"] [data-xclean-settings-link][data-xclean-compact] > div > div:not(:has(svg)){display:none!important}

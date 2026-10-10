@@ -1,0 +1,6 @@
+[data-xclean-about-name-row]{flex-wrap:wrap !important;gap:6px 12px !important;overflow:visible !important}
+[data-xclean-about]{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 14px;max-width:100%;font-family:TwitterChirp,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif !important;font-size:13px !important;line-height:20px;font-weight:400 !important;letter-spacing:0;opacity:.78;margin:2px 0 3px}
+[data-xclean-about] .xclean-about-badge{display:inline-flex;align-items:center;gap:6px;padding:0;max-width:100%;box-sizing:border-box}
+[data-xclean-about] svg{width:13px;height:13px;flex:none;fill:none;stroke:currentColor;stroke-width:1.75;opacity:.8}
+[data-xclean-about] .xclean-about-value{font-family:TwitterChirp,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif !important;font-size:13px !important;font-weight:400 !important;letter-spacing:0;overflow-wrap:anywhere}
+[data-xclean-about] .xclean-about-note{opacity:.6;font-size:11px}
