@@ -1,0 +1,19 @@
+# X Trim privacy policy
+
+Effective October 10, 2026 — version 0.1.68.
+
+X Trim has no developer-operated backend, analytics, advertising, or error-reporting service. It never sends information to the extension author. Layout, navigation, themes, preferences, and local media-metadata inspection are processed in your browser.
+
+## Optional requests to X
+
+Media downloads request only the image or video you selected from X's media servers (`pbs.twimg.com` and `video.twimg.com`). Firefox asks for optional website-content transmission consent before the extension starts a download. GIF conversion additionally requires optional access to `video.twimg.com`; its MP4 fetch omits credentials. GIF frames are processed locally using the bundled encoder in a temporary extension tab. Conversion output remains local and is saved using Firefox's download API. No media is uploaded to a conversion service. Download requests can reveal the selected media URL and ordinary network information, such as your IP address, to X. Firefox's native download behavior may attach applicable site cookies to direct image/MP4 requests.
+
+Account-detail features are off by default. Before enabling them, Firefox asks for optional website-content, browsing-activity, and authentication-information consent. When enabled, the extension sends the displayed account handle and your existing X session credentials only to X (`x.com` or `twitter.com`) to request that account's About information. These requests may happen as you visit supported profiles/posts while the feature is enabled. The extension does not ask you to enter passwords. Authentication/CSRF headers are held only in memory, are not logged or saved, and are cleared when the tab closes or account details are disabled or consent is revoked.
+
+You may decline or revoke optional consent in Firefox's extension permissions. The affected remote features stop; local layout and theme features remain usable. Disable account details in X Trim's popup to stop automatic account-detail requests. Optional host access and data consent are distinct permissions.
+
+## Local storage and retention
+
+Preferences remain in Firefox extension storage. Account-detail responses from normal windows are cached locally for up to 24 hours, with at most 100 records; expired records are ignored and pruned on subsequent writes. Private-window account responses are not written to disk. Media URLs are cached in memory, at most 100 per tab, and cleared when downloads are disabled or the tab closes. Temporary GIF input/output data is released after conversion/download or cancellation. Files you choose to save and Firefox's own download history remain under your control.
+
+Removing the extension removes its extension storage. It does not delete files you saved. X's own data handling is governed by X's policies.

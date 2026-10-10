@@ -8,7 +8,8 @@ async function startGifConversion(url,sourceTabId,token){
   const job={url,sourceTabId,token,resolve,reject};gifConversions.set(jobId,job);
   // Register before opening the tab: its script can send ready immediately.
   try{
-    const tab=await browser.tabs.create({url:browser.runtime.getURL('gif-converter.html')+'?job='+jobId,active:true});
+    const sourceTab=await browser.tabs.get(sourceTabId);
+    const tab=await browser.tabs.create({windowId:sourceTab.windowId,url:browser.runtime.getURL('gif-converter.html')+'?job='+jobId,active:true});
     job.tabId=tab.id;
     job.timer=setTimeout(()=>{gifConversions.delete(jobId);browser.tabs.remove(tab.id).catch(()=>{});reject(new Error('GIF conversion timed out.'));},240000);
     const objectURL=await result;

@@ -1,6 +1,6 @@
 # X Trim
 
-**v0.1.67** · Firefox / Zen 140+
+**v0.1.68** · Firefox / Zen 140+
 
 Tidy up X: hide promotions and sidebar items, change column widths, customize profiles, pick a theme, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
@@ -18,7 +18,7 @@ Temporary installs last until the browser restarts. Load it again next time. The
 
 ## Privacy & rough edges
 
-Settings stay in your browser. No analytics. Optional account details use your signed-in X session and are cached locally for 24 hours; authentication headers stay in memory and requests go only to X. Downloads use the browser’s Save As dialog.
+Settings stay in your browser. No analytics. Media downloads require optional website-content consent; account details require separate optional website-content, browsing-activity, and authentication-information consent. Optional account details use your signed-in X session and are cached locally for 24 hours; authentication headers stay in memory and requests go only to X. Downloads use the browser’s Save As dialog.
 
 X changes often, so some controls may break. Promotion matching works best in English. Video downloads read existing X GraphQL responses locally to find the best available MP4, including when playback uses a blob URL. Reload the post after installing or enabling downloads so metadata can be captured. HLS-only videos are not supported. A filling button shows byte progress when Firefox reports the file size; otherwise it shows an indeterminate animation. Video URLs are cached only in memory, up to 100 per tab, and cleared when downloads are disabled or the tab closes. Report bugs with steps to reproduce.
 
@@ -34,6 +34,8 @@ X GIF MP4s (`/tweet_video/`) save as looping `.gif` files. Conversion runs in th
 
 Bundled encoder: [gif.js](https://github.com/jnordberg/gif.js), v0.2.0, MIT (see `vendor/gif.js/LICENSE`). The unchanged npm release's source, build script, package metadata, and source maps are retained in the repository for review. Runtime packages include only its two distribution scripts and license. To reproduce the vendor files, extract `https://registry.npmjs.org/gif.js/-/gif.js-0.2.0.tgz`; the upstream MIT license is included separately. No build step is used for X Trim's own code.
 
-GIF setup: open the X Trim toolbar popup → Post page → Enable GIF downloads, then approve Firefox’s permission prompt for `video.twimg.com`. This is optional and normally only needed once; declining leaves the other features available. If you revoke access later, the same button lets you enable it again.
+GIF setup: open the X Trim toolbar popup → Post page → Enable media downloads, then approve Firefox’s permission prompt for `video.twimg.com`. This is optional and normally only needed once; declining leaves the other features available. If you revoke access later, the same button lets you enable it again.
 
 Zen compatibility: GIF conversion opens a temporary extension tab with a video preview, because decoding in the hidden background page can fail on macOS. Keep it open until saving completes; it closes automatically afterward. Closing it during conversion cancels the operation.
+
+Submission materials: [privacy policy](PRIVACY.md), [proposed AMO listing](review/AMO-LISTING.md), [reviewer notes](review/REVIEWER-NOTES.md), and [check results](review/CHECKS.md). Rebuild unsigned packages with `python3 scripts/package.py`.

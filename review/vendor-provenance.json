@@ -1,0 +1,11 @@
+{
+  "name": "gif.js",
+  "version": "0.2.0",
+  "tarball": "https://registry.npmjs.org/gif.js/-/gif.js-0.2.0.tgz",
+  "integrity": "sha512-bYxCoT8OZKmbxY8RN4qDiYuj4nrQDTzgLRcFVovyona1PTWNePzI4nzOmotnlOFIzTk/ZxAHtv+TfVLiBWj/hw==",
+  "gitHead": "55bdbfea897753787fd2f4efc62f144371351522",
+  "sha256": {
+    "dist/gif.js": "a8b111071bb3b123c302e6182c01d6b3550f93a4b627398b07c46875d84090bb",
+    "dist/gif.worker.js": "ca9e3048557ec05d619e18b83403cd3669c88939e5fa2d6034ce7625d445970d"
+  }
+}

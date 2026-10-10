@@ -23,7 +23,15 @@ async function init() {
  settings = await browser.storage.local.get(defaults);
  for (const name of ['enabled','premium','hideRightColumn','follow','trends','floatingGrok','floatingMessages','twitterLogo','settingsShortcut','customWidths','profileCustomWidth','profilePostCount','profileSquareAvatar','profileAvatarBorder','profileAbout','postAbout','mediaDownloads']) {
    const input = document.getElementById(name); input.checked = settings[name];
-   input.onchange = () => { settings[name] = input.checked; renderWidths(); renderProfile(); save(); };
+   input.onchange = async () => {
+     if(input.checked&&['profileAbout','postAbout'].includes(name)){
+       try{
+         const allowed=await browser.permissions.request({data_collection:ACCOUNT_DATA_TYPES});
+         if(!allowed){input.checked=false;settings[name]=false;await save();document.getElementById('status').textContent='Account details remain off. Consent to send the displayed handle and your X session credentials to X is required.';return;}
+       }catch{input.checked=false;document.getElementById('status').textContent='Could not request account-detail consent. Try again.';return;}
+     }
+     settings[name] = input.checked; renderWidths(); renderProfile(); save();
+   };
  }
  let discovered = [];
  try {

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "X Trim",
-  "version": "0.1.67",
-  "description": "Hide Premium promotions, follow suggestions, and individual navigation items on X.",
+  "version": "0.1.68",
+  "description": "Customize X’s layout and themes, show optional account details, and save images, MP4 videos, and locally converted GIFs.",
   "permissions": [
     "storage",
     "webRequest",
@@ -45,12 +45,21 @@
       "data_collection_permissions": {
         "required": [
           "none"
+        ],
+        "optional": [
+          "websiteContent",
+          "browsingActivity",
+          "authenticationInfo"
         ]
       }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
     }
   },
   "background": {
     "scripts": [
+      "data-consent.js",
       "about-background.js",
       "gif-background.js",
       "media-background.js"
@@ -58,5 +67,8 @@
   },
   "optional_host_permissions": [
     "https://video.twimg.com/*"
-  ]
+  ],
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; script-src 'self'; worker-src 'self'; object-src 'none'; connect-src 'self' https://x.com https://twitter.com https://video.twimg.com; media-src 'self' blob:; img-src 'self' data:; style-src 'self' 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'"
+  }
 }
