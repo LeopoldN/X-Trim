@@ -1,4 +1,4 @@
-# X Trim 0.1.68 — reviewer notes
+# X Trim 0.1.69 — reviewer notes
 
 ## Code and packaging
 

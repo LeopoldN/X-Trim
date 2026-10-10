@@ -1,6 +1,6 @@
 # X Trim
 
-**v0.1.68** · Firefox / Zen 140+
+**v0.1.69** · Firefox / Zen 140+
 
 Tidy up X: hide promotions and sidebar items, change column widths, customize profiles, pick a theme, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
@@ -39,3 +39,5 @@ GIF setup: open the X Trim toolbar popup → Post page → Enable media download
 Zen compatibility: GIF conversion opens a temporary extension tab with a video preview, because decoding in the hidden background page can fail on macOS. Keep it open until saving completes; it closes automatically afterward. Closing it during conversion cancels the operation.
 
 Submission materials: [privacy policy](PRIVACY.md), [proposed AMO listing](review/AMO-LISTING.md), [reviewer notes](review/REVIEWER-NOTES.md), and [check results](review/CHECKS.md). Rebuild unsigned packages with `python3 scripts/package.py`.
+
+Calls is available in Sidebar navigation, including when your cached navigation predates X’s rollout. Uncheck Calls to hide it.

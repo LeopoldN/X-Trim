@@ -9,14 +9,14 @@
     const names = {
       AppTabBar_Home_Link: 'Home', AppTabBar_Explore_Link: 'Explore',
       AppTabBar_Notifications_Link: 'Notifications', AppTabBar_DirectMessage_Link: 'Chat',
-      AppTabBar_Profile_Link: 'Profile', AppTabBar_More_Menu: 'More',
+      AppTabBar_Calls_Link: 'Calls', AppTabBar_Profile_Link: 'Profile', AppTabBar_More_Menu: 'More',
       SideNav_NewTweet_Button: 'Post', SideNav_AccountSwitcher_Button: 'Account menu'
     };
     if (el.getAttribute('data-xtrim-settings-link')) return 'Settings';
     return names[el.getAttribute('data-testid')] ||
       (el.getAttribute('aria-label') || el.textContent || '').trim().replace(/\s+/g, ' ');
   };
-  const key = el => el.getAttribute('data-xtrim-nav-key') || (el.tagName === 'A' ? new URL(el.href).pathname.replace(/\/$/, '') || '/' : el.getAttribute('data-testid') || label(el));
+  const key = el => /^calls$/i.test(label(el)) ? 'Calls' : el.getAttribute('data-xtrim-nav-key') || (el.tagName === 'A' ? new URL(el.href).pathname.replace(/\/$/, '') || '/' : el.getAttribute('data-testid') || label(el));
   function items() {
     const entries = new Map();
     for (const el of document.querySelectorAll(navSelector)) {

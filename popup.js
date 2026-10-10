@@ -51,7 +51,9 @@ async function init() {
  renderWidths();
  renderProfile();
 
- const entries = new Map(discovered.map(item => [item.key, item.label]));
+ const entries = new Map(discovered.map(item => [/^calls$/i.test(item.label) ? 'Calls' : item.key, item.label]));
+ // Keep new rollout items available even when the cached sidebar predates them.
+ if(!entries.has('Calls'))entries.set('Calls','Calls');
  const container = document.getElementById('navigation'); container.replaceChildren();
  for (const [key,label] of entries) {
    const row = document.createElement('label'), input = document.createElement('input');

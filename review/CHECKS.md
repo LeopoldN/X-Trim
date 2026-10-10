@@ -40,3 +40,7 @@ The artifacts remain **unsigned**. Submit the XPI and source ZIP, copy the listi
 - Mozilla lint: extract `x-trim.xpi` into an empty directory, then `web-ext lint --source-dir /path/to/extracted-package --output json`.
 
 Policy references: https://extensionworkshop.com/documentation/publish/add-on-policies/ ; https://extensionworkshop.com/documentation/publish/third-party-library-usage/ ; https://extensionworkshop.com/documentation/develop/firefox-builtin-data-consent/ .
+
+## 0.1.69 sidebar update
+
+Added an always-available Calls toggle with a stable key derived from the observed sidebar label. The preceding conversion/consent checks apply to unchanged functionality in 0.1.68. JavaScript syntax and complete-package lint were rerun for 0.1.69; see review/lint.json.
