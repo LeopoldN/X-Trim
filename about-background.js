@@ -1,7 +1,7 @@
 // X's public web-client token, not a developer API key. Session headers stay in memory.
 const WEB_TOKEN = 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA';
 let queryId = 'XRqGa7EeokUU5kppkh13EA';
-const sessionHeaders = new Map(), pending = new Map();
+const sessionHeaders = new Map(), pending = new Map(), accountProfiles = new Map();
 let queue = Promise.resolve(), lastStart = 0;
 const TTL = 24 * 60 * 60 * 1000;
 function parseAbout(data, handle) {
@@ -10,13 +10,41 @@ function parseAbout(data, handle) {
   if (returned && returned.toLowerCase() !== handle.toLowerCase()) throw new Error('account-mismatch');
   if (!user?.about_profile) throw new Error(data?.errors?.length ? 'request-rejected' : 'not-available');
   const text = value => typeof value === 'string' && value.trim() ? value.trim().slice(0, 160) : null;
-  return { basedIn: text(user.about_profile.account_based_in), connectedVia: text(user.about_profile.source), approximate: user.about_profile.location_accurate === false };
+  const legacy=user.legacy || {}, core=user.core || {};
+  const count=value=>Number.isSafeInteger(value)&&value>=0?value:null;
+  const label=user.affiliates_highlighted_label?.label;
+  return { basedIn:text(user.about_profile.account_based_in), connectedVia:text(user.about_profile.source), approximate:user.about_profile.location_accurate===false,
+    name:text(core.name || legacy.name), createdAt:text(core.created_at || legacy.created_at), userId:text(user.rest_id),
+    verification:['Business','Government'].includes(user.verification?.verified_type)?user.verification.verified_type:user.is_blue_verified===true?'Blue':null,
+    handleChanges:count(user.about_profile.username_changes?.count), affiliation:text(label?.description || user.about_profile.affiliate_username),
+    followers:count(legacy.followers_count), following:count(legacy.friends_count), posts:count(legacy.statuses_count), media:count(legacy.media_count) };
+}
+// Enrich only from responses X already loaded. Keep these changing counts in tab memory.
+function rememberAccountProfiles(root,tabId){
+  if(!captureAccountHeaders)return;
+  const cache=accountProfiles.get(tabId)||new Map(), stack=[root];
+  while(stack.length){
+    const user=stack.pop();if(!user||typeof user!=='object')continue;
+    const handle=user.core?.screen_name||user.legacy?.screen_name;
+    if(typeof handle==='string'&&/^[a-z0-9_]{1,15}$/i.test(handle)&&user.rest_id){
+      const legacy=user.legacy||{}, entry={};
+      for(const [key,field] of [['followers','followers_count'],['following','friends_count'],['posts','statuses_count'],['media','media_count']]){
+        if(Number.isSafeInteger(legacy[field])&&legacy[field]>=0)entry[key]=legacy[field];
+      }
+      if(Object.keys(entry).length){cache.delete(handle.toLowerCase());cache.set(handle.toLowerCase(),entry);}
+    }
+    for(const child of Object.values(user))if(child&&typeof child==='object')stack.push(child);
+  }
+  while(cache.size>100)cache.delete(cache.keys().next().value);
+  accountProfiles.set(tabId,cache);
+  browser.tabs.sendMessage(tabId,{type:'about-profile-counts',profiles:Object.fromEntries(cache)}).catch(()=>{});
+
 }
 let captureAccountHeaders=false;
 async function updateAccountCapture(){
   const prefs=await browser.storage.local.get({enabled:true,profileAbout:false,postAbout:false});
   captureAccountHeaders=prefs.enabled&&(prefs.profileAbout||prefs.postAbout)&&await hasDataConsent(ACCOUNT_DATA_TYPES);
-  if(!captureAccountHeaders)sessionHeaders.clear();
+  if(!captureAccountHeaders){sessionHeaders.clear();accountProfiles.clear();}
 }
 updateAccountCapture();
 browser.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&(changes.enabled||changes.profileAbout||changes.postAbout))updateAccountCapture();});
@@ -34,7 +62,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(details => {
   }
   if (headers.authorization && headers['x-csrf-token']) sessionHeaders.set(details.tabId, headers);
 }, {urls:['https://x.com/i/api/*','https://twitter.com/i/api/*']}, ['requestHeaders']);
-browser.tabs.onRemoved.addListener(tabId => sessionHeaders.delete(tabId));
+browser.tabs.onRemoved.addListener(tabId => {sessionHeaders.delete(tabId);accountProfiles.delete(tabId);});
 async function lookupAbout(message, sender) {
   if (!sender.tab || !sender.url) return {ok:false, error:'invalid-page'};
   // SPA navigation can leave the document sender URL behind the current tab URL.
@@ -51,7 +79,7 @@ async function lookupAbout(message, sender) {
   const pendingKey=privateWindow?'private:'+sender.tab.id+':'+key:key;
   const store = await browser.storage.local.get({aboutCache:{},aboutCooldown:0});
   const cached = privateWindow?null:store.aboutCache[key];
-  if (!message.refresh && cached && Date.now() - cached.fetchedAt < TTL) return {ok:true,...cached,cached:true};
+  if (!message.refresh && cached && Date.now() - cached.fetchedAt < TTL) return {ok:true,...cached,...accountProfiles.get(sender.tab.id)?.get(handle.toLowerCase()),cached:true};
   if (store.aboutCooldown > Date.now()) return {ok:false,error:'rate-limited'};
   if (pending.has(pendingKey)) return pending.get(pendingKey);
   const operation = queue.then(async () => {
@@ -83,12 +111,12 @@ async function lookupAbout(message, sender) {
       }
       if (!response.ok) return {ok:false,httpStatus:response.status,error:response.status === 401 ? 'sign-in' : response.status === 403 ? 'request-rejected' : response.status === 404 ? 'endpoint-changed' : 'http-error'};
       const result = {...parseAbout(await response.json(), handle), fetchedAt:Date.now()};
-      if(privateWindow)return {ok:true,...result};
+      if(privateWindow)return {ok:true,...result,...accountProfiles.get(sender.tab.id)?.get(handle.toLowerCase())};
       const current = await browser.storage.local.get({aboutCache:{}});
       current.aboutCache[key] = result;
       const entries = Object.entries(current.aboutCache).filter(([,entry])=>Date.now()-entry.fetchedAt<TTL).sort((a,b)=>b[1].fetchedAt-a[1].fetchedAt).slice(0,100);
       await browser.storage.local.set({aboutCache:Object.fromEntries(entries)});
-      return {ok:true,...result};
+      return {ok:true,...result,...accountProfiles.get(sender.tab.id)?.get(handle.toLowerCase())};
     } catch (error) {
       return {ok:false,error:['account-mismatch','not-available','request-rejected'].includes(error.message) ? error.message : error.name === 'AbortError' ? 'timeout' : 'network-error'};
     } finally {clearTimeout(timeout);}

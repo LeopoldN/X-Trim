@@ -1,6 +1,6 @@
 # X Trim privacy policy
 
-Effective October 10, 2026 — version 0.1.69.
+Effective October 10, 2026 — version 0.1.72.
 
 X Trim has no developer-operated backend, analytics, advertising, or error-reporting service. It never sends information to the extension author. Layout, navigation, themes, preferences, and local media-metadata inspection are processed in your browser.
 
@@ -14,6 +14,6 @@ You may decline or revoke optional consent in Firefox's extension permissions. T
 
 ## Local storage and retention
 
-Preferences remain in Firefox extension storage. Account-detail responses from normal windows are cached locally for up to 24 hours, with at most 100 records; expired records are ignored and pruned on subsequent writes. Private-window account responses are not written to disk. Media URLs are cached in memory, at most 100 per tab, and cleared when downloads are disabled or the tab closes. Temporary GIF input/output data is released after conversion/download or cancellation. Files you choose to save and Firefox's own download history remain under your control.
+Preferences remain in Firefox extension storage. Account-detail responses from normal windows are cached locally for up to 24 hours, with at most 100 records; expired records are ignored and pruned on subsequent writes. Private-window account responses are not written to disk. While account details are enabled and consent is granted, profile counts in X’s existing GraphQL responses are read locally and held in memory for up to 100 accounts per tab; this cache is cleared when the tab closes, account details are disabled, or consent is revoked. Media URLs are cached in memory, at most 100 per tab, and cleared when downloads are disabled or the tab closes. Temporary GIF input/output data is released after conversion/download or cancellation. Files you choose to save and Firefox's own download history remain under your control.
 
 Removing the extension removes its extension storage. It does not delete files you saved. X's own data handling is governed by X's policies.

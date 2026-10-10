@@ -15,7 +15,10 @@ async function accountChecks(){
  assert.equal(writes.length,0,'private account responses must not write to disk');
  sender.tab.incognito=false;assert.equal((await context.lookupAbout(message,sender)).ok,true);assert.equal(fetches,2);assert.equal(writes.filter(v=>v.aboutCache).length,1);
  allowed=false;const before=fetches;assert.equal((await context.lookupAbout({...message,refresh:true},sender)).error,'consent-required');assert.equal(fetches,before);
- console.log('PASS account consent enforcement and private-cache isolation');
+ const parsed=context.parseAbout({data:{user_result_by_screen_name:{result:{core:{screen_name:'example',name:'Example'},rest_id:'42',about_profile:{username_changes:{count:0}},legacy:{followers_count:0,friends_count:-1,statuses_count:123},is_blue_verified:true}}}},'example');
+ assert.equal(parsed.followers,0);assert.equal(parsed.following,null);assert.equal(parsed.handleChanges,0);assert.equal(parsed.verification,'Blue');assert.equal(parsed.connectedVia,null);
+ assert.throws(()=>context.parseAbout({data:{user_result_by_screen_name:{result:{core:{screen_name:'other'},about_profile:{}}}}},'example'),/account-mismatch/);
+ console.log('PASS account consent, private-cache isolation, enriched metadata, unknown values and account identity');
 }
 async function downloadChecks(){
  let allowed=false,downloaded=0;const sent=[];let filter,forwarded=[];

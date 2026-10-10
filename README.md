@@ -1,6 +1,6 @@
 # X Trim
 
-**v0.1.69** · Firefox / Zen 140+
+**v0.1.72** · Firefox / Zen 140+
 
 Tidy up X: hide promotions and sidebar items, change column widths, customize profiles, pick a theme, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
@@ -41,3 +41,9 @@ Zen compatibility: GIF conversion opens a temporary extension tab with a video p
 Submission materials: [privacy policy](PRIVACY.md), [proposed AMO listing](review/AMO-LISTING.md), [reviewer notes](review/REVIEWER-NOTES.md), and [check results](review/CHECKS.md). Rebuild unsigned packages with `python3 scripts/package.py`.
 
 Calls is available in Sidebar navigation, including when your cached navigation predates X’s rollout. Uncheck Calls to hide it.
+
+## Account details
+
+Enable account details under Profile or Post page. The compact flag and connection-source badge opens a theme-aware account card with location, connection source, account creation date, user ID and affiliation. Missing values are not inferred. Escape or an outside click closes the card; Refresh details requests fresh account information.
+
+The card is independently implemented with visual inspiration from the xaitax reference linked above. No reference source code is bundled; no project-wide license was present in its repository at inspection. Requests go directly to X, with a local cache and rate-limit backoff. No community service is used.
