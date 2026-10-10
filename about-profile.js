@@ -48,16 +48,16 @@
   }
   function render() {
     const profile = enabled ? currentTarget() : null;
-    const old = document.querySelector('[data-xclean-about]');
+    const old = document.querySelector('[data-xtrim-about]');
     if (!profile) {if (old) old.remove();activeHandle=null;return;}
     activeHandle = profile.handle.toLowerCase();
     const nameLine = profile.nameLine || profile.name.querySelector('[dir="ltr"]')?.parentElement;
     if (!nameLine) return;
     let box = old;
     if (box && (box.parentElement !== nameLine || box.dataset.handle !== activeHandle)) {box.remove();box=null;}
-    nameLine.setAttribute('data-xclean-about-name-row','');
+    nameLine.setAttribute('data-xtrim-about-name-row','');
     if (!box) {
-      box=document.createElement('span');box.setAttribute('data-xclean-about','');box.dataset.handle=activeHandle;box.setAttribute('role','group');box.setAttribute('aria-label','About this account');nameLine.append(box);
+      box=document.createElement('span');box.setAttribute('data-xtrim-about','');box.dataset.handle=activeHandle;box.setAttribute('role','group');box.setAttribute('aria-label','About this account');nameLine.append(box);
     }
     const state=results.get(activeHandle);
     if (!state || (state.status === 'ready' && Date.now() - state.fetchedAt >= 24 * 60 * 60 * 1000)) {request(profile.handle);return;}
@@ -65,22 +65,22 @@
     if (box.dataset.state===signature) return;
     box.dataset.state=signature;box.replaceChildren();
     if (state.status==='loading') {
-      const note=document.createElement('span');note.className='xclean-about-note';note.textContent='Loading account details…';note.setAttribute('role','status');box.append(note);return;
+      const note=document.createElement('span');note.className='xtrim-about-note';note.textContent='Loading account details…';note.setAttribute('role','status');box.append(note);return;
     }
     if (state.status==='ready') {
       for (const [label,value,icon] of [['Based in',state.basedIn,'globe'],['Connected via',state.connectedVia,'device']]) {
-        const badge=document.createElement('span');badge.className='xclean-about-badge';
+        const badge=document.createElement('span');badge.className='xtrim-about-badge';
         badge.setAttribute('aria-label', label + ': ' + (value || 'Not provided'));
         badge.title=label + ': ' + (value || 'Not provided') + ' · From X’s About this account panel' + (state.approximate && label==='Based in' ? ' · X marks this location as approximate' : '');
         const graphic=document.createElementNS('http://www.w3.org/2000/svg','svg');graphic.setAttribute('viewBox','0 0 24 24');graphic.setAttribute('aria-hidden','true');
         const path=document.createElementNS('http://www.w3.org/2000/svg','path');
         path.setAttribute('d',icon==='globe'?'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm-9 9h18M12 3c-5 5-5 13 0 18 5-5 5-13 0-18':'M7 3h10v18H7zM10 17h4');
         graphic.append(path);
-        const text=document.createElement('span');text.className='xclean-about-value';text.textContent=value || 'Not provided';
+        const text=document.createElement('span');text.className='xtrim-about-value';text.textContent=value || 'Not provided';
         badge.append(graphic,text);box.append(badge);
       }
     } else {
-      const note=document.createElement('span');note.className='xclean-about-note';note.textContent=(errors[state.error] || errors.unavailable) + (state.httpStatus ? ' (HTTP ' + state.httpStatus + ')' : '');note.title=note.textContent;box.append(note);
+      const note=document.createElement('span');note.className='xtrim-about-note';note.textContent=(errors[state.error] || errors.unavailable) + (state.httpStatus ? ' (HTTP ' + state.httpStatus + ')' : '');note.title=note.textContent;box.append(note);
     }
 
   }

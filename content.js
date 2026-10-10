@@ -2,7 +2,7 @@
   const defaults = { themeMode:'default', themeCustom:{accent:'#1D9BF0'}, enabled: true, premium: true, hideRightColumn: false, follow: true, trends: false, floatingGrok: false, floatingMessages: false, twitterLogo: false, settingsShortcut: false, moreOptions: [], added: [], postAbout: false, profileAbout: false, profileCustomWidth: false, profileWidth: 800, profileFont: "default", profilePostCount: false, profileSquareAvatar: false, profileAvatarBorder: false, profileAvatarBorderColor: "#1DA1F2", customWidths: false, navWidth: 272, feedWidth: 600, rightWidth: 350, hidden: [] };
   let settings = defaults, timer;
   const style = document.createElement('style');
-  style.textContent = "[data-xclean-hidden] { display: none !important; }\nhtml[data-xclean-twitter] header[role=\"banner\"] h1 a[href=\"/home\"] { position: relative; }\nhtml[data-xclean-twitter] header[role=\"banner\"] h1 a[href=\"/home\"] svg { visibility: hidden !important; }\nhtml[data-xclean-twitter] header[role=\"banner\"] h1 a[href=\"/home\"]::before { content: ''; position: absolute; width: 30px; height: 30px; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #1da1f2; mask: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M23.954%204.57a10%2010%200%200%201-2.825.775%204.958%204.958%200%200%200%202.163-2.723%209.99%209.99%200%200%201-3.127%201.195%204.916%204.916%200%200%200-8.384%204.482A13.944%2013.944%200%200%201%201.64%203.162a4.916%204.916%200%200%200%201.523%206.574%204.904%204.904%200%200%201-2.229-.616v.061a4.917%204.917%200%200%200%203.946%204.818%204.936%204.936%200%200%201-2.224.084%204.923%204.923%200%200%200%204.6%203.419A9.868%209.868%200%200%201%200%2019.54a13.94%2013.94%200%200%200%207.548%202.212c9.057%200%2014.01-7.503%2014.01-14.01%200-.213-.005-.425-.014-.637a10.012%2010.012%200%200%200%202.46-2.548z%22%2F%3E%3C%2Fsvg%3E\") center / contain no-repeat; pointer-events: none; }";
+  style.textContent = "[data-xtrim-hidden] { display: none !important; }\nhtml[data-xtrim-twitter] header[role=\"banner\"] h1 a[href=\"/home\"] { position: relative; }\nhtml[data-xtrim-twitter] header[role=\"banner\"] h1 a[href=\"/home\"] svg { visibility: hidden !important; }\nhtml[data-xtrim-twitter] header[role=\"banner\"] h1 a[href=\"/home\"]::before { content: ''; position: absolute; width: 30px; height: 30px; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #1da1f2; mask: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M23.954%204.57a10%2010%200%200%201-2.825.775%204.958%204.958%200%200%200%202.163-2.723%209.99%209.99%200%200%201-3.127%201.195%204.916%204.916%200%200%200-8.384%204.482A13.944%2013.944%200%200%201%201.64%203.162a4.916%204.916%200%200%200%201.523%206.574%204.904%204.904%200%200%201-2.229-.616v.061a4.917%204.917%200%200%200%203.946%204.818%204.936%204.936%200%200%201-2.224.084%204.923%204.923%200%200%200%204.6%203.419A9.868%209.868%200%200%201%200%2019.54a13.94%2013.94%200%200%200%207.548%202.212c9.057%200%2014.01-7.503%2014.01-14.01%200-.213-.005-.425-.014-.637a10.012%2010.012%200%200%200%202.46-2.548z%22%2F%3E%3C%2Fsvg%3E\") center / contain no-repeat; pointer-events: none; }";
   document.documentElement.append(style);
   const navSelector = 'header[role="banner"] nav a, header[role="banner"] nav button, header[role="banner"] [data-testid="SideNav_NewTweet_Button"], header[role="banner"] [data-testid="SideNav_AccountSwitcher_Button"]';
   const label = el => {
@@ -12,15 +12,15 @@
       AppTabBar_Profile_Link: 'Profile', AppTabBar_More_Menu: 'More',
       SideNav_NewTweet_Button: 'Post', SideNav_AccountSwitcher_Button: 'Account menu'
     };
-    if (el.getAttribute('data-xclean-settings-link')) return 'Settings';
+    if (el.getAttribute('data-xtrim-settings-link')) return 'Settings';
     return names[el.getAttribute('data-testid')] ||
       (el.getAttribute('aria-label') || el.textContent || '').trim().replace(/\s+/g, ' ');
   };
-  const key = el => el.getAttribute('data-xclean-nav-key') || (el.tagName === 'A' ? new URL(el.href).pathname.replace(/\/$/, '') || '/' : el.getAttribute('data-testid') || label(el));
+  const key = el => el.getAttribute('data-xtrim-nav-key') || (el.tagName === 'A' ? new URL(el.href).pathname.replace(/\/$/, '') || '/' : el.getAttribute('data-testid') || label(el));
   function items() {
     const entries = new Map();
     for (const el of document.querySelectorAll(navSelector)) {
-      if (el.hasAttribute('data-xclean-added')) continue;
+      if (el.hasAttribute('data-xtrim-added')) continue;
       const itemKey = key(el);
       entries.set(itemKey, { key: itemKey, label: label(el) || itemKey });
     }
@@ -34,17 +34,17 @@
     function hasContent(node) {
       if (node.nodeType === Node.TEXT_NODE) return !!node.textContent.trim();
       if (node.nodeType !== Node.ELEMENT_NODE) return false;
-      if (node.hasAttribute('data-xclean-hidden')) return false;
+      if (node.hasAttribute('data-xtrim-hidden')) return false;
       const css = getComputedStyle(node);
       if (css.display === 'none' || css.visibility === 'hidden') return false;
       if (node.matches('input, textarea, button, img, svg, video, canvas, iframe, [role="search"]')) return true;
       return [...node.childNodes].some(hasContent);
     }
-    for (const hidden of sidebar.querySelectorAll('[data-xclean-hidden]')) {
+    for (const hidden of sidebar.querySelectorAll('[data-xtrim-hidden]')) {
       let parent = hidden.parentElement;
       while (parent && parent !== sidebar) {
         if (hasContent(parent)) break;
-        parent.setAttribute('data-xclean-hidden', '');
+        parent.setAttribute('data-xtrim-hidden', '');
         parent = parent.parentElement;
       }
     }
@@ -59,13 +59,13 @@
       document.querySelectorAll(selector).forEach(drawer => {
         const positionedWrapper = drawer.closest('[style*="position: absolute"][style*="bottom:"]');
         const target = positionedWrapper && positionedWrapper.closest('#layers') ? positionedWrapper : drawer;
-        target.setAttribute('data-xclean-hidden', '');
+        target.setAttribute('data-xtrim-hidden', '');
       });
     }
   }
   function updateSettingsShortcut() {
     const original = document.querySelector('header[role="banner"] nav button[data-testid="AppTabBar_More_Menu"]');
-    const existing = document.querySelector('header[role="banner"] [data-xclean-settings-link]');
+    const existing = document.querySelector('header[role="banner"] [data-xtrim-settings-link]');
     if (!settings.enabled || !settings.settingsShortcut) {
       if (existing) existing.remove();
       return;
@@ -73,18 +73,18 @@
     if (!original) { if (existing) existing.remove(); return; }
     const compact = /^\/(?:i\/chat|messages)(?:\/|$)/.test(location.pathname);
     const signature = (compact ? 'compact:' : 'full:') + original.className + original.innerHTML;
-    if (existing && (existing.previousElementSibling !== original || existing.getAttribute('data-xclean-source') !== signature)) existing.remove();
-    if (!original.nextElementSibling?.hasAttribute('data-xclean-settings-link')) {
+    if (existing && (existing.previousElementSibling !== original || existing.getAttribute('data-xtrim-source') !== signature)) existing.remove();
+    if (!original.nextElementSibling?.hasAttribute('data-xtrim-settings-link')) {
       const link = document.createElement('a');
       link.className = original.className;
       link.href = '/settings/account';
       link.setAttribute('role', 'link');
       link.setAttribute('aria-label', 'Settings');
       link.setAttribute('title', 'Settings');
-      link.setAttribute('data-xclean-settings-link', 'true');
-      link.setAttribute('data-xclean-source', signature);
-      if (compact) link.setAttribute('data-xclean-compact', '');
-      link.setAttribute('data-xclean-nav-key', 'AppTabBar_More_Menu');
+      link.setAttribute('data-xtrim-settings-link', 'true');
+      link.setAttribute('data-xtrim-source', signature);
+      if (compact) link.setAttribute('data-xtrim-compact', '');
+      link.setAttribute('data-xtrim-nav-key', 'AppTabBar_More_Menu');
       for (const child of original.childNodes) link.append(child.cloneNode(true));
       const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
       while (walker.nextNode()) {
@@ -103,7 +103,7 @@
       }
       original.after(link);
     }
-    original.setAttribute('data-xclean-hidden', '');
+    original.setAttribute('data-xtrim-hidden', '');
   }
   function readMoreMenu() {
     const more = document.querySelector('header[role="banner"] button[data-testid="AppTabBar_More_Menu"]');
@@ -129,27 +129,27 @@
   function updateAddedNavigation() {
     const nav = document.querySelector('header[role="banner"] nav');
     if (!nav) return;
-    const nativePaths = new Set([...nav.querySelectorAll('a:not([data-xclean-added])')].map(link => new URL(link.href).pathname + new URL(link.href).search));
+    const nativePaths = new Set([...nav.querySelectorAll('a:not([data-xtrim-added])')].map(link => new URL(link.href).pathname + new URL(link.href).search));
     const selected = settings.enabled ? settings.moreOptions.filter(item => settings.added.includes(item.key) && !nativePaths.has(item.key)) : [];
     const wanted = new Map(selected.map(item => [item.key, item]));
-    nav.querySelectorAll('[data-xclean-added]').forEach(link => {
-      if (!wanted.has(link.getAttribute('data-xclean-added'))) link.remove();
+    nav.querySelectorAll('[data-xtrim-added]').forEach(link => {
+      if (!wanted.has(link.getAttribute('data-xtrim-added'))) link.remove();
     });
-    const template = nav.querySelector('a:not([data-xclean-added]):not([data-xclean-settings-link])');
+    const template = nav.querySelector('a:not([data-xtrim-added]):not([data-xtrim-settings-link])');
     if (!template) return;
     for (const item of selected) {
       const url = new URL(item.key, location.origin);
       if (url.origin !== location.origin || !item.key.startsWith('/')) continue;
       // Native links already on the sidebar do not need another copy.
-      if ([...nav.querySelectorAll('a:not([data-xclean-added])')].some(link => new URL(link.href).pathname + new URL(link.href).search === item.key)) continue;
-      if ([...nav.querySelectorAll('[data-xclean-added]')].some(link => link.getAttribute('data-xclean-added') === item.key)) continue;
+      if ([...nav.querySelectorAll('a:not([data-xtrim-added])')].some(link => new URL(link.href).pathname + new URL(link.href).search === item.key)) continue;
+      if ([...nav.querySelectorAll('[data-xtrim-added]')].some(link => link.getAttribute('data-xtrim-added') === item.key)) continue;
       const link = document.createElement('a');
       link.className = template.className;
       link.href = url.href;
       link.setAttribute('aria-label', item.label);
       link.setAttribute('title', item.label);
       link.setAttribute('role', 'link');
-      link.setAttribute('data-xclean-added', item.key);
+      link.setAttribute('data-xtrim-added', item.key);
       for (const child of template.childNodes) link.append(child.cloneNode(true));
       link.querySelectorAll('[aria-label*="unread"]').forEach(el => el.remove());
       const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
@@ -176,9 +176,9 @@
   document.documentElement.append(profileStyle);
   function updateProfile() {
     const active = settings.enabled && isProfilePage();
-    document.documentElement.toggleAttribute('data-xclean-profile', active);
+    document.documentElement.toggleAttribute('data-xtrim-profile', active);
     let css = '';
-    const scope = 'html[data-xclean-profile]';
+    const scope = 'html[data-xtrim-profile]';
     if (active) {
       const fonts = {system:'system-ui, sans-serif', arial:'Arial, Helvetica, sans-serif', serif:'Georgia, serif', mono:'Menlo, Consolas, monospace'};
       if (fonts[settings.profileFont]) css += `${scope} [data-testid="primaryColumn"], ${scope} [data-testid="primaryColumn"] :is(div,span,a,button,input,textarea) {font-family:${fonts[settings.profileFont]} !important;}`;
@@ -186,8 +186,8 @@
       const photo = [...document.querySelectorAll('[data-testid="primaryColumn"] a[href]')]
         .find(link => new URL(link.href).pathname === '/' + handle + '/photo');
       const avatar = photo?.closest('[data-testid^="UserAvatar-Container-"]');
-      if (avatar) avatar.setAttribute('data-xclean-profile-avatar', '');
-      const avatarScope = `${scope} [data-xclean-profile-avatar]`;
+      if (avatar) avatar.setAttribute('data-xtrim-profile-avatar', '');
+      const avatarScope = `${scope} [data-xtrim-profile-avatar]`;
       if (settings.profileSquareAvatar) css += `${avatarScope}, ${avatarScope} * {border-radius:0 !important;}`;
       if (settings.profileAvatarBorder) {
         const accent=settings.themeMode==='custom'?settings.themeCustom?.accent:'#1D9BF0';
@@ -198,7 +198,7 @@
 
     }
     const primary = document.querySelector('[data-testid="primaryColumn"]');
-    const existing = document.querySelector('[data-xclean-profile-posts]');
+    const existing = document.querySelector('[data-xtrim-profile-posts]');
     if (!active || !settings.profilePostCount) {
       if (existing) existing.remove();
     } else if (primary) {
@@ -210,13 +210,13 @@
       const source = [...primary.querySelectorAll('h2')].map(heading => heading.nextElementSibling)
         .find(el => el && /^[\d,.]+[KM]?\s+posts?$/i.test(el.textContent.trim()));
       if (followers && source) {
-        source.setAttribute('data-xclean-profile-post-source', '');
+        source.setAttribute('data-xtrim-profile-post-source', '');
         let count = existing;
         if (!count || count.previousElementSibling !== followers.parentElement) {
           if (count) count.remove();
           count = document.createElement('div');
           count.className = followers.parentElement.className;
-          count.setAttribute('data-xclean-profile-posts', '');
+          count.setAttribute('data-xtrim-profile-posts', '');
           followers.parentElement.after(count);
         }
         const match = source.textContent.trim().match(/^([\d,.]+[KM]?)\s+(posts?)$/i);
@@ -232,7 +232,7 @@
           stat.append(number, document.createTextNode(' '), caption);
           count.replaceChildren(stat);
         }
-        css += `${scope} [data-xclean-profile-post-source]{display:none !important;} ${scope} [data-xclean-profile-posts]{margin-left:20px;white-space:nowrap;} `;
+        css += `${scope} [data-xtrim-profile-post-source]{display:none !important;} ${scope} [data-xtrim-profile-posts]{margin-left:20px;white-space:nowrap;} `;
       } else if (existing) existing.remove();
     }
     if (profileStyle.textContent !== css) profileStyle.textContent = css;
@@ -252,35 +252,35 @@
       const right = hideRight ? 0 : bounds(settings.rightWidth, 350, 240, 600);
       const gap = hideRight ? 0 : 32;
       const primary = document.querySelector('[data-testid="primaryColumn"]');
-      if (primary?.parentElement) primary.parentElement.setAttribute('data-xclean-columns', '');
+      if (primary?.parentElement) primary.parentElement.setAttribute('data-xtrim-columns', '');
       const main = document.querySelector('main[role="main"]');
       const header = document.querySelector('header[role="banner"]');
       if (header?.parentElement && header.parentElement === main?.parentElement) {
-        header.parentElement.setAttribute('data-xclean-page-row', '');
+        header.parentElement.setAttribute('data-xtrim-page-row', '');
       }
       if (main) {
         for (let wrapper = primary?.parentElement; wrapper && wrapper !== main; wrapper = wrapper.parentElement) {
-          wrapper.setAttribute('data-xclean-layout-wrapper', '');
+          wrapper.setAttribute('data-xtrim-layout-wrapper', '');
         }
       }
       css = `@media (min-width: 700px) {
-        [data-xclean-page-row] { justify-content: center !important; width: 100% !important; }
+        [data-xtrim-page-row] { justify-content: center !important; width: 100% !important; }
         header[role="banner"] { width: ${nav}px !important; min-width: ${nav}px !important; flex: 0 0 ${nav}px !important; }
         header[role="banner"] > div, header[role="banner"] > div > div, header[role="banner"] > div > div > div { width: ${nav}px !important; max-width: ${nav}px !important; }
         header[role="banner"] nav { width: 100% !important; max-width: 100% !important; min-width: 0 !important; }
         header[role="banner"] nav > :is(a,button) { max-width:100% !important; box-sizing:border-box !important; }
         main[role="main"] { width: ${feed + right + gap}px !important; max-width: none !important; flex: 0 0 auto !important; min-width: 0 !important; }
-        [data-xclean-layout-wrapper] { width: 100% !important; max-width: none !important; min-width: 0 !important; }
-        [data-xclean-columns] { gap: ${gap}px !important; justify-content: flex-start !important; }
+        [data-xtrim-layout-wrapper] { width: 100% !important; max-width: none !important; min-width: 0 !important; }
+        [data-xtrim-columns] { gap: ${gap}px !important; justify-content: flex-start !important; }
         [data-testid="primaryColumn"] { width: ${feed}px !important; max-width: ${feed}px !important; min-width: 0 !important; flex: 0 0 ${feed}px !important; margin-left: 0 !important; margin-right: 0 !important; }
         [data-testid="sidebarColumn"] { width: ${right}px !important; max-width: ${right}px !important; min-width: 0 !important; margin-left: 0 !important; flex: 0 0 ${right}px !important; }
         [data-testid="sidebarColumn"] > div > div { max-width: 100% !important; }
-        html[data-xclean-profile] [data-testid="primaryColumn"] .r-1ye8kvj.r-13qz1uu { width:100% !important; max-width:100% !important; margin-left:0 !important; margin-right:0 !important; }
+        html[data-xtrim-profile] [data-testid="primaryColumn"] .r-1ye8kvj.r-13qz1uu { width:100% !important; max-width:100% !important; margin-left:0 !important; margin-right:0 !important; }
       }
       @media (min-width: 700px) and (max-width: ${nav + feed + right + 55}px) {
         [data-testid="sidebarColumn"] { display: none !important; }
         main[role="main"] { width: min(${feed}px, calc(100vw - ${nav + 24}px)) !important; }
-        [data-xclean-columns] { gap: 0 !important; }
+        [data-xtrim-columns] { gap: 0 !important; }
         [data-testid="primaryColumn"] { width: 100% !important; max-width: 100% !important; flex-basis: 100% !important; }
       }`;
     }
@@ -302,7 +302,7 @@
       'square-avatar': profileRoute && settings.profileSquareAvatar,
       'settings-shortcut': settings.settingsShortcut
     };
-    for (const [name, value] of Object.entries(flags)) root.toggleAttribute('data-xclean-' + name, !!(settings.enabled && value));
+    for (const [name, value] of Object.entries(flags)) root.toggleAttribute('data-xtrim-' + name, !!(settings.enabled && value));
     const navRules = settings.enabled ? settings.hidden.map(item => {
       const escaped = CSS.escape(item);
       return `header[role="banner"] nav a[href="${escaped}"], header[role="banner"] [data-testid="${escaped}"] {display:none !important;}`;
@@ -313,8 +313,8 @@
   document.documentElement.append(earlyNavStyle);
   function apply() {
     updateEarlyPreferences();
-    document.documentElement.toggleAttribute('data-xclean-twitter', !!(settings.enabled && settings.twitterLogo));
-    document.querySelectorAll('[data-xclean-hidden]').forEach(el => el.removeAttribute('data-xclean-hidden'));
+    document.documentElement.toggleAttribute('data-xtrim-twitter', !!(settings.enabled && settings.twitterLogo));
+    document.querySelectorAll('[data-xtrim-hidden]').forEach(el => el.removeAttribute('data-xtrim-hidden'));
     updateProfile();
     updateWidths();
     readMoreMenu();
@@ -322,7 +322,7 @@
     updateAddedNavigation();
     if (!settings.enabled) return;
     hideFloatingDrawers();
-    const hide = el => el && el.setAttribute('data-xclean-hidden', '');
+    const hide = el => el && el.setAttribute('data-xtrim-hidden', '');
     const hideSidebarCard = el => {
       const sidebar = el.closest('[data-testid="sidebarColumn"]');
       if (!sidebar) { hide(el); return; }

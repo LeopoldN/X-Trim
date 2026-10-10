@@ -27,8 +27,8 @@
           if(url.protocol!=='https:'||url.hostname!=='pbs.twimg.com'||!url.pathname.startsWith('/media/'))continue;
           url.searchParams.set('name','orig');
           targets.add(photo);
-          let button=photo.querySelector('[data-xclean-download]');
-          if(!button){button=document.createElement('button');button.type='button';button.className='xclean-download';button.setAttribute('data-xclean-download','');button.textContent='Download image';button.title='Save original-resolution image';photo.append(button);}
+          let button=photo.querySelector('[data-xtrim-download]');
+          if(!button){button=document.createElement('button');button.type='button';button.className='xtrim-download';button.setAttribute('data-xtrim-download','');button.textContent='Download image';button.title='Save original-resolution image';photo.append(button);}
           bindDownload(button,url.href,route[2]);
         }
         for(const video of tweet.querySelectorAll('video')) {
@@ -41,9 +41,9 @@
           }
           const host=video.closest('[data-testid="videoPlayer"]')||video.parentElement;
           targets.add(host);
-          let button=host.querySelector('[data-xclean-download]');
+          let button=host.querySelector('[data-xtrim-download]');
           if(!button) {
-            button=document.createElement('button');button.type='button';button.className='xclean-download';button.setAttribute('data-xclean-download','');button.textContent='Download';
+            button=document.createElement('button');button.type='button';button.className='xtrim-download';button.setAttribute('data-xtrim-download','');button.textContent='Download';
             host.append(button);
           }
           if(!url) {
@@ -57,7 +57,7 @@
         }
       }
     }
-    document.querySelectorAll('[data-xclean-download]').forEach(button=>{if(!targets.has(button.parentElement))button.remove();});
+    document.querySelectorAll('[data-xtrim-download]').forEach(button=>{if(!targets.has(button.parentElement))button.remove();});
   }
   function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;render();});}
   browser.storage.local.get(preferences).then(value=>{preferences=value;schedule();});

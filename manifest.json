@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "X Clean Layout",
+  "name": "X Trim",
   "version": "0.1.62",
   "description": "Hide Premium promotions, follow suggestions, and individual navigation items on X.",
   "permissions": [
@@ -14,7 +14,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "X Clean Layout"
+    "default_title": "X Trim"
   },
   "content_scripts": [
     {
