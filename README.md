@@ -1,6 +1,6 @@
 # X Trim
 
-**v0.1.72** · Firefox / Zen 140+
+**v0.1.76** · Firefox / Zen 140+
 
 Tidy up X: hide promotions and sidebar items, change column widths, customize profiles, pick a theme, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
@@ -47,3 +47,11 @@ Calls is available in Sidebar navigation, including when your cached navigation 
 Enable account details under Profile or Post page. The compact flag and connection-source badge opens a theme-aware account card with location, connection source, account creation date, user ID and affiliation. Missing values are not inferred. Escape or an outside click closes the card; Refresh details requests fresh account information.
 
 The card is independently implemented with visual inspiration from the xaitax reference linked above. No reference source code is bundled; no project-wide license was present in its repository at inspection. Requests go directly to X, with a local cache and rate-limit backoff. No community service is used.
+
+## Timeline country filtering
+
+Open **Timeline country filters** in the toolbar popup. Enter comma-separated country names or two-letter country codes, then enable filtering and approve Firefox’s account-data consent. Choose collapse with **Show post**, highlight with the theme’s accent border, or **Fully hide** without a placeholder, and optionally list exempt handles under **Always show**. Region names match X’s reported label exactly; they do not expand into member countries.
+
+Near-visible authors are looked up sequentially, using the same 24-hour local cache and rate-limit backoff as account cards. Unknown locations remain visible. Opened posts are highlighted rather than collapsed. Show post reveals that post for the current page session. Quoted accounts are not independently filtered. Disabling filtering restores the posts. Requests go only to X; no community cache is used.
+
+The optional Block button to the left of Grok opens X’s native Block confirmation for the post author. X handles the block after you confirm. Toggle the shortcut under Post page. No additional credential handling or API requests are performed by this shortcut.

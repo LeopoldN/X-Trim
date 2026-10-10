@@ -2,7 +2,7 @@
 const WEB_TOKEN = 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA';
 let queryId = 'XRqGa7EeokUU5kppkh13EA';
 const sessionHeaders = new Map(), pending = new Map(), accountProfiles = new Map();
-let queue = Promise.resolve(), lastStart = 0;
+let queue = Promise.resolve(), lastStart = 0, accountCooldown = 0;
 const TTL = 24 * 60 * 60 * 1000;
 function parseAbout(data, handle) {
   const user = data?.data?.user_result_by_screen_name?.result;
@@ -42,12 +42,12 @@ function rememberAccountProfiles(root,tabId){
 }
 let captureAccountHeaders=false;
 async function updateAccountCapture(){
-  const prefs=await browser.storage.local.get({enabled:true,profileAbout:false,postAbout:false});
-  captureAccountHeaders=prefs.enabled&&(prefs.profileAbout||prefs.postAbout)&&await hasDataConsent(ACCOUNT_DATA_TYPES);
+  const prefs=await browser.storage.local.get({enabled:true,profileAbout:false,postAbout:false,geoBlocking:false});
+  captureAccountHeaders=prefs.enabled&&(prefs.profileAbout||prefs.postAbout||prefs.geoBlocking)&&await hasDataConsent(ACCOUNT_DATA_TYPES);
   if(!captureAccountHeaders){sessionHeaders.clear();accountProfiles.clear();}
 }
 updateAccountCapture();
-browser.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&(changes.enabled||changes.profileAbout||changes.postAbout))updateAccountCapture();});
+browser.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&(changes.enabled||changes.profileAbout||changes.postAbout||changes.geoBlocking))updateAccountCapture();});
 browser.permissions.onAdded.addListener(updateAccountCapture);
 browser.permissions.onRemoved.addListener(updateAccountCapture);
 browser.webRequest.onBeforeSendHeaders.addListener(details => {
@@ -68,10 +68,10 @@ async function lookupAbout(message, sender) {
   // SPA navigation can leave the document sender URL behind the current tab URL.
   const page = new URL(sender.tab.url || sender.url);
   const handle = String(message.handle || '');
-  if (!['x.com','twitter.com'].includes(page.hostname) || !/^[a-z0-9_]{1,15}$/i.test(handle) || page.pathname.split('/')[1]?.toLowerCase() !== handle.toLowerCase()) return {ok:false,error:'invalid-page'};
+  if (page.protocol !== 'https:' || !['x.com','twitter.com'].includes(page.hostname) || !/^[a-z0-9_]{1,15}$/i.test(handle) || (message.timeline !== true && page.pathname.split('/')[1]?.toLowerCase() !== handle.toLowerCase())) return {ok:false,error:'invalid-page'};
   const postPage = /^\/[a-z0-9_]{1,15}\/status\/\d+(?:\/(?:photo|video)\/\d+)?\/?$/i.test(page.pathname);
-  const scope = postPage ? 'postAbout' : 'profileAbout';
-  const preferences = await browser.storage.local.get({enabled:true,profileAbout:false,postAbout:false});
+  const scope = message.timeline === true ? 'geoBlocking' : postPage ? 'postAbout' : 'profileAbout';
+  const preferences = await browser.storage.local.get({enabled:true,profileAbout:false,postAbout:false,geoBlocking:false});
   if (!preferences.enabled || !preferences[scope]) return {ok:false,error:'disabled'};
   if(!await hasDataConsent(ACCOUNT_DATA_TYPES))return {ok:false,error:'consent-required'};
   const privateWindow=!!sender.tab.incognito;
@@ -80,13 +80,14 @@ async function lookupAbout(message, sender) {
   const store = await browser.storage.local.get({aboutCache:{},aboutCooldown:0});
   const cached = privateWindow?null:store.aboutCache[key];
   if (!message.refresh && cached && Date.now() - cached.fetchedAt < TTL) return {ok:true,...cached,...accountProfiles.get(sender.tab.id)?.get(handle.toLowerCase()),cached:true};
-  if (store.aboutCooldown > Date.now()) return {ok:false,error:'rate-limited'};
+  if (Math.max(store.aboutCooldown,accountCooldown) > Date.now()) return {ok:false,error:'rate-limited'};
   if (pending.has(pendingKey)) return pending.get(pendingKey);
+  if(pending.size>=30)return {ok:false,error:'busy'};
   const operation = queue.then(async () => {
-    const now = await browser.storage.local.get({enabled:true,profileAbout:false,postAbout:false,aboutCooldown:0});
+    const now = await browser.storage.local.get({enabled:true,profileAbout:false,postAbout:false,geoBlocking:false,aboutCooldown:0});
     if(!await hasDataConsent(ACCOUNT_DATA_TYPES))return {ok:false,error:'consent-required'};
     if (!now.enabled || !now[scope]) return {ok:false,error:'disabled'};
-    if (now.aboutCooldown > Date.now()) return {ok:false,error:'rate-limited'};
+    if (Math.max(now.aboutCooldown,accountCooldown) > Date.now()) return {ok:false,error:'rate-limited'};
     const headers = {...(sessionHeaders.get(sender.tab.id) || {})};
     if (!headers.authorization) headers.authorization = WEB_TOKEN;
     if (!headers['x-csrf-token'] && typeof message.csrf === 'string' && /^[a-z0-9]{16,256}$/i.test(message.csrf)) headers['x-csrf-token'] = message.csrf;
@@ -95,7 +96,7 @@ async function lookupAbout(message, sender) {
     await new Promise(resolve => setTimeout(resolve, Math.max(0, 1500 - (Date.now() - lastStart))));
     // Consent/preferences may have changed while waiting in the request queue.
     if(!await hasDataConsent(ACCOUNT_DATA_TYPES))return {ok:false,error:'consent-required'};
-    const latest=await browser.storage.local.get({enabled:true,profileAbout:false,postAbout:false});
+    const latest=await browser.storage.local.get({enabled:true,profileAbout:false,postAbout:false,geoBlocking:false});
     if(!latest.enabled||!latest[scope])return {ok:false,error:'disabled'};
     lastStart = Date.now();
     const url = new URL('/i/api/graphql/' + queryId + '/AboutAccountQuery', page.origin);
@@ -106,7 +107,8 @@ async function lookupAbout(message, sender) {
       if (response.status === 429) {
         const reset = Number(response.headers.get('x-rate-limit-reset')) * 1000;
         const retry = Number(response.headers.get('retry-after')) * 1000;
-        if(!privateWindow)await browser.storage.local.set({aboutCooldown:Math.max(Date.now() + 60000, Number.isFinite(reset) ? reset : 0, Date.now() + (Number.isFinite(retry) ? retry : 0))});
+        accountCooldown=Math.max(Date.now() + 60000, Number.isFinite(reset) ? reset : 0, Date.now() + (Number.isFinite(retry) ? retry : 0));
+        if(!privateWindow)await browser.storage.local.set({aboutCooldown:accountCooldown});
         return {ok:false,error:'rate-limited'};
       }
       if (!response.ok) return {ok:false,httpStatus:response.status,error:response.status === 401 ? 'sign-in' : response.status === 403 ? 'request-rejected' : response.status === 404 ? 'endpoint-changed' : 'http-error'};

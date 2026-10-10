@@ -1,0 +1,7 @@
+article[data-xtrim-geo="hide"] > :not(.xtrim-geo-notice){display:none!important}
+article[data-xtrim-geo="remove"], [data-testid="cellInnerDiv"]:has(article[data-xtrim-geo="remove"]){display:none!important}
+html body article[data-testid="tweet"][data-xtrim-geo="highlight"]{border:1px solid var(--x-fg-brand,#1d9bf0)!important}
+.xtrim-geo-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 4px;font:13px/1.4 TwitterChirp,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--x-fg-secondary,inherit);width:100%;box-sizing:border-box}
+.xtrim-geo-notice span{overflow-wrap:anywhere;min-width:0}
+.xtrim-geo-notice button{flex:none;border:1px solid currentColor;border-radius:999px;padding:5px 11px;color:inherit;background:transparent;font:inherit;cursor:pointer}
+.xtrim-geo-notice button:focus-visible{outline:2px solid var(--x-fg-brand,#1d9bf0);outline-offset:3px}

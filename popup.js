@@ -1,4 +1,4 @@
-const defaults = { enabled: true, premium: true, hideRightColumn: false, follow: true, trends: false, floatingGrok: false, floatingMessages: false, twitterLogo: false, settingsShortcut: false, moreOptions: [], added: [], mediaDownloads: true, postAbout: false, profileAbout: false, profileCustomWidth: false, profileWidth: 800, profileFont: "default", profilePostCount: false, profileSquareAvatar: false, profileAvatarBorder: false, profileAvatarBorderColor: "#1DA1F2", customWidths: false, navWidth: 272, feedWidth: 600, rightWidth: 350, hidden: [], themePreset: "", themeMode: "default", themeCustom: {"background": "#000000", "surface": "#16181C", "text": "#E7E9EA", "muted": "#71767B", "border": "#2F3336", "accent": "#1D9BF0", "tabBackground": "#000000", "tabText": "#71767B", "tabActive": "#E7E9EA", "tabIndicator": "#1D9BF0", "icons": "#E7E9EA", "buttonBackground": "#1D9BF0", "buttonText": "#FFFFFF", "buttonAutoContrast": true, "engagementColors": false, "gradient": false, "gradientEnd": "#15202B", "gradientAngle": 135} };
+const defaults = { postBlock:true, geoBlocking:false, geoCountries:"", geoAllowed:"", geoMode:"hide", enabled: true, premium: true, hideRightColumn: false, follow: true, trends: false, floatingGrok: false, floatingMessages: false, twitterLogo: false, settingsShortcut: false, moreOptions: [], added: [], mediaDownloads: true, postAbout: false, profileAbout: false, profileCustomWidth: false, profileWidth: 800, profileFont: "default", profilePostCount: false, profileSquareAvatar: false, profileAvatarBorder: false, profileAvatarBorderColor: "#1DA1F2", customWidths: false, navWidth: 272, feedWidth: 600, rightWidth: 350, hidden: [], themePreset: "", themeMode: "default", themeCustom: {"background": "#000000", "surface": "#16181C", "text": "#E7E9EA", "muted": "#71767B", "border": "#2F3336", "accent": "#1D9BF0", "tabBackground": "#000000", "tabText": "#71767B", "tabActive": "#E7E9EA", "tabIndicator": "#1D9BF0", "icons": "#E7E9EA", "buttonBackground": "#1D9BF0", "buttonText": "#FFFFFF", "buttonAutoContrast": true, "engagementColors": false, "gradient": false, "gradientEnd": "#15202B", "gradientAngle": 135} };
 let settings;
 async function save() {
  try { await browser.storage.local.set(settings); document.getElementById('status').textContent = 'Saved. Changes apply on X immediately.'; }
@@ -21,10 +21,10 @@ async function initSections() {
 async function init() {
  await initSections();
  settings = await browser.storage.local.get(defaults);
- for (const name of ['enabled','premium','hideRightColumn','follow','trends','floatingGrok','floatingMessages','twitterLogo','settingsShortcut','customWidths','profileCustomWidth','profilePostCount','profileSquareAvatar','profileAvatarBorder','profileAbout','postAbout','mediaDownloads']) {
+ for (const name of ['enabled','premium','hideRightColumn','follow','trends','floatingGrok','floatingMessages','twitterLogo','settingsShortcut','customWidths','profileCustomWidth','profilePostCount','profileSquareAvatar','profileAvatarBorder','profileAbout','postAbout','mediaDownloads','geoBlocking','postBlock']) {
    const input = document.getElementById(name); input.checked = settings[name];
    input.onchange = async () => {
-     if(input.checked&&['profileAbout','postAbout'].includes(name)){
+     if(input.checked&&['profileAbout','postAbout','geoBlocking'].includes(name)){
        try{
          const allowed=await browser.permissions.request({data_collection:ACCOUNT_DATA_TYPES});
          if(!allowed){input.checked=false;settings[name]=false;await save();document.getElementById('status').textContent='Account details remain off. Consent to send the displayed handle and your X session credentials to X is required.';return;}
@@ -33,6 +33,7 @@ async function init() {
      settings[name] = input.checked; renderWidths(); renderProfile(); save();
    };
  }
+ for(const name of ['geoCountries','geoAllowed','geoMode']){const input=document.getElementById(name);input.value=settings[name];input.onchange=()=>{settings[name]=input.value;save();};}
  let discovered = [];
  try {
    const [tab] = await browser.tabs.query({active:true,currentWindow:true});

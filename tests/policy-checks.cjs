@@ -18,7 +18,13 @@ async function accountChecks(){
  const parsed=context.parseAbout({data:{user_result_by_screen_name:{result:{core:{screen_name:'example',name:'Example'},rest_id:'42',about_profile:{username_changes:{count:0}},legacy:{followers_count:0,friends_count:-1,statuses_count:123},is_blue_verified:true}}}},'example');
  assert.equal(parsed.followers,0);assert.equal(parsed.following,null);assert.equal(parsed.handleChanges,0);assert.equal(parsed.verification,'Blue');assert.equal(parsed.connectedVia,null);
  assert.throws(()=>context.parseAbout({data:{user_result_by_screen_name:{result:{core:{screen_name:'other'},about_profile:{}}}}},'example'),/account-mismatch/);
- console.log('PASS account consent, private-cache isolation, enriched metadata, unknown values and account identity');
+ allowed=true;sender.tab.url='https://x.com/home';
+ assert.equal((await context.lookupAbout({...message,timeline:true},sender)).error,'disabled');
+ store.geoBlocking=true;
+ assert.equal((await context.lookupAbout({...message,timeline:true},sender)).ok,true);
+ assert.equal((await context.lookupAbout(message,sender)).error,'invalid-page');
+ allowed=false;assert.equal((await context.lookupAbout({...message,timeline:true},sender)).error,'consent-required');
+ console.log('PASS account consent, private-cache isolation, metadata and timeline scope enforcement');
 }
 async function downloadChecks(){
  let allowed=false,downloaded=0;const sent=[];let filter,forwarded=[];

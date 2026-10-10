@@ -1,6 +1,6 @@
 # X Trim privacy policy
 
-Effective October 10, 2026 — version 0.1.72.
+Effective October 11, 2026 — version 0.1.76.
 
 X Trim has no developer-operated backend, analytics, advertising, or error-reporting service. It never sends information to the extension author. Layout, navigation, themes, preferences, and local media-metadata inspection are processed in your browser.
 
@@ -8,9 +8,9 @@ X Trim has no developer-operated backend, analytics, advertising, or error-repor
 
 Media downloads request only the image or video you selected from X's media servers (`pbs.twimg.com` and `video.twimg.com`). Firefox asks for optional website-content transmission consent before the extension starts a download. GIF conversion additionally requires optional access to `video.twimg.com`; its MP4 fetch omits credentials. GIF frames are processed locally using the bundled encoder in a temporary extension tab. Conversion output remains local and is saved using Firefox's download API. No media is uploaded to a conversion service. Download requests can reveal the selected media URL and ordinary network information, such as your IP address, to X. Firefox's native download behavior may attach applicable site cookies to direct image/MP4 requests.
 
-Account-detail features are off by default. Before enabling them, Firefox asks for optional website-content, browsing-activity, and authentication-information consent. When enabled, the extension sends the displayed account handle and your existing X session credentials only to X (`x.com` or `twitter.com`) to request that account's About information. These requests may happen as you visit supported profiles/posts while the feature is enabled. The extension does not ask you to enter passwords. Authentication/CSRF headers are held only in memory, are not logged or saved, and are cleared when the tab closes or account details are disabled or consent is revoked.
+Account-detail features and timeline country filtering are off by default. Before enabling them, Firefox asks for optional website-content, browsing-activity, and authentication-information consent. When enabled, the extension sends the displayed account handle and your existing X session credentials only to X (`x.com` or `twitter.com`) to request that account's About information. These requests may happen as you visit supported profiles/posts while the feature is enabled. When timeline country filtering is enabled with a nonempty country list, authors near the viewport are also looked up to compare their reported account location against your saved filters. Filters and exempt handles stay in local storage. Unknown locations are left visible. The extension does not ask you to enter passwords. Authentication/CSRF headers are held only in memory, are not logged or saved, and are cleared when the tab closes or account details are disabled or consent is revoked.
 
-You may decline or revoke optional consent in Firefox's extension permissions. The affected remote features stop; local layout and theme features remain usable. Disable account details in X Trim's popup to stop automatic account-detail requests. Optional host access and data consent are distinct permissions.
+You may decline or revoke optional consent in Firefox's extension permissions. The affected remote features stop; local layout and theme features remain usable. Disable both account details and timeline country filtering in X Trim’s popup to stop automatic account-detail requests. Optional host access and data consent are distinct permissions.
 
 ## Local storage and retention
 
