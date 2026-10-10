@@ -1,3 +1,11 @@
 .xtrim-download{position:absolute;right:10px;top:10px;z-index:10;border:1px solid #647080;border-radius:999px;padding:7px 12px;background:rgba(0,0,0,.8);color:#fff;font:600 13px system-ui;cursor:pointer;line-height:18px}.xtrim-download:hover{background:#26313c}.xtrim-download:focus-visible{outline:2px solid #1d9bf0;outline-offset:2px}.xtrim-download:disabled{opacity:.7;cursor:wait}
 
 
+
+.xtrim-download{overflow:hidden;isolation:isolate;--download-progress:0%}
+.xtrim-download::before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(29,155,240,.65);transform:scaleX(0);transform-origin:left;pointer-events:none}
+.xtrim-download[data-busy]::before{width:var(--download-progress);transform:none;transition:width .3s ease}
+.xtrim-download[data-busy]{opacity:1;border-color:#1d9bf0;min-width:150px}
+.xtrim-download[data-indeterminate]::before{width:40%;animation:xtrim-download-sweep 1.3s ease-in-out infinite}
+@keyframes xtrim-download-sweep{from{transform:translateX(-110%)}to{transform:translateX(360%)}}
+@media(prefers-reduced-motion:reduce){.xtrim-download[data-indeterminate]::before{animation:none;width:100%;opacity:.3}.xtrim-download[data-busy]::before{transition:none}}

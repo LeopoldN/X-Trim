@@ -1,8 +1,8 @@
 # X Trim
 
-**v0.1.62** · Firefox / Zen 140+
+**v0.1.64** · Firefox / Zen 140+
 
-Tidy up X: hide promotions and sidebar items, change column widths, customize profiles, pick a theme, and download GIFs or direct MP4 videos. Everything is controlled from the toolbar popup.
+Tidy up X: hide promotions and sidebar items, change column widths, customize profiles, pick a theme, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
 ## Try it
 
@@ -20,10 +20,16 @@ Temporary installs last until the browser restarts. Load it again next time. The
 
 Settings stay in your browser. No analytics. Optional account details use your signed-in X session and are cached locally for 24 hours; authentication headers stay in memory and requests go only to X. Downloads use the browser’s Save As dialog.
 
-X changes often, so some controls may break. Promotion matching works best in English. Video downloads support direct MP4s, including X’s GIFs; streaming-only videos aren’t supported. Report bugs with steps to reproduce.
+X changes often, so some controls may break. Promotion matching works best in English. Video downloads read existing X GraphQL responses locally to find the best available MP4, including when playback uses a blob URL. Reload the post after installing or enabling downloads so metadata can be captured. HLS-only videos are not supported. A filling button shows byte progress when Firefox reports the file size; otherwise it shows an indeterminate animation. Video URLs are cached only in memory, up to 100 per tab, and cleared when downloads are disabled or the tab closes. Report bugs with steps to reproduce.
 
 ## License & credits
 
 Original project code and documentation are dedicated to the public domain under [CC0 1.0](LICENSE). Use, change, share, or sell them; no credit required. Third-party work keeps its own terms.
 
 Palette credits: [Tokyo Night](https://github.com/folke/tokyonight.nvim), [Rosé Pine](https://rosepinetheme.com/palette/), [Catppuccin](https://catppuccin.com/palette/), [Dracula](https://draculatheme.com/contribute), [Nord](https://www.nordtheme.com/docs/colors-and-palettes/), [Gruvbox](https://github.com/morhetz/gruvbox). Account-details reference: [xaitax](https://github.com/xaitax/x-account-location-device).
+
+## Local GIF conversion
+
+X GIF MP4s (`/tweet_video/`) save as looping `.gif` files. Conversion runs in the extension using bundled gif.js 0.2.0; no conversion service or runtime code downloads are used. Ordinary videos remain MP4s. GIFs use up to 480 pixels on the longest edge and 12 frames per second; longer/larger clips may be scaled further to bound memory. Sources are limited to 32 MB and 30 seconds, with one conversion at a time. GIF files may be larger and have fewer colors than the MP4. The button shows fetching, frame extraction, encoding, and saving progress; these stages are not a time estimate.
+
+Bundled encoder: [gif.js](https://github.com/jnordberg/gif.js), v0.2.0, MIT (see `vendor/gif.js/LICENSE`). The unchanged npm release's source, build script, package metadata, and source maps are retained in the repository for review. Runtime packages include only its two distribution scripts and license. To reproduce the vendor files, extract `https://registry.npmjs.org/gif.js/-/gif.js-0.2.0.tgz`; the upstream MIT license is included separately. No build step is used for X Trim's own code.
