@@ -164,11 +164,22 @@
       nav.append(link);
     }
   }
-  function isProfilePage() {
+  // Every timeline tab under a profile (/name/reposts, /name/media, ...) is still the profile page.
+  const profileTabs = ['with_replies','media','likes','highlights','articles','all','reposts','superfollows','affiliates'];
+  function isProfileRoute() {
     const parts = location.pathname.split('/').filter(Boolean);
     const reserved = new Set(['home','explore','notifications','messages','i','settings','search','compose','login','logout']);
-    return !!parts.length && !reserved.has(parts[0].toLowerCase()) &&
-      (parts.length === 1 || (parts.length === 2 && ['with_replies','media','likes','highlights','articles'].includes(parts[1]))) &&
+    if (!/^[a-z0-9_]{1,15}$/i.test(parts[0] || '') || reserved.has(parts[0].toLowerCase())) return false;
+    if (parts.length === 1) return true;
+    if (parts.length !== 2) return false;
+    if (profileTabs.includes(parts[1].toLowerCase())) return true;
+    // X adds profile tabs over time; also accept any path linked from the profile's own tab bar.
+    const path = '/' + parts.join('/').toLowerCase();
+    return [...document.querySelectorAll('[data-testid="primaryColumn"] nav[aria-label="Profile timelines"] a[href]')]
+      .some(link => new URL(link.href).pathname.replace(/\/$/, '').toLowerCase() === path);
+  }
+  function isProfilePage() {
+    return isProfileRoute() &&
       !!document.querySelector('[data-testid="primaryColumn"] [data-testid="UserName"]') &&
       !!document.querySelector('[data-testid="primaryColumn"] nav[aria-label="Profile timelines"]');
   }
@@ -288,10 +299,7 @@
   }
   function updateEarlyPreferences() {
     const root = document.documentElement;
-    const parts = location.pathname.split('/').filter(Boolean);
-    const reserved = new Set(['home','explore','notifications','messages','i','settings','search','compose','login','logout']);
-    const profileRoute = !!parts.length && !reserved.has(parts[0].toLowerCase()) &&
-      (parts.length === 1 || (parts.length === 2 && ['with_replies','media','likes','highlights','articles'].includes(parts[1])));
+    const profileRoute = isProfileRoute();
     const flags = {
       'hide-right': settings.hideRightColumn,
       'hide-premium': settings.premium,

@@ -1,4 +1,15 @@
-# Submission checks — X Trim 0.4.0
+# Submission checks — X Trim 0.4.1
+
+## Rerun for 0.4.1
+
+Checked October 23, 2026. 0.4.1 = 0.4.0 plus a fix: Profile options (font, width, square avatar, avatar border, post count, account details, themed profile header) now stay on every profile timeline tab, including /name/all, /name/reposts, /name/superfollows and /name/affiliates, and on any other tab linked from X's own "Profile timelines" tab bar. Post, follower, list and settings routes are still excluded. These are local pre-update checks, not Mozilla approval.
+
+- Permissions, host permissions, optional permissions, CSP, `data_collection_permissions` and the content script list are unchanged. Only route matching in `content.js`, `about-profile.js` and `theme.js` changed; no new requests are made.
+- New `tests/profile-tabs.cjs` checks the profile options on each tab and their absence on non-profile routes. `python3 scripts/package.py` rebuilt `x-trim.xpi`, `x-trim.zip` and `x-trim-source.zip`.
+- Mozilla web-ext **10.8.0** lint of the extracted rebuilt XPI: **0 errors, 0 notices, 1 warning**, the same gif.js `platform.name` false positive as before. Output is in `review/lint.json`.
+- All first-party JavaScript passes `node --check` with Node.js 22, and all eight `tests/*.cjs` files pass. The fix has not been run in Firefox in this environment.
+
+The 0.4.0 and earlier notes below still apply.
 
 ## Rerun for 0.4.0
 
