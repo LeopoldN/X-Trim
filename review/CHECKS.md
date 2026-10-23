@@ -1,4 +1,18 @@
-# Submission checks — X Trim 0.2.0
+# Submission checks — X Trim 0.3.0
+
+## Rerun for 0.3.0
+
+Checked October 23, 2026. 0.3.0 = 0.2.0 plus a Dim theme preset (`theme-presets.js`), Theme tab controls (`popup.html`, `popup.css`, `popup.js`) and a new content script, `theme-extras.js`. These are local pre-update checks, not Mozilla approval.
+
+- Manifest permissions, host permissions, optional permissions, CSP and `data_collection_permissions` are unchanged from 0.2.0. Only the version and the content script list (adding `theme-extras.js`) changed.
+- `theme-extras.js` reads only X Trim's own settings from `storage.local` and sends nothing. It adds CSS for a site-wide font, post text size, post spacing, hidden divider lines and accent-colored Follow buttons. With the optional plain post text setting on, it rewrites Unicode bold/italic letters to plain letters in post text only, and restores them when turned off.
+- The Custom CSS box is empty by default. Its CSS goes into a `<style>` element on X; `@import` rules are stripped, so it cannot load remote stylesheets, and nothing in it runs as script.
+- `python3 scripts/package.py` rebuilt `x-trim.xpi`, `x-trim.zip` (identical to the XPI) and `x-trim-source.zip`, now including `theme-extras.js` and `tests/theme-extras.cjs`.
+- Mozilla web-ext **10.8.0** lint of the extracted rebuilt XPI: **0 errors, 0 notices, 1 warning**, the same gif.js `platform.name` false positive as before. Output is in `review/lint.json`.
+- All first-party JavaScript passes `node --check` with Node.js 22, and `tests/policy-checks.cjs`, `tests/account-card.cjs`, `tests/geo-timeline.cjs`, `tests/post-block.cjs` and the new `tests/theme-extras.cjs` pass.
+- Selectors for post spacing, dividers and Follow buttons come from x.com's live markup on October 23, 2026. The new features have not been run in Firefox in this environment.
+
+The 0.2.0 and earlier notes below still apply and were not rerun except where stated above.
 
 ## Rerun for 0.2.0
 

@@ -1,8 +1,10 @@
-# X Trim 0.2.0 — reviewer notes
+# X Trim 0.3.0 — reviewer notes
 
 ## Code and packaging
 
 All executable code is packaged in the XPI. No runtime code downloads, eval, CSP-header modification, native messaging, external conversion services, or analytics. First-party code is readable JavaScript with no compilation. Rebuild with Python 3: `python3 scripts/package.py`. This uses an explicit runtime file list, fixed archive timestamps and sorted members. The source ZIP includes original vendor source and source maps, tests, notices, and packaging script. It excludes tool installations and browser downloads.
+
+The optional Theme → Custom CSS box (empty by default) puts only CSS the user typed into a `<style>` element on X pages. `@import` rules are removed so it cannot load remote stylesheets, and it never runs script.
 
 ## Third-party library
 

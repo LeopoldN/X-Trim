@@ -4,7 +4,7 @@ Name: X Trim
 
 Summary: Customize X’s layout and themes, show optional account details, and save images, MP4 videos, and locally converted GIFs.
 
-X Trim helps tidy up X. Hide Premium promotions, follow suggestions, and selected navigation items; adjust column widths and profile presentation; and choose or customize a theme.
+X Trim helps tidy up X. Hide Premium promotions, follow suggestions, and selected navigation items; adjust column widths and profile presentation; choose or customize a theme, including X’s retired Dim colors; and set a site-wide font, post text size and spacing, or add your own CSS.
 
 On opened posts, download original-resolution images and available MP4 videos. The extension can discover MP4 variants when X's player uses streaming playback. HLS-only videos are not supported. X GIF MP4s can be converted locally into looping GIFs. Conversion opens a temporary X Trim tab with a preview and progress, then opens Firefox’s save dialog. Keep that tab open until saving finishes; it closes automatically afterward. GIFs use up to 480 pixels on the longest edge and 12 fps, and sources are limited to 30 seconds/32 MB. GIF files can be larger and have fewer colors than MP4s.
 
