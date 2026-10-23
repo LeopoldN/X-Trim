@@ -1,6 +1,6 @@
 # X Trim privacy policy
 
-Effective October 11, 2026 — version 0.1.77.
+Effective October 23, 2026 — version 0.1.77.
 
 X Trim has no developer-operated backend, analytics, advertising, or error-reporting service. It never sends information to the extension author. Layout, navigation, themes, preferences, and local media-metadata inspection are processed in your browser.
 

@@ -11,6 +11,6 @@ def write_archive(name,files):
 for name in ['x-trim.xpi','x-trim.zip']:write_archive(name,RUNTIME)
 source=RUNTIME+['README.md']
 for directory in ['scripts','tests','review','vendor']:
- source += [str(p.relative_to(ROOT)) for p in (ROOT/directory).rglob('*') if p.is_file() and '__pycache__' not in str(p)]
+ source += [str(p.relative_to(ROOT)) for p in (ROOT/directory).rglob('*') if p.is_file() and '__pycache__' not in str(p) and p.name!='.DS_Store']
 write_archive('x-trim-source.zip',source)
 print('Built unsigned XPI, ZIP and source archive.')

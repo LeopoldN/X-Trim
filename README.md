@@ -54,4 +54,4 @@ Open **Timeline country filters** in the toolbar popup. Enter comma-separated co
 
 Near-visible authors are looked up sequentially, using the same 24-hour local cache and rate-limit backoff as account cards. Unknown locations remain visible. Opened posts are highlighted rather than collapsed. Show post reveals that post for the current page session. Quoted accounts are not independently filtered. Disabling filtering restores the posts. Requests go only to X; no community cache is used.
 
-The optional Block button to the left of Grok opens X’s native Block confirmation for the post author. X handles the block after you confirm. Toggle the shortcut under Post page. No additional credential handling or API requests are performed by this shortcut.
+The Block button to the left of Grok (on by default) opens X’s native Block confirmation for the post author. X handles the block after you confirm. Toggle the shortcut under Post page. No additional credential handling or API requests are performed by this shortcut.
