@@ -1,4 +1,4 @@
-# X Trim 0.3.5 — reviewer notes
+# X Trim 0.4.0 — reviewer notes
 
 ## Code and packaging
 
@@ -15,7 +15,7 @@ Only gif.js 0.2.0 (released npm package) is used. The two runtime scripts are by
 - `storage`: preferences and bounded normal-window account-detail cache.
 - `downloads`: user-selected image/MP4/GIF files and their progress; generated GIF URL cleanup.
 - `webRequest`: X's request headers for optional account details and country filtering, and X's own API responses.
-- `webRequestBlocking`, `webRequestFilterResponse`: Firefox's response filter API, restricted to X's existing GraphQL and `/i/api/1.1/blocks/*.json` XMLHttpRequests, and active only while media downloads, account features or the Block shortcut are enabled. Response bytes are forwarded unchanged as they arrive. Up to 8 MB per response is buffered for JSON parsing. Only media IDs/MP4 URLs (downloads), follower/following/post/media counts (account features, at most 100 accounts per tab) and per-handle blocking flags (Block shortcut, at most 1,000 handles in page memory) survive parsing. None of it is transmitted or written to disk.
+- `webRequestBlocking`, `webRequestFilterResponse`: Firefox's response filter API, restricted to X's existing GraphQL and `/i/api/1.1/blocks/*.json` XMLHttpRequests, and active only while media downloads, account features, the Block shortcut, or the promoted / Paid partnership / Premium filters are enabled. Response bytes are forwarded unchanged as they arrive. Up to 8 MB per response is buffered for JSON parsing. Only media IDs/MP4 URLs (downloads), follower/following/post/media counts (account features, at most 100 accounts per tab) per-handle blocking flags (Block shortcut, at most 1,000 handles in page memory) and per-post promoted / paid-partnership / author-verification / following flags (usability filters, at most 5,000 posts in page memory) survive parsing. None of it is transmitted or written to disk.
 - X/Twitter host access: content scripts and the X-only functions above.
 - Optional `video.twimg.com` host access: user-initiated credential-free GIF MP4 fetch.
 
@@ -33,5 +33,7 @@ Install the unsigned XPI temporarily through about:debugging, or load manifest.j
 6. Enable account details: a separate data-consent prompt is required. Decline: the checkbox stays off. Approve: only X receives authenticated account queries. Revoke: further queries are blocked. Private-window account results must not update aboutCache.
 7. Filters → enter a country (for example `US`) → Enable country filtering. The same account-data consent prompt appears; declining leaves it off. With consent, matching timeline posts collapse with Show post (or highlight / fully hide, per the selected mode). Unknown locations stay visible, opened posts are only highlighted, and disabling filtering restores every post.
 8. With Posts → Block button enabled (default), click the button beside Grok on a post. X's own Block confirmation for that author opens; cancelling it leaves the account unblocked. The extension never confirms the dialog itself. Already-blocked authors show a red button.
+
+9. Usability (all off by default; Trim, Feed, Layout, Posts, Profile and Filters tabs). `usability.js` changes only what each switch names. Keep Following sorted by Recent wraps X's page `XMLHttpRequest.open`/`send` through Firefox's `exportFunction` and, only for X's own `HomeLatestTimeline` request, sets the `enableRanking` variable to false; it adds no request and changes nothing else. Fast block (Posts) clicks X's own `confirmationSheetConfirm` button only within 3 seconds after the user chooses a Block menu item. The daily limit counts visible, focused X time in the background page and stores only today's total (`usageToday`). The `commands` entry is the rebindable Alt+Shift+F focus-mode shortcut.
 
 Automated fixture tests use local/synthetic responses and isolated browser profiles. They do not validate a live signed-in X account. Real X API availability/rate limits remain external dependencies. The checked results and any linter warnings are recorded in review/CHECKS.md.

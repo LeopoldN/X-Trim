@@ -1,0 +1,43 @@
+/* Usability rules. usability.js sets the root flags from settings. */
+html[data-xtrim-hide-foryou][data-xtrim-route-home] [data-testid="primaryColumn"] [role="tablist"] > [data-xtrim-foryou]{display:none!important}
+article[data-xtrim-u="remove"], [data-testid="cellInnerDiv"]:has(article[data-xtrim-u="remove"]){display:none!important}
+article[data-xtrim-u="hide"] > :not(.xtrim-u-notice){display:none!important}
+html body article[data-testid="tweet"][data-xtrim-u="highlight"]{border:1px solid var(--x-fg-brand,#1d9bf0)!important}
+.xtrim-u-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 4px;font:13px/1.4 TwitterChirp,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--x-fg-secondary,inherit);width:100%;box-sizing:border-box}
+.xtrim-u-notice span{overflow-wrap:anywhere;min-width:0}
+.xtrim-u-notice button{flex:none;border:1px solid currentColor;border-radius:999px;padding:5px 11px;color:inherit;background:transparent;font:inherit;cursor:pointer}
+.xtrim-u-notice button:focus-visible{outline:2px solid var(--x-fg-brand,#1d9bf0);outline-offset:3px}
+
+/* Vanity counts: keep the buttons, blank their numbers (the space stays so icons do not jump). */
+html[data-xtrim-hide-counts] article [role="group"] :is(button,[role="button"]):is([data-testid="reply"],[data-testid="retweet"],[data-testid="unretweet"],[data-testid="like"],[data-testid="unlike"],[data-testid="bookmark"],[data-testid="removeBookmark"]) span{visibility:hidden!important}
+html[data-xtrim-hide-counts] article [role="group"] > div:has(> a[href$="/analytics"]),
+html[data-xtrim-hide-counts] [aria-modal="true"] [role="group"] > div:has(> a[href$="/analytics"]),
+html[data-xtrim-hide-counts] [data-xtrim-views]{display:none!important}
+html[data-xtrim-hide-actions] article[data-testid="tweet"] [role="group"]:has([data-testid="reply"]){display:none!important}
+
+/* Focus and writer modes. */
+html[data-xtrim-focus] header[role="banner"],
+html[data-xtrim-focus] [data-testid="sidebarColumn"],
+html[data-xtrim-focus] [data-testid="BottomBar"]{display:none!important}
+html[data-xtrim-focus] main[role="main"]{align-items:center!important;flex-grow:1!important;width:100%!important;max-width:none!important}
+html[data-xtrim-focus] main[role="main"] > div{margin:0 auto!important}
+html[data-xtrim-focus] [data-testid="primaryColumn"]{margin-left:auto!important;margin-right:auto!important}
+html[data-xtrim-writer][data-xtrim-route-home] [data-testid="primaryColumn"] section[role="region"],
+html[data-xtrim-writer][data-xtrim-route-home] [data-testid="primaryColumn"] nav:has([role="tablist"]){display:none!important}
+.xtrim-focus-exit{position:fixed;top:12px;left:12px;z-index:2147483646;border:1px solid var(--x-border-primary,#2f3336);border-radius:999px;padding:6px 12px;background:var(--x-bg-primary,#000);color:var(--x-fg-primary,#e7e9ea);font:13px/1.2 TwitterChirp,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;opacity:.6;cursor:pointer}
+.xtrim-focus-exit:hover,.xtrim-focus-exit:focus-visible{opacity:1}
+
+/* New posts: the "Show N posts" bar at the top of the timeline and the floating pill. */
+html[data-xtrim-hide-new-posts] [data-xtrim-new-posts],
+html[data-xtrim-hide-new-posts] [role="status"]:has(> button [data-testid="pillLabel"]){display:none!important}
+
+/* X Money's dollar button on your own profile, when Sidebar › Money is off. */
+html[data-xtrim-hide-money] [data-testid="ownProfilePaymentsButton"]{display:none!important}
+
+/* Daily limit. */
+.xtrim-limit{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;background:rgba(0,0,0,.82);backdrop-filter:blur(8px)}
+.xtrim-limit > div{max-width:420px;padding:28px;border-radius:16px;background:#15202b;color:#e7e9ea;font:15px/1.45 TwitterChirp,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center;box-shadow:0 8px 40px #0008}
+.xtrim-limit h2{margin:0 0 8px;font-size:20px}
+.xtrim-limit p{margin:0 0 20px;color:#8b98a5}
+.xtrim-limit button{border:1px solid #536471;border-radius:999px;padding:8px 16px;background:transparent;color:inherit;font:inherit;font-weight:600;cursor:pointer}
+.xtrim-limit button:focus-visible{outline:2px solid #1d9bf0;outline-offset:3px}

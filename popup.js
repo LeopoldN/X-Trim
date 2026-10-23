@@ -1,4 +1,4 @@
-const defaults = { postBlock:true, geoBlocking:false, geoCountries:"", geoAllowed:"", geoMode:"hide", enabled: true, premium: true, hideRightColumn: false, follow: true, trends: false, floatingGrok: false, floatingMessages: false, twitterLogo: false, settingsShortcut: false, moreOptions: [], added: [], mediaDownloads: true, postAbout: false, profileAbout: false, profileCustomWidth: false, profileWidth: 800, profileFont: "default", profilePostCount: false, profileSquareAvatar: false, profileAvatarBorder: false, profileAvatarBorderColor: "#1DA1F2", customWidths: false, navWidth: 272, feedWidth: 600, rightWidth: 350, hidden: [], siteFont: "default", textSize: 100, density: "default", hideDividers: false, followColors: false, plainText: false, customCss: "", themePreset: "", themeMode: "default", themeCustom: {"background": "#000000", "surface": "#16181C", "text": "#E7E9EA", "muted": "#71767B", "border": "#2F3336", "accent": "#1D9BF0", "tabBackground": "#000000", "tabText": "#71767B", "tabActive": "#E7E9EA", "tabIndicator": "#1D9BF0", "icons": "#E7E9EA", "buttonBackground": "#1D9BF0", "buttonText": "#FFFFFF", "buttonAutoContrast": true, "engagementColors": false, "gradient": false, "gradientEnd": "#15202B", "gradientAngle": 135} };
+const defaults = { postBlock:true, geoBlocking:false, geoCountries:"", geoAllowed:"", geoMode:"hide", enabled: true, premium: true, hideRightColumn: false, follow: true, trends: false, floatingGrok: false, floatingMessages: false, twitterLogo: false, settingsShortcut: false, moreOptions: [], added: [], mediaDownloads: true, postAbout: false, profileAbout: false, profileCustomWidth: false, profileWidth: 800, profileFont: "default", profilePostCount: false, profileSquareAvatar: false, profileAvatarBorder: false, profileAvatarBorderColor: "#1DA1F2", customWidths: false, navWidth: 272, feedWidth: 600, rightWidth: 350, hidden: [], siteFont: "default", textSize: 100, density: "default", hideDividers: false, followColors: false, plainText: false, customCss: "", hideForYou: false, stayFollowing: false, followingRecent: false, newPosts: "default", hidePromoted: false, hideSponsored: false, hideAdHashtags: false, hideCounts: false, hideActionBar: false, exactCounts: false, timeFormat: "relative", clock24: false, focusMode: false, writerMode: false, keywordFilters: "", hideNoMedia: false, premiumReplies: false, premiumFeeds: false, filterMode: "hide", fastBlock: false, usageLimit: false, usageMinutes: 60, mediaPhotos: false, themePreset: "", themeMode: "default", themeCustom: {"background": "#000000", "surface": "#16181C", "text": "#E7E9EA", "muted": "#71767B", "border": "#2F3336", "accent": "#1D9BF0", "tabBackground": "#000000", "tabText": "#71767B", "tabActive": "#E7E9EA", "tabIndicator": "#1D9BF0", "icons": "#E7E9EA", "buttonBackground": "#1D9BF0", "buttonText": "#FFFFFF", "buttonAutoContrast": true, "engagementColors": false, "gradient": false, "gradientEnd": "#15202B", "gradientAngle": 135} };
 let settings;
 async function save() {
  try { await browser.storage.local.set(settings); document.getElementById('status').textContent = 'Saved. Changes apply on X immediately.'; }
@@ -32,6 +32,22 @@ async function initTabs() {
  }
  select(tabs.find(tab => tab.dataset.tab === saved.popupTab) || tabs[0]);
 }
+const usabilitySwitches=['hidePromoted','hideSponsored','hideAdHashtags','hideCounts','hideActionBar','hideForYou','stayFollowing','followingRecent','exactCounts','clock24','usageLimit','focusMode','writerMode','fastBlock','hideNoMedia','premiumReplies','premiumFeeds','mediaPhotos'];
+function renderUsability() {
+ for(const name of ['newPosts','timeFormat','filterMode'])for(const input of document.querySelectorAll(`input[name="${name}"]`)){input.checked=input.value===settings[name];input.onchange=()=>{settings[name]=input.value;save();};}
+ const minutes=document.getElementById('usageMinutes'),minutesValue=document.getElementById('usageMinutes-value');
+ minutes.value=settings.usageMinutes;minutesValue.textContent=settings.usageMinutes+' min';
+ minutes.oninput=()=>{settings.usageMinutes=Number(minutes.value);minutesValue.textContent=minutes.value+' min';save();};
+ browser.storage.local.get({usageToday:{day:'',seconds:0}}).then(({usageToday})=>{
+   const d=new Date(),day=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+   const used=usageToday.day===day?Math.floor(usageToday.seconds/60):0;
+   document.getElementById('usage-today').textContent=settings.usageLimit?`Used today: about ${used} min (updates every minute).`:'Turn the limit on to start counting.';
+ });
+ // Save filter words shortly after typing stops instead of on every keystroke.
+ const words=document.getElementById('keywordFilters');let timer;
+ words.value=settings.keywordFilters;
+ words.oninput=()=>{clearTimeout(timer);timer=setTimeout(()=>{settings.keywordFilters=words.value;save();},400);};
+}
 function renderMaster() {
  document.body.classList.toggle('paused', !settings.enabled);
  document.getElementById('master-text').textContent = settings.enabled ? 'Trimming x.com' : 'Paused. X looks normal.';
@@ -47,7 +63,7 @@ function switchRow(label, checked, onchange) {
 async function init() {
  await initTabs();
  settings = await browser.storage.local.get(defaults);
- for (const name of ['enabled','premium','hideRightColumn','follow','trends','floatingGrok','floatingMessages','twitterLogo','settingsShortcut','customWidths','profileCustomWidth','profilePostCount','profileSquareAvatar','profileAvatarBorder','profileAbout','postAbout','mediaDownloads','geoBlocking','postBlock','plainText','hideDividers','followColors']) {
+ for (const name of ['enabled','premium','hideRightColumn','follow','trends','floatingGrok','floatingMessages','twitterLogo','settingsShortcut','customWidths','profileCustomWidth','profilePostCount','profileSquareAvatar','profileAvatarBorder','profileAbout','postAbout','mediaDownloads','geoBlocking','postBlock','plainText','hideDividers','followColors',...usabilitySwitches]) {
    const input = document.getElementById(name); input.checked = settings[name];
    input.onchange = async () => {
      if(input.checked&&['profileAbout','postAbout','geoBlocking'].includes(name)){
@@ -80,6 +96,7 @@ async function init() {
  renderMore();
  renderWidths();
  renderProfile();
+ renderUsability();
 
  const entries = new Map(discovered.map(item => [/^calls$/i.test(item.label) ? 'Calls' : item.key, item.label]));
  // Keep new rollout items available even when the cached sidebar predates them.

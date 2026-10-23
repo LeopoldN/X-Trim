@@ -393,7 +393,8 @@
   const schedule = () => { if (timer) return; timer = setTimeout(() => { timer = null; apply(); }, 16); };
   browser.storage.local.get(defaults).then(value => { settings = value; apply(); });
   browser.storage.onChanged.addListener((changes, area) => {
-    if (area !== 'local') return;
+    // Skip keys this script does not use, such as the daily usage counter.
+    if (area !== 'local' || !Object.keys(changes).some(name => name in defaults)) return;
     for (const [name, change] of Object.entries(changes)) settings[name] = change.newValue ?? defaults[name];
     apply();
   });
