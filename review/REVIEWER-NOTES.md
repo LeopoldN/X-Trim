@@ -1,4 +1,4 @@
-# X Trim 0.1.77 — reviewer notes
+# X Trim 0.2.0 — reviewer notes
 
 ## Code and packaging
 
@@ -24,12 +24,12 @@ No required data transmission. Optional `websiteContent` consent gates media dow
 Install the unsigned XPI temporarily through about:debugging, or load manifest.json. A signed build is required for permanent installation. Allow access to X. Layout/theme controls can be tested without signing in. For account details and X's authenticated timeline/post interface, use a reviewer-controlled X test account; no user credentials are included in the source.
 
 1. Open a post, enable download buttons in the popup. Without optional data consent, downloading must display the instruction to enable media downloads and must not start a fetch/download.
-2. Open X Trim → Post page → Enable media downloads. Decline the prompt: local features remain usable and the enable button remains available. Approve: the button reports enabled.
+2. Open X Trim → Posts → Enable media downloads. Decline the prompt: local features remain usable and the enable button remains available. Approve: the button reports enabled.
 3. On a GIF post, click Download GIF. The converter tab shows local progress and preview. Save as `.gif`; verify animation and looping. The tab closes after completion. Closing it while converting cancels with a retry error.
 4. On an ordinary video, Download saves MP4 without converting. Images request original resolution. Streaming playback is supported only when metadata supplies an MP4 variant.
 5. Revoke optional data consent, retry: the background handler blocks the operation. Regrant from the popup.
 6. Enable account details: a separate data-consent prompt is required. Decline: the checkbox stays off. Approve: only X receives authenticated account queries. Revoke: further queries are blocked. Private-window account results must not update aboutCache.
-7. Timeline country filters → enter a country (for example `US`) → Enable country filtering. The same account-data consent prompt appears; declining leaves it off. With consent, matching timeline posts collapse with Show post (or highlight / fully hide, per the selected mode). Unknown locations stay visible, opened posts are only highlighted, and disabling filtering restores every post.
-8. With Post page → Block button enabled (default), click the button beside Grok on a post. X's own Block confirmation for that author opens; cancelling it leaves the account unblocked. The extension never confirms the dialog itself. Already-blocked authors show a red button.
+7. Filters → enter a country (for example `US`) → Enable country filtering. The same account-data consent prompt appears; declining leaves it off. With consent, matching timeline posts collapse with Show post (or highlight / fully hide, per the selected mode). Unknown locations stay visible, opened posts are only highlighted, and disabling filtering restores every post.
+8. With Posts → Block button enabled (default), click the button beside Grok on a post. X's own Block confirmation for that author opens; cancelling it leaves the account unblocked. The extension never confirms the dialog itself. Already-blocked authors show a red button.
 
 Automated fixture tests use local/synthetic responses and isolated browser profiles. They do not validate a live signed-in X account. Real X API availability/rate limits remain external dependencies. The checked results and any linter warnings are recorded in review/CHECKS.md.

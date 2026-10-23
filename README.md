@@ -1,6 +1,6 @@
 # X Trim
 
-**v0.1.77** · Firefox / Zen 140+
+**v0.2.0** · Firefox / Zen 140+
 
 Tidy up X: hide promotions and sidebar items, change column widths, customize profiles, pick a theme, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
@@ -44,7 +44,7 @@ Calls and Money are available in Sidebar navigation, including when your cached 
 
 ## Account details
 
-Enable account details under Profile or Post page. The compact flag and connection-source badge opens a theme-aware account card with location, connection source, account creation date, user ID and affiliation. Missing values are not inferred. Escape or an outside click closes the card; Refresh details requests fresh account information.
+Enable account details under Profile or Posts. The compact flag and connection-source badge opens a theme-aware account card with location, connection source, account creation date, user ID and affiliation. Missing values are not inferred. Escape or an outside click closes the card; Refresh details requests fresh account information.
 
 The card is independently implemented with visual inspiration from the xaitax reference linked above. No reference source code is bundled; no project-wide license was present in its repository at inspection. Requests go directly to X, with a local cache and rate-limit backoff. No community service is used.
 
@@ -54,4 +54,4 @@ Open the **Filters** tab in the toolbar popup. Enter comma-separated country nam
 
 Near-visible authors are looked up sequentially, using the same 24-hour local cache and rate-limit backoff as account cards. Unknown locations remain visible. Opened posts are highlighted rather than collapsed. Show post reveals that post for the current page session. Quoted accounts are not independently filtered. Disabling filtering restores the posts. Requests go only to X; no community cache is used.
 
-The Block button to the left of Grok (on by default) opens X’s native Block confirmation for the post author. X handles the block after you confirm. Toggle the shortcut under Post page. No additional credential handling or API requests are performed by this shortcut.
+The Block button to the left of Grok (on by default) opens X’s native Block confirmation for the post author. X handles the block after you confirm. Toggle the shortcut under Posts. No additional credential handling or API requests are performed by this shortcut.

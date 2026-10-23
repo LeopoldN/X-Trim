@@ -68,7 +68,7 @@ browser.runtime.onMessage.addListener((message,sender)=>{
       const video=url.hostname==='video.twimg.com'&&url.pathname.endsWith('.mp4');
       const image=url.hostname==='pbs.twimg.com'&&url.pathname.startsWith('/media/');
       if(!video&&!image)return {ok:false};
-      if(!await hasDataConsent(MEDIA_DATA_TYPES))return {ok:false,error:'Open X Trim → Post page → Enable media downloads, then retry.'};
+      if(!await hasDataConsent(MEDIA_DATA_TYPES))return {ok:false,error:'Open X Trim → Posts → Enable media downloads, then retry.'};
       let name=url.pathname.split('/').pop().replace(/[^a-z0-9._-]/gi,'_');
       if(image) {
         const format=(url.searchParams.get('format')||name.split('.').pop()).toLowerCase();
