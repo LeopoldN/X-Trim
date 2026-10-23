@@ -19,7 +19,7 @@
     const current=identity(article);if(!current||current.key!==record.key){restore(article);return;}
     const data=cache.get(record.handle)?.data;
     const allowed=String(prefs.geoAllowed).toLowerCase().split(/[,\s]+/).map(v=>v.replace(/^@/,''));
-    const opened=location.pathname.match(/\/status\/(\d+)/)?.[1]===record.id;
+    const opened=xtrimPagePath().match(/\/status\/(\d+)/)?.[1]===record.id;
     const blocked=active()&&data?.ok&&list(prefs.geoCountries).includes(normalize(data.basedIn))&&!allowed.includes(record.handle)&&!revealed.has(record.key);
     if(!blocked){restore(article);return;}
     const mode=opened||prefs.geoMode==='highlight'?'highlight':prefs.geoMode==='remove'?'remove':'hide';

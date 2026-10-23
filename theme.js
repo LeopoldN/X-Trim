@@ -26,7 +26,7 @@
   const secondary=new Set(['113,118,123','83,100,113','101,119,134','139,152,165','136,153,166']);
   const borders=new Set(['47,51,54','51,54,57','56,68,77','239,243,244','207,217,222','83,100,113']);
   const creatorMuted=new Set(['75,85,99','156,163,175','115,115,115','163,163,163']);
-  const inCreatorStudio=element=>/^\/i\/jf\/creators\/studio\/?$/.test(location.pathname)&&!!element.closest('.jf-element');
+  const inCreatorStudio=element=>/^\/i\/jf\/creators\/studio\/?$/.test(xtrimPagePath())&&!!element.closest('.jf-element');
   function rgb(value) {const m=value.match(/^rgba?\((\d+)[, ]+\s*(\d+)[, ]+\s*(\d+)(?:\s*[,/]\s*([\d.]+))?\)$/);return m&&(!m[4]||Number(m[4])===1)?m.slice(1,4).map(Number).join(','):null;}
   function tag(element) {
     if(element instanceof SVGElement) {
@@ -107,11 +107,9 @@
     // Verify that cookies are writable before reloading, avoiding a reload loop if blocked.
     if(document.cookie.split(';').some(part=>part.trim()===`night_mode=${value}`))location.reload();
   }
-  let underlyingPath='/home';
   function apply() {
     const composing=/^\/compose(?:\/|$)/.test(location.pathname);
-    if(!composing)underlyingPath=location.pathname;
-    const pagePath=composing?underlyingPath:location.pathname;
+    const pagePath=xtrimPagePath();
     const palette=preferences.themeMode==='custom'?Object.fromEntries(Object.keys(preset.dark).map(key=>[key,/^#[a-f0-9]{6}$/i.test(preferences.themeCustom?.[key])?preferences.themeCustom[key]:preset.dark[key]])):null;
     const next=!!(preferences.enabled&&palette);
     if(!next) {

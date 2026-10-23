@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "X Trim",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Customize X\u2019s layout and themes, show optional account details, and save images, MP4 videos, and locally converted GIFs.",
   "permissions": [
     "storage",
@@ -25,6 +25,7 @@
         "https://twitter.com/*"
       ],
       "js": [
+        "page-route.js",
         "content.js",
         "about-profile.js",
         "theme.js",

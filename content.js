@@ -71,7 +71,7 @@
       return;
     }
     if (!original) { if (existing) existing.remove(); return; }
-    const compact = /^\/(?:i\/chat|messages)(?:\/|$)/.test(location.pathname);
+    const compact = /^\/(?:i\/chat|messages)(?:\/|$)/.test(xtrimPagePath());
     const signature = (compact ? 'compact:' : 'full:') + original.className + original.innerHTML;
     if (existing && (existing.previousElementSibling !== original || existing.getAttribute('data-xtrim-source') !== signature)) existing.remove();
     if (!original.nextElementSibling?.hasAttribute('data-xtrim-settings-link')) {
@@ -167,7 +167,7 @@
   // Every timeline tab under a profile (/name/reposts, /name/media, ...) is still the profile page.
   const profileTabs = ['with_replies','media','likes','highlights','articles','all','reposts','superfollows','affiliates'];
   function isProfileRoute() {
-    const parts = location.pathname.split('/').filter(Boolean);
+    const parts = xtrimPagePath().split('/').filter(Boolean);
     const reserved = new Set(['home','explore','notifications','messages','i','settings','search','compose','login','logout']);
     if (!/^[a-z0-9_]{1,15}$/i.test(parts[0] || '') || reserved.has(parts[0].toLowerCase())) return false;
     if (parts.length === 1) return true;
@@ -193,7 +193,7 @@
     if (active) {
       const fonts = {system:'system-ui, sans-serif', arial:'Arial, Helvetica, sans-serif', serif:'Georgia, serif', mono:'Menlo, Consolas, monospace'};
       if (fonts[settings.profileFont]) css += `${scope} [data-testid="primaryColumn"], ${scope} [data-testid="primaryColumn"] :is(div,span,a,button,input,textarea) {font-family:${fonts[settings.profileFont]} !important;}`;
-      const handle = location.pathname.split('/')[1];
+      const handle = xtrimPagePath().split('/')[1];
       const photo = [...document.querySelectorAll('[data-testid="primaryColumn"] a[href]')]
         .find(link => new URL(link.href).pathname === '/' + handle + '/photo');
       const avatar = photo?.closest('[data-testid^="UserAvatar-Container-"]');
@@ -213,7 +213,7 @@
     if (!active || !settings.profilePostCount) {
       if (existing) existing.remove();
     } else if (primary) {
-      const handle = location.pathname.split('/')[1];
+      const handle = xtrimPagePath().split('/')[1];
       const followers = [...primary.querySelectorAll('a[href]')].find(link => {
         const path = new URL(link.href).pathname;
         return path === '/' + handle + '/verified_followers' || path === '/' + handle + '/followers';

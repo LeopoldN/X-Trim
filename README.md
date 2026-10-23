@@ -1,6 +1,6 @@
 # X Trim
 
-**v0.4.2** · Firefox / Zen 140+
+**v0.4.3** · Firefox / Zen 140+
 
 Tidy up X: hide promotions, ads and sidebar items, stay on Following, filter posts by words or Premium replies, change column widths, customize profiles, pick a theme (including X’s retired Dim), change the font, post text size and spacing, add your own CSS, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
