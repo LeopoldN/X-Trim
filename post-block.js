@@ -21,7 +21,8 @@
       if(!enabled||!show||!article.isConnected||author(article)!==handle)return;
       if(!item){notify('Block is unavailable here. Use the post’s More menu.');return;}
       // Only select the native Block action. X owns the confirmation and request.
-      // Never use the separate Unblock item or submit the confirmation ourselves.
+      // Never use the separate Unblock item or submit the confirmation here; only the
+      // opt-in Posts › Fast block setting (usability.js) accepts X's confirmation.
       const mentioned=item.textContent.match(/@([a-z0-9_]{1,15})/i)?.[1];
       if(mentioned&&mentioned.toLowerCase()!==handle.toLowerCase()){notify('The menu changed. Close it and try again.');return;}
       if(item.dataset.testid==='unblock'){blockedAccounts.set(handle.toLowerCase(),true);schedule();notify('@'+handle+' is already blocked.');return;}

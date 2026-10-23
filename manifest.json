@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "X Trim",
-  "version": "0.3.5",
+  "version": "0.4.0",
   "description": "Customize X\u2019s layout and themes, show optional account details, and save images, MP4 videos, and locally converted GIFs.",
   "permissions": [
     "storage",
@@ -31,7 +31,8 @@
         "media-download.js",
         "geo-timeline.js",
         "post-block.js",
-        "theme-extras.js"
+        "theme-extras.js",
+        "usability.js"
       ],
       "run_at": "document_start",
       "css": [
@@ -39,7 +40,8 @@
         "early-layout.css",
         "media-download.css",
         "geo-timeline.css",
-        "post-block.css"
+        "post-block.css",
+        "usability.css"
       ]
     }
   ],
@@ -68,8 +70,17 @@
       "about-background.js",
       "gif-background.js",
       "block-state.js",
+      "usability-background.js",
       "media-background.js"
     ]
+  },
+  "commands": {
+    "toggle-focus-mode": {
+      "suggested_key": {
+        "default": "Alt+Shift+F"
+      },
+      "description": "Toggle X Trim focus mode on X"
+    }
   },
   "optional_host_permissions": [
     "https://video.twimg.com/*"

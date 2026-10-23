@@ -1,8 +1,8 @@
 # X Trim
 
-**v0.3.5** · Firefox / Zen 140+
+**v0.4.0** · Firefox / Zen 140+
 
-Tidy up X: hide promotions and sidebar items, change column widths, customize profiles, pick a theme (including X’s retired Dim), change the font, post text size and spacing, add your own CSS, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
+Tidy up X: hide promotions, ads and sidebar items, stay on Following, filter posts by words or Premium replies, change column widths, customize profiles, pick a theme (including X’s retired Dim), change the font, post text size and spacing, add your own CSS, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
 ## Try it
 
@@ -26,7 +26,7 @@ X changes often, so some controls may break. Promotion matching works best in En
 
 Original project code and documentation are dedicated to the public domain under [CC0 1.0](LICENSE). Use, change, share, or sell them; no credit required. Third-party work keeps its own terms.
 
-Palette credits: [Tokyo Night](https://github.com/folke/tokyonight.nvim), [Rosé Pine](https://rosepinetheme.com/palette/), [Catppuccin](https://catppuccin.com/palette/), [Dracula](https://draculatheme.com/contribute), [Nord](https://www.nordtheme.com/docs/colors-and-palettes/), [Gruvbox](https://github.com/morhetz/gruvbox). Account-details reference: [xaitax](https://github.com/xaitax/x-account-location-device).
+Palette credits: [Tokyo Night](https://github.com/folke/tokyonight.nvim), [Rosé Pine](https://rosepinetheme.com/palette/), [Catppuccin](https://catppuccin.com/palette/), [Dracula](https://draculatheme.com/contribute), [Nord](https://www.nordtheme.com/docs/colors-and-palettes/), [Gruvbox](https://github.com/morhetz/gruvbox). Account-details reference: [xaitax](https://github.com/xaitax/x-account-location-device). Several usability features follow approaches from [Control Panel for Twitter](https://github.com/insin/control-panel-for-twitter) by Jonny Buchanan (MIT; notice in `THIRD_PARTY_NOTICES.txt`).
 
 ## Local GIF conversion
 
@@ -40,7 +40,20 @@ Zen compatibility: GIF conversion opens a temporary extension tab with a video p
 
 Submission materials: [privacy policy](PRIVACY.md), [proposed AMO listing](review/AMO-LISTING.md), [reviewer notes](review/REVIEWER-NOTES.md), and [check results](review/CHECKS.md). Rebuild unsigned packages with `python3 scripts/package.py`.
 
-Calls and Money are available in Sidebar navigation, including when your cached navigation predates X’s rollout. Uncheck either item to hide it; uncheck Money to remove the dollar icon from the sidebar.
+Calls and Money are available in Sidebar navigation, including when your cached navigation predates X’s rollout. Uncheck either item to hide it; uncheck Money to remove the dollar icon from the sidebar and the dollar button on profiles.
+
+## Usability
+
+Everything here is off until you switch it on.
+
+- **Trim › Timeline:** hide promoted posts (ads), posts X labels as a Paid partnership, posts tagged #ad or #sponsored, the reply / repost / like / bookmark / view numbers, or the whole action bar.
+- **Feed:** hide the For you tab, open Home on Following, keep Following sorted by Recent, auto-load or hide X’s *Show N posts* bar, show exact counts (1,234 instead of 1.2K), show dates and times instead of “2h”, use a 24-hour clock, and set a daily time limit. Auto-load only clicks the bar while you are at the top of Home. The limit counts time with an X tab in front and covers X with a reminder, with a *5 more minutes* button.
+- **Layout › Focus:** focus mode hides the side navigation and right column; writer mode also hides the Home timeline, leaving the composer. **Alt+Shift+F** toggles focus mode (change it in Firefox › Add-ons › Manage Extension Shortcuts).
+- **Posts › Fast block:** skips X’s Block confirmation after you choose Block.
+- **Profile › Media tab:** opens a profile’s Media tab on Photos instead of Videos, by picking Photos from X’s own tab menu.
+- **Filters:** collapse, highlight or fully hide posts matching words or `/regular expressions/`, Home posts without a photo, video or GIF, and replies (and optionally feed posts) from paid blue-check accounts. The opened post, its author, accounts you follow and business or government checks are never filtered as Premium.
+
+Ads, Paid partnership labels and verification come from X’s own responses as they load, with X’s visible labels as a fallback, so nothing extra is requested. Paid partnership relies on the author adding X’s label.
 
 ## Account details
 

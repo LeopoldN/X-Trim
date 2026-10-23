@@ -13,6 +13,7 @@
 <button type="button" role="tab" id="tab-layout" data-tab="layout" aria-controls="panel-layout"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16M16 4v16"/></svg>Layout</button>
 <button type="button" role="tab" id="tab-profile" data-tab="profile" aria-controls="panel-profile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5"/></svg>Profile</button>
 <button type="button" role="tab" id="tab-posts" data-tab="posts" aria-controls="panel-posts"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 5h16v11H9l-5 4z"/></svg>Posts</button>
+<button type="button" role="tab" id="tab-feed" data-tab="feed" aria-controls="panel-feed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Feed</button>
 <button type="button" role="tab" id="tab-sidebar" data-tab="sidebar" aria-controls="panel-sidebar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg>Sidebar</button>
 <button type="button" role="tab" id="tab-filters" data-tab="filters" aria-controls="panel-filters"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>Filters</button>
 </nav>
@@ -32,6 +33,15 @@
 <label class="tile"><input type="checkbox" id="floatingGrok" class="sr-only"><span class="tile-name"><span class="sr-only">Hide </span>Grok button</span><span class="tile-state" aria-hidden="true"></span></label>
 <label class="tile"><input type="checkbox" id="floatingMessages" class="sr-only"><span class="tile-name"><span class="sr-only">Hide </span>Messages / Chat</span><span class="tile-state" aria-hidden="true"></span></label>
 </div>
+<h3>Timeline</h3>
+<div class="tiles">
+<label class="tile"><input type="checkbox" id="hidePromoted" class="sr-only"><span class="tile-name"><span class="sr-only">Hide </span>Promoted posts (ads)</span><span class="tile-state" aria-hidden="true"></span></label>
+<label class="tile"><input type="checkbox" id="hideSponsored" class="sr-only"><span class="tile-name"><span class="sr-only">Hide </span>Paid partnerships</span><span class="tile-state" aria-hidden="true"></span></label>
+<label class="tile"><input type="checkbox" id="hideAdHashtags" class="sr-only"><span class="tile-name"><span class="sr-only">Hide </span>#ad and #sponsored posts</span><span class="tile-state" aria-hidden="true"></span></label>
+<label class="tile"><input type="checkbox" id="hideCounts" class="sr-only"><span class="tile-name"><span class="sr-only">Hide </span>Reply, like and view counts</span><span class="tile-state" aria-hidden="true"></span></label>
+<label class="tile"><input type="checkbox" id="hideActionBar" class="sr-only"><span class="tile-name"><span class="sr-only">Hide </span>Whole action bar</span><span class="tile-state" aria-hidden="true"></span></label>
+</div>
+<p class="hint">Paid partnerships are posts X labels as sponsored by their author. Hiding counts keeps the buttons and drops their numbers.</p>
 <h3>Look</h3>
 <label class="row"><span class="row-text">Classic Twitter bird logo</span><input type="checkbox" id="twitterLogo" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
 <label class="row"><span class="row-text">Replace More with Settings</span><input type="checkbox" id="settingsShortcut" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
@@ -112,6 +122,9 @@
 <label class="slider-label" for="rightWidth"><span>Search / right column</span><output id="rightWidth-value" for="rightWidth"></output></label>
 <input type="range" id="rightWidth" min="240" max="600" step="10">
 <p class="hint">The right column hides when the window cannot fit all three. Small windows use X’s normal layout.</p>
+<h3>Focus</h3>
+<label class="row"><span class="row-text"><span>Focus mode</span><span class="desc">Hides the side navigation and right column so only the feed is left. Alt+Shift+F toggles it on X; change the keys in Firefox › Add-ons › Manage Extension Shortcuts.</span></span><input type="checkbox" id="focusMode" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<label class="row"><span class="row-text"><span>Writer mode</span><span class="desc">Focus mode plus no timeline on Home, leaving just the composer.</span></span><input type="checkbox" id="writerMode" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
 <button type="button" class="text-button" id="reset-widths">Reset widths</button>
 </section>
 
@@ -132,6 +145,8 @@
 <label class="row"><span class="row-text">Move post count beside Followers</span><input type="checkbox" id="profilePostCount" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
 <label class="row"><span class="row-text">Square profile picture</span><input type="checkbox" id="profileSquareAvatar" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
 <label class="row"><span class="row-text"><span>Use theme accent for picture border</span><span class="desc">Follows your Custom theme or palette accent automatically. Uses Twitter blue with native Dark and Light.</span></span><input type="checkbox" id="profileAvatarBorder" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<h3>Media tab</h3>
+<label class="row"><span class="row-text"><span>Open Media on Photos</span><span class="desc">X opens a profile’s Media tab on Videos. This picks Photos from X’s own menu each time you open it.</span></span><input type="checkbox" id="mediaPhotos" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
 <h3>Account details</h3>
 <label class="row"><span class="row-text"><span>Show Based in &amp; Connected via</span><span class="desc">Enabling account details sends the displayed handle and your X session credentials only to X. Firefox asks for consent first.</span><span class="desc">Loads X’s About details beside the name. Results stay cached locally for 24 hours.</span></span><input type="checkbox" id="profileAbout" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
 <button type="button" class="text-button" id="reset-profile">Reset profile settings</button>
@@ -140,6 +155,7 @@
 <section class="panel" role="tabpanel" id="panel-posts" aria-labelledby="tab-posts" hidden>
 <h2>Posts</h2><p class="lede">Extra buttons on timeline and opened posts.</p>
 <label class="row"><span class="row-text"><span>Block button beside Grok on posts</span><span class="desc">Opens X’s Block confirmation for the author. Works on timeline and opened posts.</span></span><input type="checkbox" id="postBlock" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<label class="row"><span class="row-text"><span>Fast block</span><span class="desc">Skips X’s Block confirmation once you choose Block, from X’s own menu or the button above. The block happens right away.</span></span><input type="checkbox" id="fastBlock" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
 <label class="row flush"><span class="row-text"><span>Download buttons on images / GIFs / MP4 videos</span><span class="desc">On opened posts, saves original-resolution images and available MP4 videos. X GIFs convert locally to looping GIF files. HLS-only videos are not supported.</span></span><input type="checkbox" id="mediaDownloads" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
 <div class="callout"><p id="gif-permission-status" role="status"></p><button type="button" class="primary" id="enable-gif-downloads">Enable media downloads</button></div>
 <label class="row"><span class="row-text"><span>Show author account details</span><span class="desc">Shows the opened post author’s location and connection source beside their name. Uses the same 24-hour cache as profiles. Enabling this sends the displayed handle and your X session credentials only to X.</span></span><input type="checkbox" id="postAbout" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
@@ -149,14 +165,53 @@
 <h2>Sidebar</h2><p class="lede">Switch off the X sidebar links you never use.</p>
 <h3>Your X sidebar</h3>
 <div id="navigation"></div>
-<p class="hint">This list matches your X sidebar. Open X and reopen this popup to refresh it.</p>
+<p class="hint">This list matches your X sidebar. Open X and reopen this popup to refresh it. Switching off Money also hides the dollar button on profiles.</p>
 <div class="heading-row"><h3>Add from More</h3><button type="button" class="secondary" id="read-more"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg>Refresh</button></div>
 <div id="more-options"></div>
 <p class="hint">Open More on X to discover its links, then refresh. Expand any menu subsections to discover their links too. Turn off Replace More with Settings while discovering.</p>
 </section>
 
+<section class="panel" role="tabpanel" id="panel-feed" aria-labelledby="tab-feed" hidden>
+<h2>Feed</h2><p class="lede">How Home loads, and how posts show numbers and times.</p>
+<h3>Home</h3>
+<label class="row"><span class="row-text"><span>Hide the For you tab</span><span class="desc">Home always opens on Following.</span></span><input type="checkbox" id="hideForYou" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<label class="row"><span class="row-text"><span>Open Home on Following</span><span class="desc">Switches once each time you open Home, so you can still pick For you.</span></span><input type="checkbox" id="stayFollowing" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<label class="row"><span class="row-text"><span>Keep Following sorted by Recent</span><span class="desc">Asks X for the newest posts first instead of Popular. Turn this off to use X’s own sort menu.</span></span><input type="checkbox" id="followingRecent" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<fieldset class="choice"><legend>New posts</legend><div class="segmented">
+<label><input type="radio" name="newPosts" value="default" class="sr-only"><span>X default</span></label>
+<label><input type="radio" name="newPosts" value="auto" class="sr-only"><span>Auto-load</span></label>
+<label><input type="radio" name="newPosts" value="hide" class="sr-only"><span>Hide bar</span></label>
+</div></fieldset>
+<p class="hint">Auto-load clicks X’s Show posts bar only while you are at the top of Home, so the page never jumps while you read.</p>
+<h3>Numbers and times</h3>
+<label class="row"><span class="row-text"><span>Exact counts</span><span class="desc">Shows 1,234 instead of 1.2K for replies, reposts, likes, bookmarks and views.</span></span><input type="checkbox" id="exactCounts" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<fieldset class="choice"><legend>Post times</legend><div class="segmented two">
+<label><input type="radio" name="timeFormat" value="relative" class="sr-only"><span>Relative (2h)</span></label>
+<label><input type="radio" name="timeFormat" value="absolute" class="sr-only"><span>Date and time</span></label>
+</div></fieldset>
+<label class="row"><span class="row-text">24-hour clock</span><input type="checkbox" id="clock24" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<h3>Daily limit</h3>
+<label class="row"><span class="row-text"><span>Limit my time on X</span><span class="desc">Covers X with a reminder once you pass the limit in a day. Only time with an X tab in front counts.</span></span><input type="checkbox" id="usageLimit" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<label class="slider-label" for="usageMinutes"><span>Minutes per day</span><output id="usageMinutes-value" for="usageMinutes"></output></label>
+<input type="range" id="usageMinutes" min="5" max="240" step="5">
+<p class="hint" id="usage-today"></p>
+</section>
+
 <section class="panel" role="tabpanel" id="panel-filters" aria-labelledby="tab-filters" hidden>
-<h2>Filters</h2><p class="lede">Act on timeline posts by where their authors are based.</p>
+<h2>Filters</h2><p class="lede">Act on timeline posts by their words, media, Premium status or where their authors are based.</p>
+<h3><label for="keywordFilters">Words</label></h3>
+<textarea id="keywordFilters" class="code" rows="3" spellcheck="false" placeholder="giveaway&#10;/crypto\s+airdrop/i"></textarea>
+<p class="hint">One word or phrase per line, matched as whole words. Wrap a line in slashes for a regular expression.</p>
+<label class="row"><span class="row-text"><span>Posts without media on Home</span><span class="desc">Filters Home posts that have no photo, video or GIF.</span></span><input type="checkbox" id="hideNoMedia" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<h3>Premium</h3>
+<label class="row"><span class="row-text"><span>Premium replies</span><span class="desc">Replies from paid blue-check accounts under an opened post. The post’s author, accounts you follow, and business or government checks stay.</span></span><input type="checkbox" id="premiumReplies" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<label class="row"><span class="row-text"><span>Premium posts in feeds</span><span class="desc">The same accounts’ posts in Home, lists and search.</span></span><input type="checkbox" id="premiumFeeds" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<fieldset class="choice"><legend>Matching posts</legend><div class="segmented">
+<label><input type="radio" name="filterMode" value="hide" class="sr-only"><span>Collapse</span></label>
+<label><input type="radio" name="filterMode" value="highlight" class="sr-only"><span>Highlight</span></label>
+<label><input type="radio" name="filterMode" value="remove" class="sr-only"><span>Fully hide</span></label>
+</div></fieldset>
+<h3>Country</h3>
 <label class="row"><span class="row-text"><span>Enable country filtering</span><span class="desc">Looks up nearby timeline authors using your signed-in X session. Firefox asks for consent. Unknown locations stay visible.</span></span><input type="checkbox" id="geoBlocking" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
 <label class="field-label" for="geoCountries">Countries or regions to filter</label>
 <textarea id="geoCountries" rows="2" placeholder="United States, India, Europe"></textarea>

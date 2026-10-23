@@ -1,4 +1,20 @@
-# Submission checks — X Trim 0.3.5
+# Submission checks — X Trim 0.4.0
+
+## Rerun for 0.4.0
+
+Checked October 23, 2026. 0.4.0 = 0.3.5 plus usability options, all off by default: Following tab controls, hiding promoted / Paid partnership / #ad posts, hiding counts or the action bar, exact counts and absolute / 24-hour times, keyword, regex, no-media and Premium-reply filters, focus and writer modes, new-post auto-load or hiding, fast block, a daily time limit, Media tab on Photos, and hiding the own-profile X Money button with Sidebar › Money. These are local pre-update checks, not Mozilla approval.
+
+- Permissions, host permissions, optional permissions, CSP and `data_collection_permissions` are unchanged. The manifest adds the content script `usability.js` with `usability.css`, the background script `usability-background.js`, and a `commands` entry (Alt+Shift+F, toggles focus mode).
+- `usability-background.js` reads promoted, paid-partnership, verification and following flags from X's existing GraphQL responses through the same pass-through response filter, only while the related filters are on, and messages them to the tab. Nothing is sent off the device or written to disk except `usageToday` (today's minutes) when the daily limit is on.
+- Keep Following sorted by Recent wraps X's page `XMLHttpRequest.open`/`send` with `exportFunction` and sets only `enableRanking` to false on X's own `HomeLatestTimeline` request.
+- Fast block clicks X's own `confirmationSheetConfirm` only within 3 seconds of the user choosing a Block menu item; `post-block.js` itself still never confirms.
+- Selectors were checked against live x.com markup captured read-only on October 23, 2026 (tabs, new-posts pill, action-bar aria-labels, verified badges, the Paid partnership policy link, the own-profile `ownProfilePaymentsButton`, the profile Videos/Photos menu). No live ad was found to sample; promoted posts rely on X's `promotedMetadata` with an "Ad" label fallback. `placementTracking` is not used, since it also wraps every video.
+- `content.js` now ignores storage changes to keys it does not use, so the usage counter does not trigger its passes.
+- New `tests/usability.cjs` covers every option above with local fixtures plus the background parsing and counter. `python3 scripts/package.py` rebuilt `x-trim.xpi`, `x-trim.zip` and `x-trim-source.zip`.
+- Mozilla web-ext **10.8.0** lint of the extracted rebuilt XPI: **0 errors, 0 notices, 1 warning**, the same gif.js `platform.name` false positive as before. Output is in `review/lint.json`.
+- All first-party JavaScript passes `node --check` with Node.js 22, and all seven `tests/*.cjs` files pass. The changes have not been run in Firefox in this environment.
+
+The 0.3.5 and earlier notes below still apply and were not rerun except where stated above.
 
 ## Rerun for 0.3.5
 
