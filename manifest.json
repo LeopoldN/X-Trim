@@ -30,7 +30,8 @@
         "theme.js",
         "media-download.js",
         "geo-timeline.js",
-        "post-block.js"
+        "post-block.js",
+        "theme-extras.js"
       ],
       "run_at": "document_start",
       "css": [

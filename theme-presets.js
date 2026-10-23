@@ -1,4 +1,13 @@
 const themePresets = {
+  "dim": [
+    "Dim",
+    "#15202B",
+    "#1E2732",
+    "#F7F9F9",
+    "#8B98A5",
+    "#38444D",
+    "#1D9BF0"
+  ],
   "tokyo-night": [
     "Tokyo Night",
     "#1A1B26",
