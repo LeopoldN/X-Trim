@@ -61,7 +61,7 @@
     const id=time?new URL(time.href).pathname.match(/\/status\/(\d+)/)?.[1]:null;
     return {handle,id};
   }
-  const route=()=>location.pathname.match(/^\/([a-z0-9_]{1,15})\/status\/(\d+)/i);
+  const route=()=>xtrimPagePath().match(/^\/([a-z0-9_]{1,15})\/status\/(\d+)/i);
   const opened=id=>!!id&&route()?.[2]===id;
   const ownHandle=()=>document.querySelector('a[data-testid="AppTabBar_Profile_Link"]')?.getAttribute('href')?.slice(1).toLowerCase();
 
@@ -113,7 +113,7 @@
       return 'Premium reply';
     }
     // Never on that account's own profile.
-    if(handle&&location.pathname.split('/')[1]?.toLowerCase()===handle)return null;
+    if(handle&&xtrimPagePath().split('/')[1]?.toLowerCase()===handle)return null;
     return settings.premiumFeeds?'Premium account':null;
   }
   function reasons(article,id,handle) {
@@ -128,7 +128,7 @@
       const hit=patterns.find(pattern=>pattern.test.test(text));
       if(hit)return {label:'Filtered: '+hit.label};
     }
-    if(on('hideNoMedia')&&location.pathname==='/home'&&!hasMedia(article))return {label:'Post without media'};
+    if(on('hideNoMedia')&&xtrimPagePath()==='/home'&&!hasMedia(article))return {label:'Post without media'};
     if(settings.enabled!==false&&(settings.premiumReplies||settings.premiumFeeds)) {
       const label=verifiedReason(article,id,handle);
       if(label)return {label:label+(handle?' · @'+handle:'')};
@@ -248,7 +248,7 @@
   // ---- Home tabs -------------------------------------------------------------------
   let lastPath='',switchedThisVisit=false;
   function syncHomeTabs() {
-    if(location.pathname!=='/home')return;
+    if(xtrimPagePath()!=='/home')return;
     const list=document.querySelector('[data-testid="primaryColumn"] [role="tablist"]');
     if(!list)return;
     const tabs=[...list.querySelectorAll('[role="tab"]')];
@@ -289,12 +289,13 @@
   let mediaSwitched='',mediaBusy=false;
   async function syncMediaTab() {
     if(!on('mediaPhotos')||mediaBusy)return;
-    const match=location.pathname.match(/^\/([a-z0-9_]{1,15})\/media\/?$/i);
+    const path=xtrimPagePath(),match=path.match(/^\/([a-z0-9_]{1,15})\/media\/?$/i);
     if(!match){mediaSwitched='';return;}
-    if(new URLSearchParams(location.search).has('filter')||mediaSwitched===location.pathname)return;
+    // A popup over the Media tab is not a new visit.
+    if(path!==location.pathname||new URLSearchParams(location.search).has('filter')||mediaSwitched===path)return;
     const tab=document.querySelector('[data-testid="primaryColumn"] nav[aria-label="Profile timelines"] [role="tab"][aria-selected="true"][aria-haspopup="menu"]');
     if(!tab||!/^videos$/i.test(tab.textContent.trim())||document.querySelector('[role="menu"]'))return;
-    mediaSwitched=location.pathname;mediaBusy=true;
+    mediaSwitched=path;mediaBusy=true;
     try {
       tab.click();
       const item=await new Promise(resolve=>{
@@ -302,18 +303,19 @@
         const started=Date.now();
         (function poll(){const found=find();if(found||Date.now()-started>2000)resolve(found||null);else setTimeout(poll,50);})();
       });
-      if(item&&location.pathname===mediaSwitched)item.click();
+      if(item&&xtrimPagePath()===mediaSwitched)item.click();
       else document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
     } finally {mediaBusy=false;}
   }
 
   // ---- Route-level flags -----------------------------------------------------------
   function syncRoute() {
-    if(location.pathname!==lastPath) {
+    const path=xtrimPagePath();
+    if(path!==lastPath) {
       switchedThisVisit=false;
-      lastPath=location.pathname;
+      lastPath=path;
     }
-    root.toggleAttribute('data-xtrim-route-home',location.pathname==='/home');
+    root.toggleAttribute('data-xtrim-route-home',path==='/home');
   }
   function applyRoot() {
     const active=loaded&&settings.enabled!==false;

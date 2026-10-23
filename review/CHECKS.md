@@ -1,4 +1,15 @@
-# Submission checks — X Trim 0.4.2
+# Submission checks — X Trim 0.4.3
+
+## Rerun for 0.4.3
+
+Checked October 23, 2026. 0.4.3 = 0.4.2 plus a fix: when X opens a popup on a URL of its own (Edit profile at /settings/profile, the composer at /compose/post, the photo viewer at /name/status/1/photo/1, and others) while the page underneath stays rendered, that page now keeps X Trim's layout, profile options and theme. Before, every feature read the popup's URL and treated the background as a different page. These are local pre-update checks, not Mozilla approval.
+
+- New `page-route.js` runs first in the existing content script list and gives the other scripts one shared `xtrimPagePath()`. While a modal dialog in X's popup layer has opened together with a URL change, it returns the path from before the popup; drawers and dialogs that never changed the URL are ignored. Page-level route checks in `content.js`, `about-profile.js`, `theme.js`, `usability.js` and `geo-timeline.js` use it. Code that acts on the popup itself (photo viewer downloads, account details for an opened post) still reads the real URL. Permissions, CSP, `data_collection_permissions` and requests are unchanged.
+- New `tests/popup-route.cjs` opens Edit profile, an unknown popup route, a popup whose dialog mounts after the URL change and the photo viewer over a profile or post, and checks that a drawer never pins the page across real navigation. `python3 scripts/package.py` rebuilt `x-trim.xpi`, `x-trim.zip` and `x-trim-source.zip`.
+- Mozilla web-ext **10.8.0** lint of the extracted rebuilt XPI: **0 errors, 0 notices, 1 warning**, the same gif.js `platform.name` false positive as before. Output is in `review/lint.json`.
+- All first-party JavaScript passes `node --check` with Node.js 22, and all `tests/*.cjs` files pass.
+
+The 0.4.2 and earlier notes below still apply.
 
 ## Rerun for 0.4.2
 
