@@ -12,7 +12,7 @@ Open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on**, t
 - **ZIP:** select [`x-trim.zip`](x-trim.zip) directly.
 - **Source:** download and extract the repo, or clone it, then select `manifest.json` inside the project folder.
 
-Open or reload [x.com](https://x.com), allow site access if asked, and open the extension’s toolbar popup. To add links from X’s More menu, open that menu first, then click **Refresh More options** in the popup.
+Open or reload [x.com](https://x.com), allow site access if asked, and open the extension’s toolbar popup. To add links from X’s More menu, open that menu first, then click **Refresh** under **Add from More** on the popup’s Sidebar tab.
 
 Temporary installs last until the browser restarts. Load it again next time. These packages are unsigned; normal permanent installation in Firefox requires Mozilla signing. See [Mozilla’s temporary installation guide](https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/).
 
@@ -34,7 +34,7 @@ X GIF MP4s (`/tweet_video/`) save as looping `.gif` files. Conversion runs in th
 
 Bundled encoder: [gif.js](https://github.com/jnordberg/gif.js), v0.2.0, MIT (see `vendor/gif.js/LICENSE`). The unchanged npm release's source, build script, package metadata, and source maps are retained in the repository for review. Runtime packages include only its two distribution scripts and license. To reproduce the vendor files, extract `https://registry.npmjs.org/gif.js/-/gif.js-0.2.0.tgz`; the upstream MIT license is included separately. No build step is used for X Trim's own code.
 
-GIF setup: open the X Trim toolbar popup → Post page → Enable media downloads, then approve Firefox’s permission prompt for `video.twimg.com`. This is optional and normally only needed once; declining leaves the other features available. If you revoke access later, the same button lets you enable it again.
+GIF setup: open the X Trim toolbar popup → Posts → Enable media downloads, then approve Firefox’s permission prompt for `video.twimg.com`. This is optional and normally only needed once; declining leaves the other features available. If you revoke access later, the same button lets you enable it again.
 
 Zen compatibility: GIF conversion opens a temporary extension tab with a video preview, because decoding in the hidden background page can fail on macOS. Keep it open until saving completes; it closes automatically afterward. Closing it during conversion cancels the operation.
 
@@ -50,7 +50,7 @@ The card is independently implemented with visual inspiration from the xaitax re
 
 ## Timeline country filtering
 
-Open **Timeline country filters** in the toolbar popup. Enter comma-separated country names or two-letter country codes, then enable filtering and approve Firefox’s account-data consent. Choose collapse with **Show post**, highlight with the theme’s accent border, or **Fully hide** without a placeholder, and optionally list exempt handles under **Always show**. Region names match X’s reported label exactly; they do not expand into member countries.
+Open the **Filters** tab in the toolbar popup. Enter comma-separated country names or two-letter country codes, then enable filtering and approve Firefox’s account-data consent. Choose collapse with **Show post**, highlight with the theme’s accent border, or **Fully hide** without a placeholder, and optionally list exempt handles under **Always show**. Region names match X’s reported label exactly; they do not expand into member countries.
 
 Near-visible authors are looked up sequentially, using the same 24-hour local cache and rate-limit backoff as account cards. Unknown locations remain visible. Opened posts are highlighted rather than collapsed. Show post reveals that post for the current page session. Quoted accounts are not independently filtered. Disabling filtering restores the posts. Requests go only to X; no community cache is used.
 
