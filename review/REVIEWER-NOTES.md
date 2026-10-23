@@ -1,4 +1,4 @@
-# X Trim 0.1.69 — reviewer notes
+# X Trim 0.1.77 — reviewer notes
 
 ## Code and packaging
 
@@ -12,12 +12,12 @@ Only gif.js 0.2.0 (released npm package) is used. The two runtime scripts are by
 
 - `storage`: preferences and bounded normal-window account-detail cache.
 - `downloads`: user-selected image/MP4/GIF files and their progress; generated GIF URL cleanup.
-- `webRequest`: X's request headers for optional account details, and media metadata responses.
-- `webRequestBlocking`, `webRequestFilterResponse`: Firefox's response filter API, restricted to existing X GraphQL XMLHttpRequests; response bytes are immediately forwarded unchanged. Up to 8 MB per response is buffered for JSON parsing. Only media IDs/MP4 URLs survive parsing.
+- `webRequest`: X's request headers for optional account details and country filtering, and X's own API responses.
+- `webRequestBlocking`, `webRequestFilterResponse`: Firefox's response filter API, restricted to X's existing GraphQL and `/i/api/1.1/blocks/*.json` XMLHttpRequests, and active only while media downloads, account features or the Block shortcut are enabled. Response bytes are forwarded unchanged as they arrive. Up to 8 MB per response is buffered for JSON parsing. Only media IDs/MP4 URLs (downloads), follower/following/post/media counts (account features, at most 100 accounts per tab) and per-handle blocking flags (Block shortcut, at most 1,000 handles in page memory) survive parsing. None of it is transmitted or written to disk.
 - X/Twitter host access: content scripts and the X-only functions above.
 - Optional `video.twimg.com` host access: user-initiated credential-free GIF MP4 fetch.
 
-No required data transmission. Optional `websiteContent` consent gates media downloads. Optional `websiteContent`, `browsingActivity`, `authenticationInfo` consent gates account details, both when enabled in the popup and again in background request handlers. Account details are off by default. Declining/revoking consent leaves local features usable and prevents the relevant requests. Existing users with enabled account-detail preferences must re-enable those features to grant consent. The included privacy policy explains destinations, session headers/cookies and retention. Private-window account results are not persisted. See PRIVACY.md and the proposed listing.
+No required data transmission. Optional `websiteContent` consent gates media downloads. Optional `websiteContent`, `browsingActivity`, `authenticationInfo` consent gates account details and timeline country filtering, both when enabled in the popup and again in background request handlers. Both are off by default. Country filtering is the one feature that looks up accounts the user did not open: while it is enabled with a nonempty country list, authors of posts near the viewport are queried one at a time through the same About request, with the same cache, spacing and rate-limit backoff. The Block shortcut (on by default) sends no requests and needs no data consent: it clicks X's own More menu and Block item, and X shows its own confirmation and performs the block. Declining/revoking consent leaves local features usable and prevents the relevant requests. Existing users with enabled account-detail preferences must re-enable those features to grant consent. The included privacy policy explains destinations, session headers/cookies and retention. Private-window account results are not persisted. See PRIVACY.md and the proposed listing.
 
 ## Testing
 
@@ -29,5 +29,7 @@ Install the unsigned XPI temporarily through about:debugging, or load manifest.j
 4. On an ordinary video, Download saves MP4 without converting. Images request original resolution. Streaming playback is supported only when metadata supplies an MP4 variant.
 5. Revoke optional data consent, retry: the background handler blocks the operation. Regrant from the popup.
 6. Enable account details: a separate data-consent prompt is required. Decline: the checkbox stays off. Approve: only X receives authenticated account queries. Revoke: further queries are blocked. Private-window account results must not update aboutCache.
+7. Timeline country filters → enter a country (for example `US`) → Enable country filtering. The same account-data consent prompt appears; declining leaves it off. With consent, matching timeline posts collapse with Show post (or highlight / fully hide, per the selected mode). Unknown locations stay visible, opened posts are only highlighted, and disabling filtering restores every post.
+8. With Post page → Block button enabled (default), click the button beside Grok on a post. X's own Block confirmation for that author opens; cancelling it leaves the account unblocked. The extension never confirms the dialog itself. Already-blocked authors show a red button.
 
 Automated fixture tests use local/synthetic responses and isolated browser profiles. They do not validate a live signed-in X account. Real X API availability/rate limits remain external dependencies. The checked results and any linter warnings are recorded in review/CHECKS.md.

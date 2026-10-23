@@ -1,20 +1,32 @@
-# Submission checks — X Trim 0.1.68
+# Submission checks — X Trim 0.1.77
 
-Checked October 10, 2026. These are local pre-submission checks, not Mozilla approval or a full independent security audit.
+Checked October 23, 2026 against commit `f051d82` (manifest version 0.1.77; the commit message reads "V0.1.76"). These are local pre-update checks, not Mozilla approval or a full independent security audit. X Trim is already listed on AMO; these notes are for the next version upload.
 
-## Passed
+## Rerun for 0.1.77
 
-- All first-party JavaScript parses with Node.js 24.19.0; `git diff --check` passes.
-- Mozilla web-ext 10.7.0 scans the complete extracted runtime package, including both unchanged vendor scripts: **0 errors, 0 notices, 1 warning**. Exact output is in `review/lint.json`.
-- Standard Firefox **157.0.1**, isolated macOS profile: complete package loads as a temporary extension; actual local MP4 decoding, GIF encoding in the converter tab, generated-blob handoff, native download completion, and conversion-tab cancellation pass. Output is an animated `GIF89a` file (1,153,106 bytes for the sample). Test transport uses a local fixture endpoint and test-only data/host grants. Only the test's output-byte inspection adds `blob:` to connect-src; runtime CSP does not permit blob scripts or workers. The converter and other production scripts are unchanged in the fixture extension.
-- Zen **1.23.1b**, isolated macOS profile: the same conversion, download and cancellation checks pass.
-- Node policy tests: media consent refusal prevents downloading; consent enables it; remote URL allowlist and download ownership checks pass; highest-bitrate MP4 selection, poster-ID matching, and byte-for-byte response forwarding pass.
-- Account tests with synthetic X responses: required consent is enforced; private-window account results do not write to local storage; normal-window cache does; denied consent prevents additional fetches.
-- Popup permission grant/denial behavior passes with mocked Firefox permission responses, including exact host/data scopes and enabled/declined status. This is a logic test, not an automated test of clicking Firefox's native consent dialog.
-- Vendor integrity: official npm archive matches its published SHA-512 integrity; packaged encoder/worker match the release bytes. SHA-256 hashes and immutable source commit are in `review/vendor-provenance.json`.
-- MIT, events, NeuQuant and LZW notices are preserved without modifying the released encoder scripts.
-- Manifest/AMO description, proposed listing, privacy policy, source archive, deterministic packaging instructions and reviewer notes are prepared.
-- Explicit extension CSP restricts executable scripts/workers to bundled files, forbids objects, and restricts remote fetches to X/Twitter/video.twimg.com. Only styles permit inline declarations for existing theme controls. Video blobs are allowed as media, not executable code.
+- The committed `x-trim.xpi` matches the working tree file for file, `x-trim.zip` is identical to it, and `python3 scripts/package.py` rebuilds a byte-identical XPI.
+- Mozilla web-ext **10.8.0** scans the complete extracted runtime package: **0 errors, 0 notices, 1 warning** (the same vendor false positive as before, below). Exact output is in `review/lint.json`.
+- All first-party JavaScript parses with Node.js 22.22.0 (`node --check`); `git diff --check` passes for 0.1.69 to 0.1.77.
+- Node tests pass: `tests/policy-checks.cjs` (account consent, private-cache isolation, metadata and timeline scope enforcement; download consent, URL allowlist, ownership, variant matching and response pass-through; optional media consent UI), `tests/account-card.cjs`, `tests/geo-timeline.cjs` and `tests/post-block.cjs`.
+- Vendor integrity: the npm archive for gif.js 0.2.0 was downloaded again and matches its published SHA-512 integrity; the packaged `gif.js` and `gif.worker.js` match the release bytes and `review/vendor-provenance.json`.
+- Manifest permissions, host permissions, optional permissions, CSP and `data_collection_permissions` are unchanged since 0.1.69. Only content scripts (`geo-timeline.js`, `post-block.js` and their CSS) and one background script (`block-state.js`) were added.
+
+## Features added since 0.1.68
+
+**Account cards (0.1.72).** The About lookup now also returns display name, creation date, user ID, verification type, handle-change count, affiliation and follower/following/post/media counts. Requests, consent and storage are unchanged: the same optional `websiteContent` + `browsingActivity` + `authenticationInfo` consent, X as the only recipient, normal-window results in `aboutCache` (24 hours, at most 100 records), private-window results not written. Counts seen in X's own GraphQL responses are kept in background memory (at most 100 accounts per tab) and cleared on tab close, feature disable or consent revocation.
+
+**Timeline country filtering (0.1.76).** Off by default. Enabling it in the popup requests the same account-data consent; the background handler checks the `geoBlocking` preference and consent again before and after queueing. While enabled with a nonempty country list, authors of posts near the viewport are looked up one at a time through the existing About request (1.5 s spacing, shared rate-limit cooldown, at most 30 pending). This is the one feature that sends a handle the user did not open, so it is the main data point to state plainly for reviewers. Results share the account cache; the content script also keeps up to 500 results in page memory. Filters only change the local view.
+
+**Block shortcut (0.1.76, 0.1.77).** On by default. Adds a button beside X's Grok button that opens the post's own More menu and selects X's native Block item, so X shows its own confirmation and sends its own request. The extension never submits the confirmation and never uses Unblock. It sends no requests. To color already-blocked authors, `block-state.js` reads blocking flags from X's existing responses and keeps up to 1,000 handles in page memory only.
+
+## Findings for the update
+
+1. **Response filtering has a wider scope.** Through 0.1.69, `filterResponseData` ran only while media downloads were enabled. It now also runs while account features or the Block shortcut are on, so turning off downloads no longer turns it off (both download buttons and the shortcut default on). Its URL filter was widened from X GraphQL to also include `/i/api/1.1/blocks/*.json`, and parsed responses now feed account counts and block state as well as media URLs. Nothing is sent anywhere; bytes are still forwarded unchanged as they arrive and buffered up to 8 MB for parsing. The old reviewer notes described the narrower scope, so they are updated.
+2. **Reviewer notes and listing were at 0.1.69.** Neither mentioned country filtering or the Block shortcut. Both are updated in this change.
+3. **README calls the Block button "optional"** without saying it is on by default. Not a policy problem, since it sends nothing, but the listing now says it is on by default.
+4. **`PRIVACY.md` effective date** reads October 11, 2026, but its Block shortcut paragraph was added on October 23. The text is accurate; only the date is stale.
+5. **The committed source archive includes two macOS `.DS_Store` files** under `vendor/`. `scripts/package.py` collects everything under `vendor/`. Rebuilding on a clean checkout drops them; excluding `.DS_Store` in the script would prevent it.
+6. **The latest commit is titled "V0.1.76"** but contains 0.1.77. Packages and docs all say 0.1.77, so AMO is unaffected.
 
 ## Linter warning disposition
 
@@ -22,25 +34,23 @@ Checked October 10, 2026. These are local pre-submission checks, not Mozilla app
 
 ## Data declaration and consent
 
-`required: ["none"]` now means there is no mandatory transmission. Optional `websiteContent` consent gates media requests. Account requests additionally require `browsingActivity` and `authenticationInfo` consent. UI and background both enforce consent; queued account operations recheck consent/preferences before fetching. Optional account features default off. X is the only recipient; no developer backend exists. Documentation discloses automatic account queries while enabled and incidental credentials on native direct downloads. GIF MP4 fetches omit credentials. Private-window conversion tabs stay in their originating window.
+`required: ["none"]`: there is no mandatory transmission. Optional `websiteContent` consent gates media requests. Account details and timeline country filtering additionally require `browsingActivity` and `authenticationInfo` consent. UI and background both enforce consent; queued account operations recheck consent and preferences before fetching. Account details and country filtering default off. The Block shortcut and block-state coloring transmit nothing and need no data consent. X is the only recipient; no developer backend exists. GIF MP4 fetches omit credentials. Private-window conversion tabs stay in their originating window.
 
 This classification follows Mozilla's published taxonomy conservatively; Mozilla reviewers retain authority over the final classification and disclosure wording.
 
-## Scope and remaining external steps
+## Carried over from 0.1.68 (not rerun)
 
-No live signed-in X account was used in the isolated tests; account API behavior was tested with synthetic responses. X's current authenticated API availability, rate limits, and page markup are external dependencies. No Android, Windows/Linux, Firefox 140, or native-consent-dialog automation was performed; those are outside the desktop macOS compatibility test reported here. The GIF MP4 sample was fetched from the user's original pasted page and is not redistributed in the source archive.
+GIF conversion, download and cancellation code is unchanged since 0.1.68. The October 10, 2026 browser runs still describe it: standard Firefox 157.0.1 and Zen 1.23.1b, isolated macOS profiles, local MP4 fixture, animated `GIF89a` output, native download completion and cancellation. They were not rerun for 0.1.77 because no Firefox build or MP4 fixture is available in this environment.
 
-The artifacts remain **unsigned**. Submit the XPI and source ZIP, copy the listing/privacy/reviewer notes to AMO, and supply reviewer-controlled X test credentials if requested for authenticated features. Mozilla's automated upload validation, human review and signing can only happen after submission; they have not been claimed as complete.
+No live signed-in X account was used. Account, country-filter and block-state behavior was tested only with synthetic responses and DOM fixtures. X's authenticated API availability, rate limits and page markup (including the Grok button the Block shortcut anchors to, and the More-menu `block` test ID) are external dependencies. No Android, Windows/Linux, Firefox 140 or native-consent-dialog automation was performed.
+
+Mozilla's upload validation, human review and signing happen only after the version is uploaded and are not claimed here. Supply reviewer-controlled X test credentials if requested for authenticated features.
 
 ## Reproduce
 
 - Package: `python3 scripts/package.py`.
-- Policy tests: `node tests/policy-checks.cjs`.
+- Node tests: `for t in tests/*.cjs; do node "$t"; done`.
 - Browser test: `python3 tests/firefox-integration.py --browser /path/to/firefox --fixture /path/to/sample.mp4` (isolated temporary profile, localhost fixture server, temporary downloads only).
 - Mozilla lint: extract `x-trim.xpi` into an empty directory, then `web-ext lint --source-dir /path/to/extracted-package --output json`.
 
 Policy references: https://extensionworkshop.com/documentation/publish/add-on-policies/ ; https://extensionworkshop.com/documentation/publish/third-party-library-usage/ ; https://extensionworkshop.com/documentation/develop/firefox-builtin-data-consent/ .
-
-## 0.1.69 sidebar update
-
-Added an always-available Calls toggle with a stable key derived from the observed sidebar label. The preceding conversion/consent checks apply to unchanged functionality in 0.1.68. JavaScript syntax and complete-package lint were rerun for 0.1.69; see review/lint.json.
