@@ -2,7 +2,7 @@
 
 ## Rerun for 0.4.1
 
-Checked October 23, 2026. 0.4.1 = 0.4.0 plus a fix: Profile options (font, width, square avatar, avatar border, post count, account details, themed profile header) now stay on every profile timeline tab, including /name/all, /name/reposts, /name/superfollows and /name/affiliates, and on any other tab linked from X's own "Profile timelines" tab bar. Post, follower, list and settings routes are still excluded. These are local pre-update checks, not Mozilla approval.
+Checked October 23, 2026. 0.4.1 = 0.4.0 plus a fix: Profile options (font, width, square avatar, avatar border, post count, account details, themed profile header) now stay on every profile timeline tab, including /name/all, /name/reposts, /name/superfollows and /name/affiliates, and on any other tab linked from X's own "Profile timelines" tab bar. Post, follower, list and settings routes are still excluded. Move post count beside Followers now also moves the header count X shows on other tabs, such as "photos & videos" on Media and "likes" on Likes. These are local pre-update checks, not Mozilla approval.
 
 - Permissions, host permissions, optional permissions, CSP, `data_collection_permissions` and the content script list are unchanged. Only route matching in `content.js`, `about-profile.js` and `theme.js` changed; no new requests are made.
 - New `tests/profile-tabs.cjs` checks the profile options on each tab and their absence on non-profile routes. `python3 scripts/package.py` rebuilt `x-trim.xpi`, `x-trim.zip` and `x-trim-source.zip`.

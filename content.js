@@ -218,8 +218,10 @@
         const path = new URL(link.href).pathname;
         return path === '/' + handle + '/verified_followers' || path === '/' + handle + '/followers';
       });
+      // The header count follows the tab: "posts", "photos & videos" on Media, "likes" on Likes.
+      const countText = /^([\d,.]+[KM]?)\s+([a-z][a-z &]{0,30})$/i;
       const source = [...primary.querySelectorAll('h2')].map(heading => heading.nextElementSibling)
-        .find(el => el && /^[\d,.]+[KM]?\s+posts?$/i.test(el.textContent.trim()));
+        .find(el => el && countText.test(el.textContent.trim()));
       if (followers && source) {
         source.setAttribute('data-xtrim-profile-post-source', '');
         let count = existing;
@@ -230,8 +232,9 @@
           count.setAttribute('data-xtrim-profile-posts', '');
           followers.parentElement.after(count);
         }
-        const match = source.textContent.trim().match(/^([\d,.]+[KM]?)\s+(posts?)$/i);
-        const text = match[1] + ' Posts';
+        const match = source.textContent.trim().match(countText);
+        const label = match[2][0].toUpperCase() + match[2].slice(1).toLowerCase();
+        const text = match[1] + ' ' + label;
         if (count.textContent !== text) {
           const stat = document.createElement('span');
           stat.className = followers.className;
@@ -239,7 +242,7 @@
           const nativeSpans = [...followers.children].filter(el => el.tagName === 'SPAN');
           const number = nativeSpans[0] ? nativeSpans[0].cloneNode(true) : document.createElement('span');
           const caption = nativeSpans[1] ? nativeSpans[1].cloneNode(true) : document.createElement('span');
-          number.textContent = match[1]; caption.textContent = 'Posts';
+          number.textContent = match[1]; caption.textContent = label;
           stat.append(number, document.createTextNode(' '), caption);
           count.replaceChildren(stat);
         }
