@@ -1,4 +1,15 @@
-# Submission checks — X Trim 0.4.1
+# Submission checks — X Trim 0.4.2
+
+## Rerun for 0.4.2
+
+Checked October 23, 2026. 0.4.2 = 0.4.1 plus a popup fix: after scrolling a popup tab, clicking a switch, tile or choice no longer pushes the whole popup up and leaves an empty area under the footer. The visually hidden checkboxes and radios had no positioned ancestor, so focusing one scrolled the popup document instead of the settings panel. `popup.css` now positions the header, the panel and every label. These are local pre-update checks, not Mozilla approval.
+
+- Only `popup.css` changed. Permissions, CSP, `data_collection_permissions`, scripts and requests are unchanged. `python3 scripts/package.py` rebuilt `x-trim.xpi`, `x-trim.zip` and `x-trim-source.zip`.
+- In Chromium with a stubbed `browser` API, clicking all 90 popup controls across the eight tabs after scrolling each panel to the bottom left the popup document at scroll 0. Before the fix the same clicks scrolled it by up to 1,570 px. The fix has not been run in Firefox in this environment.
+- Mozilla web-ext **10.8.0** lint of the extracted rebuilt XPI: **0 errors, 0 notices, 1 warning**, the same gif.js `platform.name` false positive as before. Output is in `review/lint.json`.
+- All first-party JavaScript passes `node --check` with Node.js 22, and all `tests/*.cjs` files pass.
+
+The 0.4.1 and earlier notes below still apply.
 
 ## Rerun for 0.4.1
 
