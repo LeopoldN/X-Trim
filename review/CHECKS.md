@@ -1,4 +1,18 @@
-# Submission checks — X Trim 0.3.0
+# Submission checks — X Trim 0.3.5
+
+## Rerun for 0.3.5
+
+Checked October 23, 2026. 0.3.5 = 0.3.0 plus performance fixes for the custom theme, mainly so switching photos in X's photo viewer is smooth again. These are local pre-update checks, not Mozilla approval.
+
+- Manifest permissions, host permissions, optional permissions, CSP, content script list and `data_collection_permissions` are unchanged from 0.3.0. Only the version changed.
+- `theme.js` no longer rescans the whole page on every DOM change. It classifies only nodes X added, plus elements whose class or inline color changed, and skips inline style changes that touch no color property (X's slide and fade animations). The whole page is still scanned on load, on resize and when theme settings change. Nothing new is read or sent.
+- `content.js` skips passes for DOM changes made only inside a modal dialog such as the photo viewer. `post-block.js` measures the Grok button once per Block button instead of on every scan.
+- New `tests/theme-incremental.cjs` checks that animation-only style changes trigger no style reads, that added and restyled nodes are still themed without a full-page scan, and that palette changes rescan. A headless Chromium benchmark on a synthetic 4,150-element post page with 10 simulated photo swaps cut the theme's main-thread time from about 1,900 ms to about 110 ms; tagging results on a mixed fixture were identical to 0.3.0.
+- `python3 scripts/package.py` rebuilt `x-trim.xpi`, `x-trim.zip` (identical to the XPI) and `x-trim-source.zip`, now including `tests/theme-incremental.cjs`.
+- Mozilla web-ext **10.8.0** lint of the extracted rebuilt XPI: **0 errors, 0 notices, 1 warning**, the same gif.js `platform.name` false positive as before. Output is in `review/lint.json`.
+- All first-party JavaScript passes `node --check` with Node.js 22, and all six `tests/*.cjs` files pass. The changes have not been run in Firefox in this environment.
+
+The 0.3.0 and earlier notes below still apply and were not rerun except where stated above.
 
 ## Rerun for 0.3.0
 
