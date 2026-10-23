@@ -6,6 +6,20 @@
   let preferences={enabled:true,themeMode:'default',themeCustom:preset.dark},active=false;
   const sheet=document.createElement('style');document.documentElement.append(sheet);
   const metaOriginals=new Map();
+  // X's chat drawer renders inside an open shadow root that redeclares its own --x-* palette,
+  // so page-level rules cannot reach it; a style element inside each root carries the theme.
+  const shadowHosts='[data-testid="xchatEmbedDrawer"],[data-testid="xchatEmbedOverlays"]';
+  const shadowSheets=new WeakMap();
+  function syncShadows(css) {
+    document.querySelectorAll(shadowHosts).forEach(host=>{
+      const root=host.shadowRoot;
+      if(!root)return;
+      let style=shadowSheets.get(root);
+      if(!style){if(!css)return;style=document.createElement('style');shadowSheets.set(root,style);}
+      if(style.parentNode!==root)root.append(style);
+      if(style.textContent!==css)style.textContent=css;
+    });
+  }
   const base=new Set(['0,0,0','255,255,255','21,32,43']);
   const surfaces=new Set(['15,20,25','22,24,28','32,35,39','247,249,249','239,243,244','25,39,52','30,39,50','21,32,43']);
   const primary=new Set(['231,233,234','239,243,244','255,255,255','15,20,25','20,23,26']);
@@ -88,7 +102,7 @@
     const next=!!(preferences.enabled&&palette);
     if(!next) {
       active=false;document.documentElement.removeAttribute('data-xtrim-theme');if(sheet.textContent)sheet.textContent='';
-      for(const [meta,content]of metaOriginals){if(content===null)meta.removeAttribute('content');else meta.setAttribute('content',content);}metaOriginals.clear();selectNativeTheme();return;
+      for(const [meta,content]of metaOriginals){if(content===null)meta.removeAttribute('content');else meta.setAttribute('content',content);}metaOriginals.clear();syncShadows('');selectNativeTheme();return;
     }
     // Remove our palette while classifying native X colors, including nodes added later.
     document.documentElement.removeAttribute('data-xtrim-theme');
@@ -201,6 +215,8 @@
       '--x-btn-primary':buttonBackground,'--x-btn-secondary':palette.surface
     };
     css+=`${grok},${grok} *{${Object.entries(grokVars).map(([key,value])=>`${key}:${value} !important;`).join('')}}`;
+    const shadowVars=Object.entries(grokVars).map(([key,value])=>`${key}:${value} !important;`).join('');
+    const shadowCss=`:host,*{${shadowVars}color-scheme:${luminance>.5?'light':'dark'} !important;}.text-primary{color:${palette.text} !important;}.text-secondary,.text-muted-foreground{color:${palette.muted} !important;}[contenteditable="true"]{color:${palette.text} !important;caret-color:${palette.accent} !important;}svg{color:${icons} !important;}.bg-primary.rounded-2xl{border-color:${palette.border} !important;}`;
     css+=`${grok}{background:${palette.background} !important;color:${palette.text} !important;border-color:${palette.border} !important;}${grok} .text-primary{color:${palette.text} !important;}${grok} .text-secondary,${grok} .text-muted-foreground{color:${palette.muted} !important;}${grok} [contenteditable="true"]{color:${palette.text} !important;caret-color:${palette.accent} !important;}${grok} [data-testid="GrokDrawerHeader"]{background:${customColor('tabBackground',palette.background)} !important;}${grok} [data-testid="GrokDrawerHeader"] div{background-color:transparent !important;}${grok} [data-testid="GrokDrawerHeader"] button:hover{background-color:${grokHover} !important;}${grok} svg{color:${icons} !important;}`;
     // Floating controls use translucent/glass fills which the opaque neutral-color mapper skips.
     css+=`${floatingSelector.join(',')}{background:${palette.surface} !important;border-color:${palette.border} !important;color:${icons} !important;box-shadow:0 2px 12px rgba(0,0,0,.18) !important;backdrop-filter:none !important;}${floatingSelector.map(selector=>selector+' svg').join(',')}{color:${icons} !important;fill:currentColor !important;}${floatingSelector.map(selector=>selector+' svg path:not([fill="none"])').join(',')}{color:${icons} !important;fill:currentColor !important;}`;
@@ -227,7 +243,7 @@
       css+=`html[data-xtrim-theme]{background-image:linear-gradient(${angle}deg,${palette.background},${end}) !important;background-attachment:fixed !important;min-height:100%;}html[data-xtrim-theme] body,html[data-xtrim-theme] [data-xtrim-theme-bg="background"]{background-color:transparent !important;}`;
     }
     if(sheet.textContent!==css)sheet.textContent=css;
-    document.documentElement.setAttribute('data-xtrim-theme',preferences.themeMode);active=true;syncMeta(palette);
+    document.documentElement.setAttribute('data-xtrim-theme',preferences.themeMode);active=true;syncMeta(palette);syncShadows(shadowCss);
   }
   const defaults={enabled:true,themeMode:'default',themeCustom:preset.dark};
   browser.storage.local.get(defaults).then(value=>{preferences=value;apply();});

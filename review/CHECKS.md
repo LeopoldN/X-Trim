@@ -1,4 +1,20 @@
-# Submission checks — X Trim 0.1.77
+# Submission checks — X Trim 0.2.0
+
+## Rerun for 0.2.0
+
+Checked October 23, 2026. 0.2.0 = 0.1.77 plus the tabbed toolbar popup redesign (`popup.html`, `popup.css`, `popup.js`) and a theme fix for X's chat drawer (`theme.js`). These are local pre-update checks, not Mozilla approval.
+
+- Manifest permissions, host permissions, optional permissions, CSP and `data_collection_permissions` are unchanged from 0.1.77; only the version changed.
+- `theme.js` now also writes the theme palette into a `<style>` element inside the open shadow roots X uses for its chat drawer (`xchatEmbedDrawer`, `xchatEmbedOverlays`). It reads nothing from them and sends nothing. Before this, the chat button turned back to X's native colors after the drawer was opened and closed.
+- Popup and download error messages that pointed to the old "Post page" section now say "Posts", which matches the new tab names. README, listing and reviewer notes are updated the same way.
+- `python3 scripts/package.py` rebuilt `x-trim.xpi`, `x-trim.zip` (identical to the XPI) and `x-trim-source.zip`.
+- Mozilla web-ext **10.8.0** lint of the extracted rebuilt XPI: **0 errors, 0 notices, 1 warning**, the same gif.js `platform.name` false positive described below. Output is in `review/lint.json`.
+- All first-party JavaScript passes `node --check` with Node.js 22.22.0, and `tests/policy-checks.cjs`, `tests/account-card.cjs`, `tests/geo-timeline.cjs` and `tests/post-block.cjs` pass.
+- The chat drawer fix was checked on live x.com in Chrome, with `theme.js` injected and storage stubbed: the drawer and the chat button kept the custom palette through open/close cycles. It has not been run in Firefox in this environment.
+
+The 0.1.77 notes below still apply and were not rerun except where stated above.
+
+## 0.1.77 notes
 
 Checked October 23, 2026 against commit `f051d82` (manifest version 0.1.77; the commit message reads "V0.1.76"). These are local pre-update checks, not Mozilla approval or a full independent security audit. X Trim is already listed on AMO; these notes are for the next version upload.
 

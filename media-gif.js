@@ -18,8 +18,8 @@ async function convertTwitterGif(url,notify){
   let inputURL,encoder,video;
   try{
     notify('Fetching GIF…',null);
-    if(!await browser.permissions.contains({origins:['https://video.twimg.com/*']}))throw new Error('Open X Trim → Post page → Enable GIF downloads, then retry.');
-    if(!await browser.permissions.contains({data_collection:['websiteContent']}))throw new Error('Open X Trim → Post page → Enable media downloads, then retry.');
+    if(!await browser.permissions.contains({origins:['https://video.twimg.com/*']}))throw new Error('Open X Trim → Posts → Enable media downloads, then retry.');
+    if(!await browser.permissions.contains({data_collection:['websiteContent']}))throw new Error('Open X Trim → Posts → Enable media downloads, then retry.');
     const response=await fetch(url,{credentials:'omit',redirect:'error',signal:AbortSignal.timeout(60000)});
     if(!response.ok)throw new Error('Could not fetch GIF video.');
     const limit=32*1024*1024,total=Number(response.headers.get('content-length'));
