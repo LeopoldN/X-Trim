@@ -397,7 +397,12 @@
     for (const [name, change] of Object.entries(changes)) settings[name] = change.newValue ?? defaults[name];
     apply();
   });
-  new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
+  // Nothing this script changes lives inside a modal dialog such as the photo viewer,
+  // so changes made only there (sliding between photos) need no pass.
+  const inModal = node => !!(node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement)?.closest('#layers [aria-modal="true"]');
+  new MutationObserver(records => {
+    if (records.some(record => !inModal(record.target))) schedule();
+  }).observe(document.documentElement, { childList: true, subtree: true });
   browser.runtime.onMessage.addListener(message => {
     if (message.type === 'navigation') return Promise.resolve(items());
     if (message.type === 'more-options') return Promise.resolve(readMoreMenu());

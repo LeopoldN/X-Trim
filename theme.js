@@ -76,7 +76,21 @@
     }
     if(!element.hasAttribute('data-xtrim-theme-border') && ['Top','Right','Bottom','Left'].some(edge=>parseFloat(css['border'+edge+'Width'])>0 && borders.has(rgb(css['border'+edge+'Color']))))element.setAttribute('data-xtrim-theme-border','border');
   }
-  function scan(root) {if(root instanceof HTMLElement)tag(root);root.querySelectorAll?.('*').forEach(tag);}
+  function scan(root) {if(root instanceof Element)tag(root);root.querySelectorAll?.('*').forEach(tag);}
+  // Only what X added or restyled since the last pass is classified. A full-page scan
+  // reads every element's computed style, far too slow to repeat on each animation
+  // frame (for example while the photo viewer slides between images).
+  const pending=new Set();let fullScan=true;
+  function scanPending() {
+    for(const node of pending) {
+      if(!node.isConnected)continue;
+      // An ancestor that is also pending covers this subtree.
+      let covered=false;
+      for(let parent=node.parentElement;parent&&!covered;parent=parent.parentElement)covered=pending.has(parent);
+      if(!covered)scan(node);
+    }
+    pending.clear();
+  }
   function syncMeta(palette) {
     document.querySelectorAll('meta[name="theme-color"]').forEach(meta=>{
       if(!metaOriginals.has(meta))metaOriginals.set(meta,meta.getAttribute('content'));
@@ -102,11 +116,11 @@
     const next=!!(preferences.enabled&&palette);
     if(!next) {
       active=false;document.documentElement.removeAttribute('data-xtrim-theme');if(sheet.textContent)sheet.textContent='';
-      for(const [meta,content]of metaOriginals){if(content===null)meta.removeAttribute('content');else meta.setAttribute('content',content);}metaOriginals.clear();syncShadows('');selectNativeTheme();return;
+      for(const [meta,content]of metaOriginals){if(content===null)meta.removeAttribute('content');else meta.setAttribute('content',content);}metaOriginals.clear();syncShadows('');pending.clear();fullScan=true;selectNativeTheme();return;
     }
     // Remove our palette while classifying native X colors, including nodes added later.
     document.documentElement.removeAttribute('data-xtrim-theme');
-    scan(document);
+    if(fullScan){fullScan=false;pending.clear();scan(document);}else scanPending();
     document.querySelectorAll('[data-xtrim-grok-page]').forEach(node=>node.removeAttribute('data-xtrim-grok-page'));
     if(/^\/i\/grok(?:\/|$)/.test(pagePath)) {
       const column=document.querySelector?.('[data-testid="primaryColumn"]');
@@ -249,15 +263,30 @@
   browser.storage.local.get(defaults).then(value=>{preferences=value;apply();});
   browser.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local'||!['enabled','themeMode','themeCustom'].some(key=>key in changes))return;
-    for(const key of ['enabled','themeMode','themeCustom'])if(changes[key])preferences[key]=changes[key].newValue??defaults[key];apply();
+    for(const key of ['enabled','themeMode','themeCustom'])if(changes[key])preferences[key]=changes[key].newValue??defaults[key];fullScan=true;apply();
   });
   let queued=false;
   globalThis.addEventListener?.('resize',()=>{
-    if(!active||queued)return;
+    if(!active)return;
+    fullScan=true;if(queued)return;
     queued=true;requestAnimationFrame(()=>{queued=false;apply();});
   });
+  // Most inline style changes are X's animations (transform, opacity). Only one that
+  // touches a color property can change how an element is classified.
+  const colorDeclarations=value=>(value||'').split(';').filter(part=>/color|background|border|fill|stroke/i.test(part.split(':')[0])).map(part=>part.trim()).join(';');
   new MutationObserver(records=>{
-    if(!active||queued||!records.some(record=>record.type==='attributes'||[...record.addedNodes].some(node=>node.nodeType===1)))return;
+    if(!active)return;
+    for(const record of records) {
+      if(record.type==='childList') {
+        for(const node of record.addedNodes)if(node.nodeType===1)pending.add(node);
+        continue;
+      }
+      const target=record.target;
+      if(record.attributeName==='style'&&colorDeclarations(record.oldValue)===colorDeclarations(target.getAttribute('style')))continue;
+      if(target===document.documentElement)fullScan=true;
+      else pending.add(target);
+    }
+    if(queued||(!fullScan&&!pending.size))return;
     queued=true;requestAnimationFrame(()=>{queued=false;apply();});
-  }).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','data-theme']});
+  }).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeOldValue:true,attributeFilter:['class','style','data-theme']});
 })();

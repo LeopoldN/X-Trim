@@ -45,8 +45,11 @@
         const line=document.createElementNS(svg.namespaceURI,'path');line.setAttribute('d','m6 6 12 12');svg.append(circle,line);button.append(svg);
         button.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();start(article,button).catch(()=>notify('Could not open Block. Use the post’s More menu.'));});
       }
-      const size=grok.getBoundingClientRect().height;
-      if(size>0)button.style.setProperty('--xtrim-block-size',Math.min(size,34)+'px');
+      // Measuring forces a layout, so do it once per button rather than on every scan.
+      if(!button.style.getPropertyValue('--xtrim-block-size')) {
+        const size=grok.getBoundingClientRect().height;
+        if(size>0)button.style.setProperty('--xtrim-block-size',Math.min(size,34)+'px');
+      }
       const blocked=blockedAccounts.get(handle.toLowerCase())===true;
       button.classList.toggle('xtrim-is-blocked',blocked);
       const label=(blocked?'Blocked @':'Block @')+handle; if(button.getAttribute('aria-label')!==label){button.setAttribute('aria-label',label);button.title=label;}
