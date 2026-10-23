@@ -1,4 +1,4 @@
-const defaults = { postBlock:true, geoBlocking:false, geoCountries:"", geoAllowed:"", geoMode:"hide", enabled: true, premium: true, hideRightColumn: false, follow: true, trends: false, floatingGrok: false, floatingMessages: false, twitterLogo: false, settingsShortcut: false, moreOptions: [], added: [], mediaDownloads: true, postAbout: false, profileAbout: false, profileCustomWidth: false, profileWidth: 800, profileFont: "default", profilePostCount: false, profileSquareAvatar: false, profileAvatarBorder: false, profileAvatarBorderColor: "#1DA1F2", customWidths: false, navWidth: 272, feedWidth: 600, rightWidth: 350, hidden: [], themePreset: "", themeMode: "default", themeCustom: {"background": "#000000", "surface": "#16181C", "text": "#E7E9EA", "muted": "#71767B", "border": "#2F3336", "accent": "#1D9BF0", "tabBackground": "#000000", "tabText": "#71767B", "tabActive": "#E7E9EA", "tabIndicator": "#1D9BF0", "icons": "#E7E9EA", "buttonBackground": "#1D9BF0", "buttonText": "#FFFFFF", "buttonAutoContrast": true, "engagementColors": false, "gradient": false, "gradientEnd": "#15202B", "gradientAngle": 135} };
+const defaults = { postBlock:true, geoBlocking:false, geoCountries:"", geoAllowed:"", geoMode:"hide", enabled: true, premium: true, hideRightColumn: false, follow: true, trends: false, floatingGrok: false, floatingMessages: false, twitterLogo: false, settingsShortcut: false, moreOptions: [], added: [], mediaDownloads: true, postAbout: false, profileAbout: false, profileCustomWidth: false, profileWidth: 800, profileFont: "default", profilePostCount: false, profileSquareAvatar: false, profileAvatarBorder: false, profileAvatarBorderColor: "#1DA1F2", customWidths: false, navWidth: 272, feedWidth: 600, rightWidth: 350, hidden: [], siteFont: "default", textSize: 100, density: "default", hideDividers: false, followColors: false, plainText: false, customCss: "", themePreset: "", themeMode: "default", themeCustom: {"background": "#000000", "surface": "#16181C", "text": "#E7E9EA", "muted": "#71767B", "border": "#2F3336", "accent": "#1D9BF0", "tabBackground": "#000000", "tabText": "#71767B", "tabActive": "#E7E9EA", "tabIndicator": "#1D9BF0", "icons": "#E7E9EA", "buttonBackground": "#1D9BF0", "buttonText": "#FFFFFF", "buttonAutoContrast": true, "engagementColors": false, "gradient": false, "gradientEnd": "#15202B", "gradientAngle": 135} };
 let settings;
 async function save() {
  try { await browser.storage.local.set(settings); document.getElementById('status').textContent = 'Saved. Changes apply on X immediately.'; }
@@ -47,7 +47,7 @@ function switchRow(label, checked, onchange) {
 async function init() {
  await initTabs();
  settings = await browser.storage.local.get(defaults);
- for (const name of ['enabled','premium','hideRightColumn','follow','trends','floatingGrok','floatingMessages','twitterLogo','settingsShortcut','customWidths','profileCustomWidth','profilePostCount','profileSquareAvatar','profileAvatarBorder','profileAbout','postAbout','mediaDownloads','geoBlocking','postBlock']) {
+ for (const name of ['enabled','premium','hideRightColumn','follow','trends','floatingGrok','floatingMessages','twitterLogo','settingsShortcut','customWidths','profileCustomWidth','profilePostCount','profileSquareAvatar','profileAvatarBorder','profileAbout','postAbout','mediaDownloads','geoBlocking','postBlock','plainText','hideDividers','followColors']) {
    const input = document.getElementById(name); input.checked = settings[name];
    input.onchange = async () => {
      if(input.checked&&['profileAbout','postAbout','geoBlocking'].includes(name)){
@@ -76,6 +76,7 @@ async function init() {
  }
  renderMaster();
  renderTheme();
+ renderLook();
  renderMore();
  renderWidths();
  renderProfile();
@@ -186,7 +187,19 @@ function renderTheme() {
    picker.onclick=()=>openThemePicker(key,field,picker);
  }
 }
-document.getElementById('reset-theme').onclick=()=>{settings.themePreset='';settings.themeMode='default';settings.themeCustom={...defaults.themeCustom};renderTheme();save();};
+const lookDefaults={siteFont:'default',textSize:100,density:'default',hideDividers:false,followColors:false,plainText:false};
+function renderLook() {
+ for(const name of ['siteFont','density'])for(const input of document.querySelectorAll(`input[name="${name}"]`)){input.checked=input.value===settings[name];input.onchange=()=>{settings[name]=input.value;save();};}
+ for(const name of ['hideDividers','followColors','plainText'])document.getElementById(name).checked=settings[name];
+ const size=document.getElementById('textSize'),sizeValue=document.getElementById('textSize-value');
+ size.value=settings.textSize;sizeValue.textContent=settings.textSize+'%';
+ size.oninput=()=>{settings.textSize=Number(size.value);sizeValue.textContent=size.value+'%';save();};
+ // Save pasted CSS shortly after typing stops instead of on every keystroke.
+ const css=document.getElementById('customCss');let timer;
+ css.value=settings.customCss;
+ css.oninput=()=>{clearTimeout(timer);timer=setTimeout(()=>{settings.customCss=css.value;save();},400);};
+}
+document.getElementById('reset-theme').onclick=()=>{settings.themePreset='';settings.themeMode='default';settings.themeCustom={...defaults.themeCustom};Object.assign(settings,lookDefaults);renderTheme();renderLook();save();};
 function normalizeAvatarColor(value) {
  const hex = value.trim().replace(/^#/, '');
  if (/^[0-9a-f]{3}$/i.test(hex)) return '#' + [...hex].map(c => c + c).join('').toUpperCase();

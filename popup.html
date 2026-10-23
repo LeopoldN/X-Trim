@@ -70,6 +70,30 @@
 <div class="color-row"><button type="button" class="theme-swatch" id="theme-tabIndicator-picker" aria-label="Pick active tab underline" title="Choose color"></button><label for="theme-tabIndicator">Active tab underline</label><input type="text" class="hex" id="theme-tabIndicator" maxlength="7" spellcheck="false"></div>
 <p class="hint">Feed tabs are For you, Following, and your lists.</p>
 </div>
+<h3 id="site-font-heading">Font</h3>
+<div class="fonts" role="radiogroup" aria-labelledby="site-font-heading">
+<label class="font-chip"><input type="radio" name="siteFont" value="default" class="sr-only"><b class="f-default" aria-hidden="true">Aa</b><small>X default</small></label>
+<label class="font-chip"><input type="radio" name="siteFont" value="system" class="sr-only"><b class="f-system" aria-hidden="true">Aa</b><small>System</small></label>
+<label class="font-chip"><input type="radio" name="siteFont" value="arial" class="sr-only"><b class="f-arial" aria-hidden="true">Aa</b><small>Arial</small></label>
+<label class="font-chip"><input type="radio" name="siteFont" value="serif" class="sr-only"><b class="f-serif" aria-hidden="true">Aa</b><small>Georgia</small></label>
+<label class="font-chip"><input type="radio" name="siteFont" value="mono" class="sr-only"><b class="f-mono" aria-hidden="true">Aa</b><small>Mono</small></label>
+</div>
+<p class="hint">The font applies across X. Profile › Column font still wins on profiles.</p>
+<label class="slider-label" for="textSize"><span>Post text size</span><output id="textSize-value" for="textSize"></output></label>
+<input type="range" id="textSize" min="80" max="150" step="5">
+<label class="row"><span class="row-text"><span>Plain post text</span><span class="desc">Shows 𝗯𝗼𝗹𝗱 and 𝘪𝘵𝘢𝘭𝘪𝘤 Unicode letters in posts as normal text, which screen readers can also read.</span></span><input type="checkbox" id="plainText" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<h3>Spacing</h3>
+<fieldset class="choice"><legend>Post spacing</legend><div class="segmented">
+<label><input type="radio" name="density" value="compact" class="sr-only"><span>Compact</span></label>
+<label><input type="radio" name="density" value="default" class="sr-only"><span>Default</span></label>
+<label><input type="radio" name="density" value="roomy" class="sr-only"><span>Roomy</span></label>
+</div></fieldset>
+<label class="row"><span class="row-text"><span>Hide divider lines</span><span class="desc">Removes the lines between posts in timelines.</span></span><input type="checkbox" id="hideDividers" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<h3>Buttons</h3>
+<label class="row"><span class="row-text"><span>Theme Follow buttons</span><span class="desc">Follow and Subscribe use your accent color instead of X’s black or white. Uses X blue with X default, Dark and Light.</span></span><input type="checkbox" id="followColors" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<h3><label for="customCss">Custom CSS</label></h3>
+<textarea id="customCss" class="code" rows="5" spellcheck="false" placeholder="[data-testid=&quot;tweetText&quot;] { letter-spacing: .01em !important; }"></textarea>
+<p class="hint">Applies on x.com after X Trim’s own styles. Add !important to override X. @import is ignored. Reset theme keeps this box.</p>
 <button type="button" class="text-button" id="reset-theme">Reset theme</button>
 </section>
 
