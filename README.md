@@ -1,6 +1,6 @@
 # X Trim
 
-**v0.1.76** · Firefox / Zen 140+
+**v0.1.77** · Firefox / Zen 140+
 
 Tidy up X: hide promotions and sidebar items, change column widths, customize profiles, pick a theme, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
@@ -40,7 +40,7 @@ Zen compatibility: GIF conversion opens a temporary extension tab with a video p
 
 Submission materials: [privacy policy](PRIVACY.md), [proposed AMO listing](review/AMO-LISTING.md), [reviewer notes](review/REVIEWER-NOTES.md), and [check results](review/CHECKS.md). Rebuild unsigned packages with `python3 scripts/package.py`.
 
-Calls is available in Sidebar navigation, including when your cached navigation predates X’s rollout. Uncheck Calls to hide it.
+Calls and Money are available in Sidebar navigation, including when your cached navigation predates X’s rollout. Uncheck either item to hide it; uncheck Money to remove the dollar icon from the sidebar.
 
 ## Account details
 

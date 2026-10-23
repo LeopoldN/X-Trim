@@ -55,6 +55,7 @@ async function init() {
  const entries = new Map(discovered.map(item => [/^calls$/i.test(item.label) ? 'Calls' : item.key, item.label]));
  // Keep new rollout items available even when the cached sidebar predates them.
  if(!entries.has('Calls'))entries.set('Calls','Calls');
+ if(!entries.has('/i/money'))entries.set('/i/money','Money');
  const container = document.getElementById('navigation'); container.replaceChildren();
  for (const [key,label] of entries) {
    const row = document.createElement('label'), input = document.createElement('input');

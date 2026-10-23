@@ -1,5 +1,7 @@
 (() => {
   let enabled=true, show=true, queued=false, busy=false;
+  const blockedAccounts=new Map();
+  browser.runtime.onMessage.addListener(message=>{if(message.type!=='block-state'||!enabled||!show)return;for(const [handle,state] of Object.entries(message.states||{}))if(typeof state==='boolean'){blockedAccounts.delete(handle);blockedAccounts.set(handle,state);}while(blockedAccounts.size>1000)blockedAccounts.delete(blockedAccounts.keys().next().value);schedule();});
   function author(article){const link=article.querySelector('[data-testid="User-Name"] a[href]');return link?new URL(link.href).pathname.match(/^\/([a-z0-9_]{1,15})\/?$/i)?.[1]:null;}
   function notify(message){let node=document.querySelector('.xtrim-block-status');if(!node){node=document.createElement('div');node.className='xtrim-block-status';node.setAttribute('role','status');document.body.append(node);}node.textContent=message;clearTimeout(node.timer);node.timer=setTimeout(()=>node.remove(),6000);}
   async function start(article,button){
@@ -11,7 +13,7 @@
     try{
       caret.click();
       const item=await new Promise(resolve=>{
-        const check=()=>{const menu=document.querySelector('[role="menu"]');const block=menu?.querySelector('[data-testid="block"]');if(block){cleanup();resolve(block);}};
+        const check=()=>{const menu=document.querySelector('[role="menu"]');const block=menu?.querySelector('[data-testid="block"], [data-testid="unblock"]');if(block){cleanup();resolve(block);}};
         const observer=new MutationObserver(check);const timer=setTimeout(()=>{cleanup();resolve(null);},2000);
         function cleanup(){observer.disconnect();clearTimeout(timer);}
         observer.observe(document.documentElement,{childList:true,subtree:true});check();
@@ -22,6 +24,8 @@
       // Never use the separate Unblock item or submit the confirmation ourselves.
       const mentioned=item.textContent.match(/@([a-z0-9_]{1,15})/i)?.[1];
       if(mentioned&&mentioned.toLowerCase()!==handle.toLowerCase()){notify('The menu changed. Close it and try again.');return;}
+      if(item.dataset.testid==='unblock'){blockedAccounts.set(handle.toLowerCase(),true);schedule();notify('@'+handle+' is already blocked.');return;}
+      blockedAccounts.set(handle.toLowerCase(),false);schedule();
       item.click();
     }finally{busy=false;button.disabled=false;}
   }
@@ -43,14 +47,16 @@
       }
       const size=grok.getBoundingClientRect().height;
       if(size>0)button.style.setProperty('--xtrim-block-size',Math.min(size,34)+'px');
-      const label='Block @'+handle; if(button.getAttribute('aria-label')!==label){button.setAttribute('aria-label',label);button.title=label;}
+      const blocked=blockedAccounts.get(handle.toLowerCase())===true;
+      button.classList.toggle('xtrim-is-blocked',blocked);
+      const label=(blocked?'Blocked @':'Block @')+handle; if(button.getAttribute('aria-label')!==label){button.setAttribute('aria-label',label);button.title=label;}
       // Share the Grok button's horizontal control group, before its wrapper.
       const wrapper=grok.parentElement.children.length===1?grok.parentElement:grok;
       if(button.nextElementSibling!==wrapper)wrapper.before(button);
     }
   }
   function schedule(){if(!queued){queued=true;setTimeout(scan,100);}}
-  async function settings(){const prefs=await browser.storage.local.get({enabled:true,postBlock:true});enabled=prefs.enabled;show=prefs.postBlock;schedule();}
+  async function settings(){const prefs=await browser.storage.local.get({enabled:true,postBlock:true});enabled=prefs.enabled;show=prefs.postBlock;if(!enabled||!show)blockedAccounts.clear();schedule();}
   browser.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&(changes.enabled||changes.postBlock))settings();});
   new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true});settings();
 })();
