@@ -1,4 +1,4 @@
-# X Trim 0.4.0 — reviewer notes
+# X Trim 0.4.1 — reviewer notes
 
 ## Code and packaging
 

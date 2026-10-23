@@ -5,7 +5,11 @@
   function currentProfile() {
     const parts = location.pathname.split('/').filter(Boolean);
     if (!/^[a-z0-9_]{1,15}$/i.test(parts[0] || '') || ['home','explore','notifications','messages','i','settings','search','compose'].includes(parts[0].toLowerCase())) return null;
-    if (parts.length > 1 && !(parts.length === 2 && ['with_replies','media','likes','highlights','articles'].includes(parts[1]))) return null;
+    // Every timeline tab under a profile (/name/reposts, /name/media, ...) is still the profile page.
+    const tabs = ['with_replies','media','likes','highlights','articles','all','reposts','superfollows','affiliates'];
+    const tabLinked = () => [...document.querySelectorAll('[data-testid="primaryColumn"] nav[aria-label="Profile timelines"] a[href]')]
+      .some(link => new URL(link.href).pathname.replace(/\/$/, '').toLowerCase() === '/' + parts.join('/').toLowerCase());
+    if (parts.length > 2 || (parts.length === 2 && !tabs.includes(parts[1].toLowerCase()) && !tabLinked())) return null;
     const name = document.querySelector('[data-testid="primaryColumn"] [data-testid="UserName"]');
     if (!name || !document.querySelector('[data-testid="primaryColumn"] nav[aria-label="Profile timelines"]')) return null;
     // Avoid applying the previous profile's response during X's client-side navigation.

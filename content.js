@@ -164,11 +164,22 @@
       nav.append(link);
     }
   }
-  function isProfilePage() {
+  // Every timeline tab under a profile (/name/reposts, /name/media, ...) is still the profile page.
+  const profileTabs = ['with_replies','media','likes','highlights','articles','all','reposts','superfollows','affiliates'];
+  function isProfileRoute() {
     const parts = location.pathname.split('/').filter(Boolean);
     const reserved = new Set(['home','explore','notifications','messages','i','settings','search','compose','login','logout']);
-    return !!parts.length && !reserved.has(parts[0].toLowerCase()) &&
-      (parts.length === 1 || (parts.length === 2 && ['with_replies','media','likes','highlights','articles'].includes(parts[1]))) &&
+    if (!/^[a-z0-9_]{1,15}$/i.test(parts[0] || '') || reserved.has(parts[0].toLowerCase())) return false;
+    if (parts.length === 1) return true;
+    if (parts.length !== 2) return false;
+    if (profileTabs.includes(parts[1].toLowerCase())) return true;
+    // X adds profile tabs over time; also accept any path linked from the profile's own tab bar.
+    const path = '/' + parts.join('/').toLowerCase();
+    return [...document.querySelectorAll('[data-testid="primaryColumn"] nav[aria-label="Profile timelines"] a[href]')]
+      .some(link => new URL(link.href).pathname.replace(/\/$/, '').toLowerCase() === path);
+  }
+  function isProfilePage() {
+    return isProfileRoute() &&
       !!document.querySelector('[data-testid="primaryColumn"] [data-testid="UserName"]') &&
       !!document.querySelector('[data-testid="primaryColumn"] nav[aria-label="Profile timelines"]');
   }
@@ -207,8 +218,10 @@
         const path = new URL(link.href).pathname;
         return path === '/' + handle + '/verified_followers' || path === '/' + handle + '/followers';
       });
+      // The header count follows the tab: "posts", "photos & videos" on Media, "likes" on Likes.
+      const countText = /^([\d,.]+[KM]?)\s+([a-z][a-z &]{0,30})$/i;
       const source = [...primary.querySelectorAll('h2')].map(heading => heading.nextElementSibling)
-        .find(el => el && /^[\d,.]+[KM]?\s+posts?$/i.test(el.textContent.trim()));
+        .find(el => el && countText.test(el.textContent.trim()));
       if (followers && source) {
         source.setAttribute('data-xtrim-profile-post-source', '');
         let count = existing;
@@ -219,8 +232,9 @@
           count.setAttribute('data-xtrim-profile-posts', '');
           followers.parentElement.after(count);
         }
-        const match = source.textContent.trim().match(/^([\d,.]+[KM]?)\s+(posts?)$/i);
-        const text = match[1] + ' Posts';
+        const match = source.textContent.trim().match(countText);
+        const label = match[2][0].toUpperCase() + match[2].slice(1).toLowerCase();
+        const text = match[1] + ' ' + label;
         if (count.textContent !== text) {
           const stat = document.createElement('span');
           stat.className = followers.className;
@@ -228,7 +242,7 @@
           const nativeSpans = [...followers.children].filter(el => el.tagName === 'SPAN');
           const number = nativeSpans[0] ? nativeSpans[0].cloneNode(true) : document.createElement('span');
           const caption = nativeSpans[1] ? nativeSpans[1].cloneNode(true) : document.createElement('span');
-          number.textContent = match[1]; caption.textContent = 'Posts';
+          number.textContent = match[1]; caption.textContent = label;
           stat.append(number, document.createTextNode(' '), caption);
           count.replaceChildren(stat);
         }
@@ -288,10 +302,7 @@
   }
   function updateEarlyPreferences() {
     const root = document.documentElement;
-    const parts = location.pathname.split('/').filter(Boolean);
-    const reserved = new Set(['home','explore','notifications','messages','i','settings','search','compose','login','logout']);
-    const profileRoute = !!parts.length && !reserved.has(parts[0].toLowerCase()) &&
-      (parts.length === 1 || (parts.length === 2 && ['with_replies','media','likes','highlights','articles'].includes(parts[1])));
+    const profileRoute = isProfileRoute();
     const flags = {
       'hide-right': settings.hideRightColumn,
       'hide-premium': settings.premium,

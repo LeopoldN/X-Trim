@@ -136,7 +136,7 @@
         if(getComputedStyle(node).position==='sticky')break;
       }
     }
-    const profileHeader=/^\/[a-z0-9_]{1,15}(?:\/(?:with_replies|media|likes|highlights|articles))?\/?$/i.test(pagePath)&&!!document.querySelector?.('[data-testid="primaryColumn"] [data-testid="UserName"]');
+    const profileHeader=/^\/[a-z0-9_]{1,15}(?:\/(?:with_replies|media|likes|highlights|articles|all|reposts|superfollows|affiliates))?\/?$/i.test(pagePath)&&!!document.querySelector?.('[data-testid="primaryColumn"] [data-testid="UserName"]');
     const aboutHeader=/^\/[a-z0-9_]{1,15}\/about\/?$/i.test(pagePath);
     const notificationsHeader=/^\/notifications(?:\/mentions)?\/?$/.test(pagePath);
     const historyHeader=/^\/i\/history(?:\/likes)?\/?$/.test(pagePath);
