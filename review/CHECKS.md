@@ -4,8 +4,8 @@ Checked October 23, 2026 against commit `f051d82` (manifest version 0.1.77; the 
 
 ## Rerun for 0.1.77
 
-- The committed `x-trim.xpi` matches the working tree file for file, `x-trim.zip` is identical to it, and `python3 scripts/package.py` rebuilds a byte-identical XPI.
-- Mozilla web-ext **10.8.0** scans the complete extracted runtime package: **0 errors, 0 notices, 1 warning** (the same vendor false positive as before, below). Exact output is in `review/lint.json`.
+- The `x-trim.xpi` committed in `f051d82` matched the working tree file for file and rebuilt byte for byte with `python3 scripts/package.py`. After the small fixes below, the XPI was rebuilt; its only content change is the `PRIVACY.md` date line, and `x-trim.zip` is identical to it.
+- Mozilla web-ext **10.8.0** scans the complete extracted rebuilt runtime package: **0 errors, 0 notices, 1 warning** (the same vendor false positive as before, below). Exact output is in `review/lint.json`.
 - All first-party JavaScript parses with Node.js 22.22.0 (`node --check`); `git diff --check` passes for 0.1.69 to 0.1.77.
 - Node tests pass: `tests/policy-checks.cjs` (account consent, private-cache isolation, metadata and timeline scope enforcement; download consent, URL allowlist, ownership, variant matching and response pass-through; optional media consent UI), `tests/account-card.cjs`, `tests/geo-timeline.cjs` and `tests/post-block.cjs`.
 - Vendor integrity: the npm archive for gif.js 0.2.0 was downloaded again and matches its published SHA-512 integrity; the packaged `gif.js` and `gif.worker.js` match the release bytes and `review/vendor-provenance.json`.
@@ -23,9 +23,9 @@ Checked October 23, 2026 against commit `f051d82` (manifest version 0.1.77; the 
 
 1. **Response filtering has a wider scope.** Through 0.1.69, `filterResponseData` ran only while media downloads were enabled. It now also runs while account features or the Block shortcut are on, so turning off downloads no longer turns it off (both download buttons and the shortcut default on). Its URL filter was widened from X GraphQL to also include `/i/api/1.1/blocks/*.json`, and parsed responses now feed account counts and block state as well as media URLs. Nothing is sent anywhere; bytes are still forwarded unchanged as they arrive and buffered up to 8 MB for parsing. The old reviewer notes described the narrower scope, so they are updated.
 2. **Reviewer notes and listing were at 0.1.69.** Neither mentioned country filtering or the Block shortcut. Both are updated in this change.
-3. **README calls the Block button "optional"** without saying it is on by default. Not a policy problem, since it sends nothing, but the listing now says it is on by default.
-4. **`PRIVACY.md` effective date** reads October 11, 2026, but its Block shortcut paragraph was added on October 23. The text is accurate; only the date is stale.
-5. **The committed source archive includes two macOS `.DS_Store` files** under `vendor/`. `scripts/package.py` collects everything under `vendor/`. Rebuilding on a clean checkout drops them; excluding `.DS_Store` in the script would prevent it.
+3. **README called the Block button "optional"** without saying it is on by default. Not a policy problem, since it sends nothing. Fixed in the README and stated in the listing.
+4. **`PRIVACY.md` effective date** read October 11, 2026, but its Block shortcut paragraph was added on October 23. Fixed to October 23, 2026; the policy text is otherwise unchanged.
+5. **The committed source archive included two macOS `.DS_Store` files** under `vendor/`, because `scripts/package.py` collected everything there. The script now skips `.DS_Store`, and the rebuilt source archive contains none.
 6. **The latest commit is titled "V0.1.76"** but contains 0.1.77. Packages and docs all say 0.1.77, so AMO is unaffected.
 
 ## Linter warning disposition
