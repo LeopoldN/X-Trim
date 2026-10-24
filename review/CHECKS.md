@@ -1,4 +1,15 @@
-# Submission checks — X Trim 0.5.1
+# Submission checks — X Trim 0.5.2
+
+## Rerun for 0.5.2
+
+Checked October 24, 2026. 0.5.2 = 0.5.1 plus custom-theme coverage for X's full Chat and Calls pages. These are local pre-update checks, not Mozilla approval.
+
+- `content/theme.js` already wrote its palette into the chat drawer's shadow roots. It now finds every X app shadow root, the hosts X names `xchat*` or `xcalls*` (Chat page, Calls page, chat drawer and overlays) and body-level roots that hold X's `[data-theme]` wrapper, and sets the palette on `[data-theme]` instead of every element so X's locally remapped button tokens keep working. It also maps the list divider, subtle row hover and secondary-button hover and pressed tokens. No new files, permissions, requests or host permissions; CSP, `data_collection_permissions` and the extension ID are unchanged.
+- New `tests/chat-calls-theme.cjs` checks the Calls and Chat page roots, a body-level portal, that an unrelated shadow root is left alone, and that turning the theme off restores X's colors. `python3 scripts/package.py` rebuilt `x-trim.xpi`, `x-trim.zip` and `x-trim-source.zip`.
+- Mozilla web-ext **10.8.0** lint of the extracted rebuilt XPI: **0 errors, 0 notices, 1 warning**, the same gif.js `platform.name` false positive as before. Output is in `review/lint.json`.
+- All first-party JavaScript passes `node --check` with Node.js 22, and all `tests/*.cjs` files pass. The build has not been run in Firefox in this environment.
+
+The 0.5.1 and earlier notes below still apply.
 
 ## Rerun for 0.5.1
 
