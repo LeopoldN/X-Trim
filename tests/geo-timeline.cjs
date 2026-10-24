@@ -8,7 +8,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
   window.post=(handle,id)=>`<article data-testid="tweet"><div><div data-testid="User-Name"><a href="/${handle}">${handle}</a></div><a href="/${handle}/status/${id}"><time>Today</time></a><p>Post content</p></div></article>`;
   document.querySelector('main').innerHTML=post('example','1')+post('unknown','2');
  });
- await page.addStyleTag({path:path.resolve('geo-timeline.css')});await page.addScriptTag({path:path.resolve('page-route.js')});await page.addScriptTag({path:path.resolve('geo-timeline.js')});
+ await page.addStyleTag({path:path.resolve('content/geo-timeline.css')});await page.addScriptTag({path:path.resolve('content/page-route.js')});await page.addScriptTag({path:path.resolve('content/geo-timeline.js')});
  await page.waitForSelector('[data-xtrim-geo="hide"]');assert.equal(await page.locator('[data-xtrim-geo]').count(),1);assert.equal(await page.getByText('Post content').first().isVisible(),false);
  await page.getByRole('button',{name:'Show post'}).click();assert.equal(await page.locator('[data-xtrim-geo]').count(),0);
  // X recycles an existing row for another post.

@@ -33,8 +33,8 @@ const stub=prefs=>{
  });
  await page.goto('https://x.com/home');
  await page.evaluate(stub,{enabled:true,hidePromoted:true,hideSponsored:true,hideAdHashtags:true,keywordFilters:'giveaway\n/crypto\\s+airdrop/i\n/(bad/',hideNoMedia:true,filterMode:'hide',stayFollowing:true,hideForYou:true,followingRecent:true,newPosts:'auto',exactCounts:true,timeFormat:'absolute',clock24:true});
- await page.addStyleTag({path:path.resolve('usability.css')});
- await page.addScriptTag({path:path.resolve('page-route.js')});await page.addScriptTag({path:path.resolve('usability.js')});
+ await page.addStyleTag({path:path.resolve('content/usability.css')});
+ await page.addScriptTag({path:path.resolve('content/page-route.js')});await page.addScriptTag({path:path.resolve('content/usability.js')});
  const shown=sel=>page.evaluate(sel=>!!document.querySelector(sel)?.checkVisibility(),sel);
  await page.waitForFunction(()=>document.querySelector('#p3')?.hasAttribute('data-xtrim-u'));
  assert.equal(await shown('#p9 [data-testid="tweetText"]'),true,'placementTracking wraps videos; not an ad');
@@ -113,8 +113,8 @@ const stub=prefs=>{
  // Premium replies on an opened post.
  await page.goto('https://x.com/op/status/100');
  await page.evaluate(stub,{enabled:true,premiumReplies:true,filterMode:'remove'});
- await page.addStyleTag({path:path.resolve('usability.css')});
- await page.addScriptTag({path:path.resolve('page-route.js')});await page.addScriptTag({path:path.resolve('usability.js')});
+ await page.addStyleTag({path:path.resolve('content/usability.css')});
+ await page.addScriptTag({path:path.resolve('content/page-route.js')});await page.addScriptTag({path:path.resolve('content/usability.js')});
  await page.evaluate(()=>deliver({type:'timeline-data',tweets:{100:{blue:true},101:{blue:true},102:{blue:true,following:true},103:{blue:true,verifiedType:'Business'},104:{blue:true},105:{}}}));
  await page.waitForFunction(()=>document.querySelector('#p101').getAttribute('data-xtrim-u')==='remove');
  for(const id of [100,102,103,104,105])assert.equal(await page.locator('#p'+id).getAttribute('data-xtrim-u'),null,'post '+id+' stays');
@@ -123,8 +123,8 @@ const stub=prefs=>{
  await page.route('https://x.com/me/media**',r=>r.fulfill({contentType:'text/html; charset=utf-8',body:'<html><body><div data-testid="primaryColumn"><button data-testid="ownProfilePaymentsButton" aria-label="X Money">$</button><a data-testid="editProfileButton" href="/settings/profile">Edit profile</a><nav aria-label="Profile timelines"><a role="tab" href="/me">Posts</a><a role="tab" id="videos" href="/me/media" aria-selected="true" aria-haspopup="menu"><span>Videos</span></a></nav></div><script>document.getElementById("videos").onclick=e=>{e.preventDefault();const m=document.createElement("div");m.setAttribute("role","menu");m.innerHTML=\'<div data-testid="Dropdown"><div role="menuitem">Videos</div><div role="menuitem" id="photos">Photos</div></div>\';document.body.append(m);document.getElementById("photos").onclick=()=>{history.pushState(null,"","/me/media?filter=photo");m.remove();window.picked=(window.picked||0)+1;};};</script></body></html>'}));
  await page.goto('https://x.com/me/media');
  await page.evaluate(stub,{enabled:true,hidden:['/i/money'],mediaPhotos:true});
- await page.addStyleTag({path:path.resolve('usability.css')});
- await page.addScriptTag({path:path.resolve('page-route.js')});await page.addScriptTag({path:path.resolve('usability.js')});
+ await page.addStyleTag({path:path.resolve('content/usability.css')});
+ await page.addScriptTag({path:path.resolve('content/page-route.js')});await page.addScriptTag({path:path.resolve('content/usability.js')});
  await page.waitForFunction(()=>window.picked===1&&location.search==='?filter=photo');
  assert.equal(await shown('[data-testid="ownProfilePaymentsButton"]'),false,'X Money button hidden');
  assert.equal(await shown('[data-testid="editProfileButton"]'),true);
@@ -141,7 +141,7 @@ const stub=prefs=>{
  let now=Date.parse('2026-10-23T12:00:00');
  class Clock extends Date{constructor(...args){super(...(args.length?args:[now]));}static now(){return now;}}
  const context=vm.createContext({browser:api,Date:Clock,Math,Number,Object,Set,String,JSON,Promise});
- vm.runInContext(fs.readFileSync('usability-background.js','utf8'),context);
+ vm.runInContext(fs.readFileSync('background/usability.js','utf8'),context);
  await new Promise(setImmediate);
  const tweet=(id,user,extra={})=>({__typename:'Tweet',rest_id:id,core:{user_results:{result:user}},legacy:{full_text:'x'},...extra});
  context.rememberTimelineData({data:{entries:[

@@ -8,7 +8,7 @@ async function accountChecks(){
  const store={enabled:true,profileAbout:true,postAbout:false,aboutCache:{},aboutCooldown:0};
  const browser={storage:{local:{get:async defaults=>({...defaults,...store}),set:async value=>{writes.push(value);Object.assign(store,value);}},onChanged:event()},permissions:{contains:async()=>allowed,onAdded:event(),onRemoved:event()},tabs:{onRemoved:event()},webRequest:{onBeforeSendHeaders:event()},runtime:{onMessage:event()}};
  const context=vm.createContext({browser,URL,Map,Set,Date,Promise,setTimeout,clearTimeout,AbortController,fetch:async()=>{fetches++;return {ok:true,status:200,json:async()=>({data:{user_result_by_screen_name:{result:{core:{screen_name:'example'},about_profile:{account_based_in:'Earth',source:'Web'}}}}})};}});
- evaluate('data-consent.js',context);evaluate('about-background.js',context);
+ evaluate('shared/data-consent.js',context);evaluate('background/account-details.js',context);
  const sender={url:'https://x.com/example',tab:{id:4,url:'https://x.com/example',incognito:true}};
  const message={handle:'example',csrf:'a'.repeat(32)};
  assert.equal((await context.lookupAbout(message,sender)).ok,true);
@@ -29,7 +29,7 @@ async function accountChecks(){
 async function downloadChecks(){
  let allowed=false,downloaded=0;const sent=[];let filter,forwarded=[];
  const browser={storage:{local:{get:async defaults=>defaults},onChanged:event()},permissions:{contains:async()=>allowed},webRequest:{onBeforeRequest:event(),filterResponseData:()=>filter={write:bytes=>forwarded.push(bytes),close(){}}},tabs:{onRemoved:event(),sendMessage:async(id,message)=>sent.push(message)},runtime:{onMessage:event()},downloads:{onChanged:event(),download:async()=>{downloaded++;return 9;},search:async()=>[{state:'complete',bytesReceived:100,totalBytes:100}]}};
- const context=vm.createContext({browser,URL,Map,Date,Uint8Array,TextDecoder,Promise});evaluate('data-consent.js',context);evaluate('media-background.js',context);await new Promise(setImmediate);
+ const context=vm.createContext({browser,URL,Map,Date,Uint8Array,TextDecoder,Promise});evaluate('shared/data-consent.js',context);evaluate('background/media-download.js',context);await new Promise(setImmediate);
  const handler=browser.runtime.onMessage.listeners[1],sender={url:'https://x.com/a/status/12',tab:{id:3}};
  const message={type:'media-download',url:'https://video.twimg.com/a.mp4',postId:'12'};
  assert.equal((await handler(message,sender)).ok,false);assert.equal(downloaded,0);
@@ -47,7 +47,7 @@ async function popupChecks(){
  for(const choice of [true,false]){
   let allowed=false,requested=0;const button={},status={};
   const browser={permissions:{contains:async()=>allowed,request:async permission=>{assert.equal(permission.origins[0],'https://video.twimg.com/*');assert.deepEqual(Array.from(permission.data_collection),['websiteContent']);requested++;return allowed=choice;},onAdded:event(),onRemoved:event()}};
-  const context=vm.createContext({browser,document:{getElementById:id=>id==='enable-gif-downloads'?button:status}});evaluate('media-permissions.js',context);await new Promise(setImmediate);assert.equal(button.hidden,false);await button.onclick();assert.equal(requested,1);assert.equal(button.hidden,choice);assert.equal(button.disabled,false);
+  const context=vm.createContext({browser,document:{getElementById:id=>id==='enable-gif-downloads'?button:status}});evaluate('popup/media-permissions.js',context);await new Promise(setImmediate);assert.equal(button.hidden,false);await button.onclick();assert.equal(requested,1);assert.equal(button.hidden,choice);assert.equal(button.disabled,false);
  }
  console.log('PASS optional media consent grant/denial UI');
 }

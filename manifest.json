@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "X Trim",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Customize X\u2019s layout and themes, show optional account details, and save images, MP4 videos, and locally converted GIFs.",
   "permissions": [
     "storage",
@@ -15,7 +15,7 @@
     "https://twitter.com/*"
   ],
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "popup/popup.html",
     "default_title": "X Trim"
   },
   "content_scripts": [
@@ -25,24 +25,24 @@
         "https://twitter.com/*"
       ],
       "js": [
-        "page-route.js",
-        "content.js",
-        "about-profile.js",
-        "theme.js",
-        "media-download.js",
-        "geo-timeline.js",
-        "post-block.js",
-        "theme-extras.js",
-        "usability.js"
+        "content/page-route.js",
+        "content/layout.js",
+        "content/account-details.js",
+        "content/theme.js",
+        "content/media-download.js",
+        "content/geo-timeline.js",
+        "content/post-block.js",
+        "content/theme-extras.js",
+        "content/usability.js"
       ],
       "run_at": "document_start",
       "css": [
-        "about-profile.css",
-        "early-layout.css",
-        "media-download.css",
-        "geo-timeline.css",
-        "post-block.css",
-        "usability.css"
+        "content/account-details.css",
+        "content/layout-early.css",
+        "content/media-download.css",
+        "content/geo-timeline.css",
+        "content/post-block.css",
+        "content/usability.css"
       ]
     }
   ],
@@ -67,12 +67,12 @@
   },
   "background": {
     "scripts": [
-      "data-consent.js",
-      "about-background.js",
-      "gif-background.js",
-      "block-state.js",
-      "usability-background.js",
-      "media-background.js"
+      "shared/data-consent.js",
+      "background/account-details.js",
+      "background/gif-conversion.js",
+      "background/post-block.js",
+      "background/usability.js",
+      "background/media-download.js"
     ]
   },
   "commands": {

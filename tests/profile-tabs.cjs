@@ -6,7 +6,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
  await page.route('https://x.com/**',r=>r.fulfill({contentType:'text/html; charset=utf-8',body:`<html><body>${profile}</body></html>`}));
  await page.goto('https://x.com/me');
  await page.evaluate(()=>{window.browser={storage:{local:{get:async d=>({...d,profileFont:'mono',profileSquareAvatar:true,profileCustomWidth:true,profilePostCount:true})},onChanged:{addListener(){}}},runtime:{onMessage:{addListener(){}}}};});
- await page.addScriptTag({path:path.resolve('page-route.js')});await page.addScriptTag({path:path.resolve('content.js')});
+ await page.addScriptTag({path:path.resolve('content/page-route.js')});await page.addScriptTag({path:path.resolve('content/layout.js')});
  const state=()=>page.evaluate(()=>({profile:document.documentElement.hasAttribute('data-xtrim-profile'),square:document.documentElement.hasAttribute('data-xtrim-square-avatar'),font:getComputedStyle(document.querySelector('[data-testid="UserName"] span')).fontFamily}));
  const go=async route=>{await page.evaluate(r=>{history.pushState(null,'',r);document.body.append(document.createElement('i'));},route);await page.waitForTimeout(60);return state();};
  for(const route of ['/me','/me/all','/me/reposts','/me/with_replies','/me/media','/me/likes','/me/highlights','/me/articles','/me/newtab','/me/reposts/']) {
@@ -28,7 +28,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
  // theme.js styles the sticky profile header on the new tabs as well.
  await page.goto('https://x.com/me/reposts');
  await page.evaluate(()=>{window.browser={storage:{local:{get:async d=>({...d,themeMode:'custom',themeCustom:{background:'#282828',surface:'#3C3836',text:'#EBDBB2',muted:'#A89984',border:'#504945',accent:'#D79921'}})},onChanged:{addListener(){}}}};});
- await page.addScriptTag({path:path.resolve('page-route.js')});await page.addScriptTag({path:path.resolve('theme.js')});
+ await page.addScriptTag({path:path.resolve('content/page-route.js')});await page.addScriptTag({path:path.resolve('content/theme.js')});
  await page.waitForFunction(()=>document.querySelector('[data-xtrim-post-header]'));
  await browser.close();console.log('PASS profile settings and the moved header count on every profile tab, not on other routes');
 })().catch(e=>{console.error(e);process.exit(1);});

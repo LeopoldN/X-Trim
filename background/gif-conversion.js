@@ -9,7 +9,7 @@ async function startGifConversion(url,sourceTabId,token){
   // Register before opening the tab: its script can send ready immediately.
   try{
     const sourceTab=await browser.tabs.get(sourceTabId);
-    const tab=await browser.tabs.create({windowId:sourceTab.windowId,url:browser.runtime.getURL('gif-converter.html')+'?job='+jobId,active:true});
+    const tab=await browser.tabs.create({windowId:sourceTab.windowId,url:browser.runtime.getURL('gif-converter/gif-converter.html')+'?job='+jobId,active:true});
     job.tabId=tab.id;
     job.timer=setTimeout(()=>{gifConversions.delete(jobId);browser.tabs.remove(tab.id).catch(()=>{});reject(new Error('GIF conversion timed out.'));},240000);
     const objectURL=await result;
@@ -22,7 +22,7 @@ browser.runtime.onMessage.addListener((message,sender)=>{
   const job=gifConversions.get(message.token);
   if(!job||!sender.tab)return;
   let page;try{page=new URL(sender.url);}catch{return;}
-  const expected=new URL(browser.runtime.getURL('gif-converter.html'));
+  const expected=new URL(browser.runtime.getURL('gif-converter/gif-converter.html'));
   if(page.origin!==expected.origin||page.pathname!==expected.pathname||page.searchParams.get('job')!==message.token)return;
   if(job.tabId!==undefined&&sender.tab.id!==job.tabId)return;
   job.tabId=sender.tab.id;
