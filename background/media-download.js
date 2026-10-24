@@ -29,8 +29,16 @@ function rememberMedia(root,tabId){
   mediaVariants.set(tabId,cache);
   browser.tabs.sendMessage(tabId,{type:'media-variants',variants:Object.fromEntries(cache)}).catch(()=>{});
 }
-browser.webRequest.onBeforeRequest.addListener(details=>{
-  if((!mediaCaptureEnabled && !(typeof captureAccountHeaders!=='undefined'&&captureAccountHeaders)&&!(typeof blockStateEnabled!=='undefined'&&blockStateEnabled)&&!(typeof timelineDataEnabled!=='undefined'&&timelineDataEnabled))||details.tabId<0)return;
+function responseCaptureEnabled(){
+  return mediaCaptureEnabled||(typeof captureAccountHeaders!=='undefined'&&captureAccountHeaders)||(typeof blockStateEnabled!=='undefined'&&blockStateEnabled)||(typeof timelineDataEnabled!=='undefined'&&timelineDataEnabled);
+}
+// One parsed X API response, from Firefox's response filter or Chrome's page hook.
+function readXResponse(data,tabId,url){
+  if(mediaCaptureEnabled)rememberMedia(data,tabId);if(typeof rememberAccountProfiles==='function')rememberAccountProfiles(data,tabId);if(typeof rememberBlockState==='function')rememberBlockState(data,tabId,url);if(typeof rememberTimelineData==='function')rememberTimelineData(data,tabId);
+}
+// Chrome has no filterResponseData; chrome/page-hook.js reads the same responses there.
+if(browser.webRequest.filterResponseData)browser.webRequest.onBeforeRequest.addListener(details=>{
+  if(!responseCaptureEnabled()||details.tabId<0)return;
   let filter;try{filter=browser.webRequest.filterResponseData(details.requestId);}catch{return;}
   const chunks=[];let length=0,tooLarge=false;
   filter.ondata=event=>{
@@ -40,7 +48,7 @@ browser.webRequest.onBeforeRequest.addListener(details=>{
   };
   filter.onstop=()=>{
     filter.close();if(tooLarge)return;
-    try{const bytes=new Uint8Array(length);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}const data=JSON.parse(new TextDecoder().decode(bytes));if(mediaCaptureEnabled)rememberMedia(data,details.tabId);if(typeof rememberAccountProfiles==='function')rememberAccountProfiles(data,details.tabId);if(typeof rememberBlockState==='function')rememberBlockState(data,details.tabId,details.url);if(typeof rememberTimelineData==='function')rememberTimelineData(data,details.tabId);}catch{}
+    try{const bytes=new Uint8Array(length);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}readXResponse(JSON.parse(new TextDecoder().decode(bytes)),details.tabId,details.url);}catch{}
   };
   filter.onerror=()=>{chunks.length=0;};
 },{urls:['https://x.com/i/api/graphql/*','https://twitter.com/i/api/graphql/*','https://x.com/i/api/1.1/blocks/*.json*','https://twitter.com/i/api/1.1/blocks/*.json*'],types:['xmlhttprequest']},['blocking']);
