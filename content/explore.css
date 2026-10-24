@@ -1,0 +1,6 @@
+/* Explore page sections. explore.js labels the cells and sets the root flags on the Explore tab only. */
+html[data-xtrim-explore-sports] [data-testid="primaryColumn"] [data-testid="cellInnerDiv"][data-xtrim-explore="sports"],
+html[data-xtrim-explore-news] [data-testid="primaryColumn"] [data-testid="cellInnerDiv"][data-xtrim-explore="news"],
+html[data-xtrim-explore-trends] [data-testid="primaryColumn"] [data-testid="cellInnerDiv"][data-xtrim-explore="trends"],
+html[data-xtrim-explore-follow] [data-testid="primaryColumn"] [data-testid="cellInnerDiv"][data-xtrim-explore="follow"],
+html[data-xtrim-explore-posts] [data-testid="primaryColumn"] [data-testid="cellInnerDiv"][data-xtrim-explore="posts"]{display:none!important}
