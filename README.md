@@ -1,6 +1,6 @@
 # X Trim
 
-**v0.6.0** · Firefox / Zen 140+ · Chrome 116+
+**v0.6.1** · Firefox / Zen 140+ · Chrome 116+
 
 Tidy up X: hide promotions, ads, sidebar items and Explore page sections, stay on Following, filter posts by words or Premium replies, change column widths, customize profiles, pick a theme (including X’s retired Dim), change the font, post text size and spacing, add your own CSS, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
@@ -80,6 +80,7 @@ Plain JavaScript and CSS with no build step. Folders follow where the code runs,
 
 ```
 manifest.json      Extension manifest (stays at the root)
+icons/             Firefox toolbar and add-on icon (x-trim.svg)
 content/           Content scripts and styles that run on x.com, in manifest order
 background/        Background page scripts (X response reading, downloads, GIF jobs, counters)
 shared/            data-consent.js, loaded by both the background page and the popup
