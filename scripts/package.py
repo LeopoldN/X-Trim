@@ -8,7 +8,7 @@ from pathlib import Path
 import json,zipfile
 ROOT=Path(__file__).resolve().parents[1]
 DIST=ROOT/'dist'
-RUNTIME=['manifest.json','LICENSE','THIRD_PARTY_NOTICES.txt','PRIVACY.md',
+RUNTIME=['manifest.json','icons/x-trim.svg','LICENSE','THIRD_PARTY_NOTICES.txt','PRIVACY.md',
  'content/page-route.js','content/layout.js','content/layout-early.css','content/account-details.js','content/account-details.css','content/theme.js','content/theme-extras.js','content/media-download.js','content/media-download.css','content/geo-timeline.js','content/geo-timeline.css','content/post-block.js','content/post-block.css','content/usability.js','content/usability.css','content/explore.js','content/explore.css',
  'background/account-details.js','background/gif-conversion.js','background/post-block.js','background/usability.js','background/media-download.js',
  'shared/data-consent.js',
@@ -17,6 +17,8 @@ RUNTIME=['manifest.json','LICENSE','THIRD_PARTY_NOTICES.txt','PRIVACY.md',
  'vendor/gif.js/LICENSE','vendor/gif.js/dist/gif.js','vendor/gif.js/dist/gif.worker.js']
 CHROME_ONLY=['chrome/browser-compat.js','chrome/service-worker.js','chrome/page-hook.js','chrome/page-bridge.js','chrome/page-responses.js',
  'chrome/icons/icon-16.png','chrome/icons/icon-32.png','chrome/icons/icon-48.png','chrome/icons/icon-128.png']
+# Firefox uses an SVG icon; Chrome needs the PNGs in chrome/icons.
+FIREFOX_ONLY=['manifest.json','icons/x-trim.svg']
 COMPAT_SCRIPT='<script src="../chrome/browser-compat.js"></script>'
 # Each Firefox phrase must appear exactly once, so a reworded popup fails the build.
 CHROME_WORDING={
@@ -55,7 +57,7 @@ def chrome_overrides():
   overrides[name]=(text[:first]+COMPAT_SCRIPT+text[first:]).encode()
  return overrides
 for name in ['x-trim.xpi','x-trim.zip']:write_archive(name,RUNTIME)
-write_archive('x-trim-chrome.zip',[name for name in RUNTIME if name!='manifest.json']+CHROME_ONLY,chrome_overrides())
+write_archive('x-trim-chrome.zip',[name for name in RUNTIME if name not in FIREFOX_ONLY]+CHROME_ONLY,chrome_overrides())
 source=RUNTIME+['README.md']
 for directory in ['chrome','scripts','tests','review','vendor']:
  source += [str(p.relative_to(ROOT)) for p in (ROOT/directory).rglob('*') if p.is_file() and '__pycache__' not in str(p) and p.name!='.DS_Store']

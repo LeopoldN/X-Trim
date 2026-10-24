@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "X Trim",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Customize X\u2019s layout and themes, show optional account details, and save images, MP4 videos, and locally converted GIFs.",
   "permissions": [
     "storage",
@@ -14,9 +14,17 @@
     "https://x.com/*",
     "https://twitter.com/*"
   ],
+  "icons": {
+    "48": "icons/x-trim.svg",
+    "96": "icons/x-trim.svg"
+  },
   "action": {
     "default_popup": "popup/popup.html",
-    "default_title": "X Trim"
+    "default_title": "X Trim",
+    "default_icon": {
+      "16": "icons/x-trim.svg",
+      "32": "icons/x-trim.svg"
+    }
   },
   "content_scripts": [
     {

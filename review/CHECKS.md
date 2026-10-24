@@ -1,4 +1,13 @@
-# Submission checks — X Trim 0.6.0
+# Submission checks — X Trim 0.6.1
+
+## Rerun for 0.6.1
+
+Checked October 24, 2026. 0.6.1 = 0.6.0 plus an extension icon for Firefox. These are local pre-update checks, not Mozilla approval.
+
+- 0.6.0 and earlier had no `icons` or `action.default_icon` in `manifest.json`, so Firefox showed its generic puzzle-piece icon in the toolbar and Add-ons Manager. The manifest now points both at the new `icons/x-trim.svg`, the popup's scissors mark on its mint tile, which reads on light and dark toolbars.
+- No other file changed apart from version numbers. No new permissions, requests or host permissions; CSP, `data_collection_permissions` and the extension ID are unchanged. The SVG is left out of the Chrome ZIP, which keeps its PNGs in `chrome/icons`.
+- `python3 scripts/package.py` rebuilt all four archives. Mozilla web-ext **10.8.0** lint of the extracted rebuilt XPI: **0 errors, 0 notices, 1 warning**, the same gif.js `platform.name` false positive as before. All `tests/*.cjs` files pass.
+
 
 ## Rerun for 0.6.0
 
