@@ -1,4 +1,16 @@
-# Submission checks — X Trim 0.5.3
+# Submission checks — X Trim 0.6.0
+
+## Rerun for 0.6.0
+
+Checked October 24, 2026. 0.6.0 = 0.5.3 plus a separate Chrome Web Store build. These are local pre-update checks, not Mozilla approval.
+
+- The Firefox XPI has the same files as 0.5.3. Only `manifest.json` (version), `PRIVACY.md` (version and a Chrome consent sentence) and `background/media-download.js` changed. That file now names its response reader `readXResponse()` and its on/off check `responseCaptureEnabled()`, and registers the Firefox response filter only where `browser.webRequest.filterResponseData` exists, which is always true in Firefox. Same requests, permissions, filters and behavior; CSP, `data_collection_permissions` and the extension ID are unchanged.
+- New `chrome/` folder (manifest, icons, shims) is packaged only into `dist/x-trim-chrome.zip`. `scripts/package.py` fails if `chrome/manifest.json` drifts from `manifest.json` (name, version, description, hosts, commands, CSP, content scripts and background scripts).
+- New `tests/chrome-build.cjs` builds the Chrome ZIP and loads it in Playwright's Chromium against local x.com fixtures: the service worker starts, X's XHR and fetch replies reach the background readers, forged replies from other paths are ignored, promise replies work both ways, data consent reaches the background, and the popup has no Firefox wording.
+- `python3 scripts/package.py` rebuilt `x-trim.xpi`, `x-trim.zip`, `x-trim-chrome.zip` and `x-trim-source.zip`. Mozilla web-ext **10.8.0** lint of the extracted rebuilt XPI: **0 errors, 0 notices, 1 warning**, the same gif.js `platform.name` false positive as before. Output is in `review/lint.json`.
+- All first-party JavaScript passes `node --check`, and all `tests/*.cjs` files pass. The Firefox build has not been run in Firefox in this environment.
+
+The 0.5.3 and earlier notes below still apply.
 
 ## Rerun for 0.5.3
 
