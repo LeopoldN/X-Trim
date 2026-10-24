@@ -1,4 +1,18 @@
-# Submission checks — X Trim 0.5.2
+# Submission checks — X Trim 0.5.3
+
+## Rerun for 0.5.3
+
+Checked October 24, 2026. 0.5.3 = 0.5.2 plus optional custom widths for X's full Chat and Calls pages. These are local pre-update checks, not Mozilla approval.
+
+- Popup › Layout gains a Chat and Calls section: two switches (off by default) with 480–1600 px sliders, stored as `chatCustomWidth`/`chatWidth` and `callsCustomWidth`/`callsWidth` in `storage.local`. Reset widths clears them too.
+- `content/layout.js` sizes `primaryColumn` on `/i/chat`, `/messages` and `/i/calls` (via `xtrimPagePath()`) and leaves X's own nav rail alone there. A Calls width above X's own 1280 px cap adds one style element to the Calls page's open shadow root. Hide right column no longer squeezes these pages, which have no right column, to 600 px. No new files besides the test, no new permissions, requests or host permissions; CSP, `data_collection_permissions` and the extension ID are unchanged.
+- New `tests/chat-calls-width.cjs` checks the default (unchanged), each page's own width, the Calls cap being lifted and restored, popups keeping the width, small windows and other pages.
+- `python3 scripts/package.py` rebuilt `x-trim.xpi`, `x-trim.zip` and `x-trim-source.zip`. Mozilla web-ext **10.8.0** lint of the extracted rebuilt XPI: **0 errors, 0 notices, 1 warning**, the same gif.js `platform.name` false positive as before. Output is in `review/lint.json`.
+- All first-party JavaScript passes `node --check`, and all `tests/*.cjs` files pass. The build has not been run in Firefox in this environment.
+
+The 0.5.2 and earlier notes below still apply.
+
+## Rerun for 0.5.2
 
 ## Rerun for 0.5.2
 

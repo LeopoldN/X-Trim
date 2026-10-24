@@ -131,6 +131,14 @@
 <label class="slider-label" for="rightWidth"><span>Search / right column</span><output id="rightWidth-value" for="rightWidth"></output></label>
 <input type="range" id="rightWidth" min="240" max="600" step="10">
 <p class="hint">The right column hides when the window cannot fit all three. Small windows use X’s normal layout.</p>
+<h3>Chat and Calls</h3>
+<label class="row flush"><span class="row-text"><span>Custom Chat width</span><span class="desc">X’s full Chat page fills the window. This sets its width instead, centered.</span></span><input type="checkbox" id="chatCustomWidth" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<label class="slider-label muted" for="chatWidth"><span>Chat page</span><output id="chatWidth-value" for="chatWidth"></output></label>
+<input type="range" id="chatWidth" min="480" max="1600" step="10">
+<label class="row flush"><span class="row-text"><span>Custom Calls width</span><span class="desc">Same for the Calls page.</span></span><input type="checkbox" id="callsCustomWidth" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
+<label class="slider-label muted" for="callsWidth"><span>Calls page</span><output id="callsWidth-value" for="callsWidth"></output></label>
+<input type="range" id="callsWidth" min="480" max="1600" step="10">
+<p class="hint">Small windows shrink the page to fit.</p>
 <h3>Focus</h3>
 <label class="row"><span class="row-text"><span>Focus mode</span><span class="desc">Hides the side navigation and right column so only the feed is left. Alt+Shift+F toggles it on X; change the keys in Firefox › Add-ons › Manage Extension Shortcuts.</span></span><input type="checkbox" id="focusMode" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>
 <label class="row"><span class="row-text"><span>Writer mode</span><span class="desc">Focus mode plus no timeline on Home, leaving just the composer.</span></span><input type="checkbox" id="writerMode" class="sr-only" role="switch"><span class="switch" aria-hidden="true"></span></label>

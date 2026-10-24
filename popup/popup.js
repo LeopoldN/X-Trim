@@ -1,4 +1,4 @@
-const defaults = { postBlock:true, geoBlocking:false, geoCountries:"", geoAllowed:"", geoMode:"hide", enabled: true, premium: true, hideRightColumn: false, follow: true, trends: false, floatingGrok: false, floatingMessages: false, twitterLogo: false, settingsShortcut: false, moreOptions: [], added: [], mediaDownloads: true, postAbout: false, profileAbout: false, profileCustomWidth: false, profileWidth: 800, profileFont: "default", profilePostCount: false, profileSquareAvatar: false, profileAvatarBorder: false, profileAvatarBorderColor: "#1DA1F2", customWidths: false, navWidth: 272, feedWidth: 600, rightWidth: 350, hidden: [], siteFont: "default", textSize: 100, density: "default", hideDividers: false, followColors: false, plainText: false, customCss: "", hideForYou: false, stayFollowing: false, followingRecent: false, newPosts: "default", hidePromoted: false, hideSponsored: false, hideAdHashtags: false, hideCounts: false, hideActionBar: false, exactCounts: false, timeFormat: "relative", clock24: false, focusMode: false, writerMode: false, keywordFilters: "", hideNoMedia: false, premiumReplies: false, premiumFeeds: false, filterMode: "hide", fastBlock: false, hidePostGrok: false, usageLimit: false, usageMinutes: 60, mediaPhotos: false, exploreSports: false, exploreNews: false, exploreTrends: false, exploreFollow: false, explorePosts: false, themePreset: "", themeMode: "default", themeCustom: {"background": "#000000", "surface": "#16181C", "text": "#E7E9EA", "muted": "#71767B", "border": "#2F3336", "accent": "#1D9BF0", "tabBackground": "#000000", "tabText": "#71767B", "tabActive": "#E7E9EA", "tabIndicator": "#1D9BF0", "icons": "#E7E9EA", "buttonBackground": "#1D9BF0", "buttonText": "#FFFFFF", "buttonAutoContrast": true, "engagementColors": false, "gradient": false, "gradientEnd": "#15202B", "gradientAngle": 135} };
+const defaults = { postBlock:true, geoBlocking:false, geoCountries:"", geoAllowed:"", geoMode:"hide", enabled: true, premium: true, hideRightColumn: false, follow: true, trends: false, floatingGrok: false, floatingMessages: false, twitterLogo: false, settingsShortcut: false, moreOptions: [], added: [], mediaDownloads: true, postAbout: false, profileAbout: false, profileCustomWidth: false, profileWidth: 800, profileFont: "default", profilePostCount: false, profileSquareAvatar: false, profileAvatarBorder: false, profileAvatarBorderColor: "#1DA1F2", chatCustomWidth: false, chatWidth: 1000, callsCustomWidth: false, callsWidth: 900, customWidths: false, navWidth: 272, feedWidth: 600, rightWidth: 350, hidden: [], siteFont: "default", textSize: 100, density: "default", hideDividers: false, followColors: false, plainText: false, customCss: "", hideForYou: false, stayFollowing: false, followingRecent: false, newPosts: "default", hidePromoted: false, hideSponsored: false, hideAdHashtags: false, hideCounts: false, hideActionBar: false, exactCounts: false, timeFormat: "relative", clock24: false, focusMode: false, writerMode: false, keywordFilters: "", hideNoMedia: false, premiumReplies: false, premiumFeeds: false, filterMode: "hide", fastBlock: false, hidePostGrok: false, usageLimit: false, usageMinutes: 60, mediaPhotos: false, exploreSports: false, exploreNews: false, exploreTrends: false, exploreFollow: false, explorePosts: false, themePreset: "", themeMode: "default", themeCustom: {"background": "#000000", "surface": "#16181C", "text": "#E7E9EA", "muted": "#71767B", "border": "#2F3336", "accent": "#1D9BF0", "tabBackground": "#000000", "tabText": "#71767B", "tabActive": "#E7E9EA", "tabIndicator": "#1D9BF0", "icons": "#E7E9EA", "buttonBackground": "#1D9BF0", "buttonText": "#FFFFFF", "buttonAutoContrast": true, "engagementColors": false, "gradient": false, "gradientEnd": "#15202B", "gradientAngle": 135} };
 let settings;
 async function save() {
  try { await browser.storage.local.set(settings); document.getElementById('status').textContent = 'Saved. Changes apply on X immediately.'; }
@@ -63,7 +63,7 @@ function switchRow(label, checked, onchange) {
 async function init() {
  await initTabs();
  settings = await browser.storage.local.get(defaults);
- for (const name of ['enabled','premium','hideRightColumn','follow','trends','floatingGrok','floatingMessages','twitterLogo','settingsShortcut','customWidths','profileCustomWidth','profilePostCount','profileSquareAvatar','profileAvatarBorder','profileAbout','postAbout','mediaDownloads','geoBlocking','postBlock','plainText','hideDividers','followColors',...usabilitySwitches]) {
+ for (const name of ['enabled','premium','hideRightColumn','follow','trends','floatingGrok','floatingMessages','twitterLogo','settingsShortcut','customWidths','chatCustomWidth','callsCustomWidth','profileCustomWidth','profilePostCount','profileSquareAvatar','profileAvatarBorder','profileAbout','postAbout','mediaDownloads','geoBlocking','postBlock','plainText','hideDividers','followColors',...usabilitySwitches]) {
    const input = document.getElementById(name); input.checked = settings[name];
    input.onchange = async () => {
      if(input.checked&&['profileAbout','postAbout','geoBlocking'].includes(name)){
@@ -256,10 +256,16 @@ function renderWidths() {
      save();
    };
  }
+ for (const [name, toggle] of [['chatWidth','chatCustomWidth'],['callsWidth','callsCustomWidth']]) {
+   const slider = document.getElementById(name), output = document.getElementById(name + '-value');
+   slider.value = settings[name]; slider.disabled = !settings[toggle];
+   output.textContent = settings[name] + ' px';
+   slider.oninput = () => { settings[name] = Number(slider.value); output.textContent = settings[name] + ' px'; save(); };
+ }
 }
 document.getElementById('reset-widths').onclick = () => {
- Object.assign(settings, { customWidths: false, navWidth: 272, feedWidth: 600, rightWidth: 350 });
- document.getElementById('customWidths').checked = false;
+ Object.assign(settings, { customWidths: false, navWidth: 272, feedWidth: 600, rightWidth: 350, chatCustomWidth: false, chatWidth: 1000, callsCustomWidth: false, callsWidth: 900 });
+ for (const name of ['customWidths','chatCustomWidth','callsCustomWidth']) document.getElementById(name).checked = false;
  renderWidths(); save();
 };
 function renderMore() {
