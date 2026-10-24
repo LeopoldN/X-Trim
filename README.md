@@ -4,9 +4,13 @@
 
 Tidy up X: hide promotions, ads, sidebar items and Explore page sections, stay on Following, filter posts by words or Premium replies, change column widths, customize profiles, pick a theme (including X’s retired Dim), change the font, post text size and spacing, add your own CSS, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
-## Try it
+## Install
 
-Open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on**, then choose one:
+**Firefox / Zen:** get the stable version from [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/x-trim/). It stays installed and updates on its own.
+
+## Try the experimental build
+
+Want the newest changes before they reach Firefox Add-ons? Open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on**, then choose one:
 
 - **XPI:** select [`x-trim.xpi`](dist/x-trim.xpi). No extraction needed.
 - **ZIP:** select [`x-trim.zip`](dist/x-trim.zip) directly.
@@ -16,7 +20,7 @@ Open or reload [x.com](https://x.com), allow site access if asked, and open the 
 
 **Chrome:** unzip [`x-trim-chrome.zip`](dist/x-trim-chrome.zip), open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and pick the unzipped folder. The same ZIP is what the Chrome Web Store takes.
 
-Temporary installs last until the browser restarts. Load it again next time. These packages are unsigned; normal permanent installation in Firefox requires Mozilla signing. See [Mozilla’s temporary installation guide](https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/).
+Temporary installs last until the browser restarts. Load it again next time. These packages are unsigned; for a permanent install, use [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/x-trim/). See [Mozilla’s temporary installation guide](https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/).
 
 ## Usability
 
