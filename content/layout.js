@@ -1,5 +1,5 @@
 (() => {
-  const defaults = { themeMode:'default', themeCustom:{accent:'#1D9BF0'}, enabled: true, premium: true, hideRightColumn: false, follow: true, trends: false, floatingGrok: false, floatingMessages: false, twitterLogo: false, settingsShortcut: false, moreOptions: [], added: [], postAbout: false, profileAbout: false, profileCustomWidth: false, profileWidth: 800, profileFont: "default", profilePostCount: false, profileSquareAvatar: false, profileAvatarBorder: false, profileAvatarBorderColor: "#1DA1F2", customWidths: false, navWidth: 272, feedWidth: 600, rightWidth: 350, hidden: [] };
+  const defaults = { themeMode:'default', themeCustom:{accent:'#1D9BF0'}, enabled: true, premium: true, hideRightColumn: false, follow: true, trends: false, floatingGrok: false, floatingMessages: false, twitterLogo: false, settingsShortcut: false, moreOptions: [], added: [], postAbout: false, profileAbout: false, profileCustomWidth: false, profileWidth: 800, profileFont: "default", profilePostCount: false, profileSquareAvatar: false, profileAvatarBorder: false, profileAvatarBorderColor: "#1DA1F2", chatCustomWidth: false, chatWidth: 1000, callsCustomWidth: false, callsWidth: 900, customWidths: false, navWidth: 272, feedWidth: 600, rightWidth: 350, hidden: [] };
   let settings = defaults, timer;
   const style = document.createElement('style');
   style.textContent = "[data-xtrim-hidden] { display: none !important; }\nhtml[data-xtrim-twitter] header[role=\"banner\"] h1 a[href=\"/home\"] { position: relative; }\nhtml[data-xtrim-twitter] header[role=\"banner\"] h1 a[href=\"/home\"] svg { visibility: hidden !important; }\nhtml[data-xtrim-twitter] header[role=\"banner\"] h1 a[href=\"/home\"]::before { content: ''; position: absolute; width: 30px; height: 30px; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #1da1f2; mask: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M23.954%204.57a10%2010%200%200%201-2.825.775%204.958%204.958%200%200%200%202.163-2.723%209.99%209.99%200%200%201-3.127%201.195%204.916%204.916%200%200%200-8.384%204.482A13.944%2013.944%200%200%201%201.64%203.162a4.916%204.916%200%200%200%201.523%206.574%204.904%204.904%200%200%201-2.229-.616v.061a4.917%204.917%200%200%200%203.946%204.818%204.936%204.936%200%200%201-2.224.084%204.923%204.923%200%200%200%204.6%203.419A9.868%209.868%200%200%201%200%2019.54a13.94%2013.94%200%200%200%207.548%202.212c9.057%200%2014.01-7.503%2014.01-14.01%200-.213-.005-.425-.014-.637a10.012%2010.012%200%200%200%202.46-2.548z%22%2F%3E%3C%2Fsvg%3E\") center / contain no-repeat; pointer-events: none; }";
@@ -71,7 +71,7 @@
       return;
     }
     if (!original) { if (existing) existing.remove(); return; }
-    const compact = /^\/(?:i\/chat|messages)(?:\/|$)/.test(xtrimPagePath());
+    const compact = isChatRoute();
     const signature = (compact ? 'compact:' : 'full:') + original.className + original.innerHTML;
     if (existing && (existing.previousElementSibling !== original || existing.getAttribute('data-xtrim-source') !== signature)) existing.remove();
     if (!original.nextElementSibling?.hasAttribute('data-xtrim-settings-link')) {
@@ -164,6 +164,8 @@
       nav.append(link);
     }
   }
+  const isChatRoute = () => /^\/(?:i\/chat|messages)(?:\/|$)/.test(xtrimPagePath());
+  const isCallsRoute = () => /^\/i\/calls(?:\/|$)/.test(xtrimPagePath());
   // Every timeline tab under a profile (/name/reposts, /name/media, ...) is still the profile page.
   const profileTabs = ['with_replies','media','likes','highlights','articles','all','reposts','superfollows','affiliates'];
   function isProfileRoute() {
@@ -251,18 +253,36 @@
     }
     if (profileStyle.textContent !== css) profileStyle.textContent = css;
   }
+  // The Calls app caps its own column at 1280px inside its shadow root; a wider Calls width lifts it.
+  let callsCap = null;
+  function syncCallsCap(lift) {
+    const root = document.querySelector('[data-testid="xcallsRemoteHost"]')?.shadowRoot;
+    if (!lift || !root) { callsCap?.remove(); return; }
+    if (!callsCap) {
+      callsCap = document.createElement('style');
+      callsCap.textContent = '.max-w-\\[1280px\\] { max-width: none !important; }';
+    }
+    if (callsCap.parentNode !== root) root.append(callsCap);
+  }
   const widthStyle = document.createElement('style');
   document.documentElement.append(widthStyle);
   function updateWidths() {
     const bounds = (value, fallback, min, max) => Number.isFinite(Number(value)) ? Math.min(max, Math.max(min, Number(value))) : fallback;
     let css = '';
     const profile = isProfilePage();
-    if (settings.enabled && (settings.customWidths || settings.hideRightColumn || (profile && settings.profileCustomWidth))) {
+    // The full Chat and Calls pages have no right column and fill the window; their own width replaces the feed width.
+    const chat = isChatRoute(), calls = !chat && isCallsRoute(), app = chat || calls;
+    const appWidth = chat && settings.chatCustomWidth ? bounds(settings.chatWidth, 1000, 480, 1600)
+      : calls && settings.callsCustomWidth ? bounds(settings.callsWidth, 900, 480, 1600) : 0;
+    syncCallsCap(settings.enabled && calls && appWidth > 0);
+    if (settings.enabled && (settings.customWidths || appWidth || (!app && settings.hideRightColumn) || (profile && settings.profileCustomWidth))) {
       // Choose the native responsive rail before X mounts; never measure our own overrides.
+      // Chat and Calls pick their own rail (icons only on Chat), so it is left alone there.
       const nativeNavWidth = window.matchMedia('(min-width: 1265px)').matches ? 275 : 88;
-      const nav = settings.customWidths ? bounds(settings.navWidth, 272, 72, 360) : nativeNavWidth;
-      const feed = profile && settings.profileCustomWidth ? bounds(settings.profileWidth, 800, 360, 1200) : (settings.customWidths ? bounds(settings.feedWidth, 600, 360, 1200) : 600);
-      const hideRight = settings.hideRightColumn;
+      const sizeNav = settings.customWidths || !app;
+      const nav = settings.customWidths ? bounds(settings.navWidth, 272, 72, 360) : (app ? document.querySelector('header[role="banner"]')?.offsetWidth || 88 : nativeNavWidth);
+      const feed = appWidth || (profile && settings.profileCustomWidth ? bounds(settings.profileWidth, 800, 360, 1200) : (settings.customWidths ? bounds(settings.feedWidth, 600, 360, 1200) : 600));
+      const hideRight = settings.hideRightColumn || app;
       const right = hideRight ? 0 : bounds(settings.rightWidth, 350, 240, 600);
       const gap = hideRight ? 0 : 32;
       const primary = document.querySelector('[data-testid="primaryColumn"]');
@@ -278,11 +298,12 @@
         }
       }
       css = `@media (min-width: 700px) {
-        [data-xtrim-page-row] { justify-content: center !important; width: 100% !important; }
+        [data-xtrim-page-row] { justify-content: center !important; width: 100% !important; }${sizeNav ? `
         header[role="banner"] { width: ${nav}px !important; min-width: ${nav}px !important; flex: 0 0 ${nav}px !important; }
         header[role="banner"] > div, header[role="banner"] > div > div, header[role="banner"] > div > div > div { width: ${nav}px !important; max-width: ${nav}px !important; }
         header[role="banner"] nav { width: 100% !important; max-width: 100% !important; min-width: 0 !important; }
-        header[role="banner"] nav > :is(a,button) { max-width:100% !important; box-sizing:border-box !important; }
+        header[role="banner"] nav > :is(a,button) { max-width:100% !important; box-sizing:border-box !important; }` : ''}
+        [data-testid="primaryColumn"] :is([data-testid="xchatEmbedRoute"],[data-testid="xcallsRemoteHost"]) { min-width: 0 !important; }
         main[role="main"] { width: ${feed + right + gap}px !important; max-width: none !important; flex: 0 0 auto !important; min-width: 0 !important; }
         [data-xtrim-layout-wrapper] { width: 100% !important; max-width: none !important; min-width: 0 !important; }
         [data-xtrim-columns] { gap: ${gap}px !important; justify-content: flex-start !important; }
