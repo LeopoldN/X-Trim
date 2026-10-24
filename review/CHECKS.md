@@ -1,4 +1,17 @@
-# Submission checks — X Trim 0.4.3
+# Submission checks — X Trim 0.4.4
+
+## Rerun for 0.4.4
+
+Checked October 24, 2026. 0.4.4 = 0.4.3 with the files reorganized into folders and no change in behavior. These are local pre-update checks, not Mozilla approval.
+
+- Files moved into `content/` (content scripts and styles), `background/` (background page scripts), `shared/` (`data-consent.js`), `popup/`, `gif-converter/` and `dist/` (built archives). Renamed: `content.js` → `content/layout.js`, `early-layout.css` → `content/layout-early.css`, `about-profile.js`/`.css` → `content/account-details.js`/`.css`, `about-background.js` → `background/account-details.js`, `gif-background.js` → `background/gif-conversion.js`, `block-state.js` → `background/post-block.js`, `usability-background.js` → `background/usability.js`, `media-background.js` → `background/media-download.js`, `media-gif.js` → `gif-converter/mp4-to-gif.js`. Other files kept their names. Entries for older versions below use the file names of their release.
+- Content scripts, content styles and background scripts load in the same order as 0.4.3. Permissions, host permissions, optional permissions, CSP, `data_collection_permissions`, the extension ID and requests are unchanged. `vendor/gif.js` is unchanged and at the same path; both runtime scripts still match the SHA-256 values in `review/vendor-provenance.json`.
+- The rebuilt XPI was compared with the 0.4.3 XPI file by file under the rename map: 31 of 37 files are byte-identical. The only differences are the version in `manifest.json` and `PRIVACY.md`, the manifest paths, the conversion page path in `background/gif-conversion.js`, the script paths in `popup/popup.html` and `gif-converter/gif-converter.html`, and one comment naming a renamed file in `content/usability.js`.
+- `python3 scripts/package.py` now writes `x-trim.xpi`, `x-trim.zip` (identical to the XPI) and `x-trim-source.zip` to `dist/`, still from an explicit file list.
+- Mozilla web-ext **10.8.0** lint of the extracted rebuilt XPI: **0 errors, 0 notices, 1 warning**, the same gif.js `platform.name` false positive as before. Output is in `review/lint.json`.
+- All first-party JavaScript passes `node --check` with Node.js 22, and all `tests/*.cjs` files pass with their paths updated. The popup and GIF conversion pages were opened from the extracted XPI and loaded every script and stylesheet. The build has not been run in Firefox in this environment.
+
+The 0.4.3 and earlier notes below still apply.
 
 ## Rerun for 0.4.3
 

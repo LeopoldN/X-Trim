@@ -6,7 +6,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
  await page.evaluate(()=>{window.browser={storage:{local:{get:async d=>({...d,themeMode:'custom',themeCustom:{background:'#282828',surface:'#3C3836',text:'#EBDBB2',muted:'#A89984',border:'#504945',accent:'#D79921'}})},onChanged:{addListener:f=>window.changed=f}}};
   // Count style reads to prove which passes rescan the page.
   const read=window.getComputedStyle;window.reads=0;window.getComputedStyle=function(){window.reads++;return read.apply(this,arguments);};});
- await page.addScriptTag({path:path.resolve('page-route.js')});await page.addScriptTag({path:path.resolve('theme.js')});
+ await page.addScriptTag({path:path.resolve('content/page-route.js')});await page.addScriptTag({path:path.resolve('content/theme.js')});
  await page.waitForFunction(()=>document.getElementById('old').getAttribute('data-xtrim-theme-text')==='text');
  const frames=()=>page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
  // A transform-only change, as when the photo viewer slides, triggers no pass at all.

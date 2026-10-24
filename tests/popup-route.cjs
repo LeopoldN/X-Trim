@@ -5,7 +5,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
  await page.route('https://x.com/**',r=>r.fulfill({contentType:'text/html; charset=utf-8',body:`<html><body>${profile}</body></html>`}));
  await page.goto('https://x.com/me');
  await page.evaluate(()=>{window.browser={storage:{local:{get:async d=>({...d,profileSquareAvatar:true,profileCustomWidth:true,profileWidth:900})},onChanged:{addListener(){}}},runtime:{onMessage:{addListener(){}}}};});
- await page.addScriptTag({path:path.resolve('page-route.js')});await page.addScriptTag({path:path.resolve('content.js')});
+ await page.addScriptTag({path:path.resolve('content/page-route.js')});await page.addScriptTag({path:path.resolve('content/layout.js')});
  const state=()=>page.evaluate(()=>({page:xtrimPagePath(),profile:document.documentElement.hasAttribute('data-xtrim-profile'),square:document.documentElement.hasAttribute('data-xtrim-square-avatar'),width:document.querySelector('[data-testid="primaryColumn"]').getBoundingClientRect().width}));
  const step=async fn=>{await page.evaluate(fn);await page.waitForTimeout(60);return state();};
  const open=(route,id)=>step(`history.pushState(null,'','${route}');const d=document.createElement('div');d.id='${id}';d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');document.getElementById('layers').append(d);`);
@@ -36,7 +36,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),path
  assert.equal((await step(()=>history.pushState(null,'','/me/status/1/photo/2'))).page,'/me/status/1');
  // A first load straight onto the composer sits over Home.
  await page.goto('https://x.com/compose/post');
- await page.addScriptTag({path:path.resolve('page-route.js')});
+ await page.addScriptTag({path:path.resolve('content/page-route.js')});
  assert.equal(await page.evaluate(()=>xtrimPagePath()),'/home');
  await browser.close();console.log('PASS popups on their own URL keep the page underneath, including unknown and late-mounting ones; drawers never pin it');
 })().catch(e=>{console.error(e);process.exit(1);});

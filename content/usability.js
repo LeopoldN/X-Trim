@@ -11,7 +11,7 @@
   const root=document.documentElement;
   const on=name=>loaded&&settings.enabled!==false&&!!settings[name];
 
-  // Facts about posts from X's own responses, keyed by post ID (see usability-background.js).
+  // Facts about posts from X's own responses, keyed by post ID (see background/usability.js).
   const facts=new Map();
   const revealed=new Set();
   const byId=new Map();

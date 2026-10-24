@@ -14,7 +14,7 @@ origin='http://127.0.0.1:'+str(server.server_port)
 with tempfile.TemporaryDirectory(prefix='xtrim-zen-extension-') as base:
  base=Path(base);profile=base/'profile';profile.mkdir();ext=base/'extension';ext.mkdir();
  import zipfile
- with zipfile.ZipFile('x-trim.xpi') as archive:archive.extractall(ext)
+ with zipfile.ZipFile('dist/x-trim.xpi') as archive:archive.extractall(ext)
  m=json.loads((ext/'manifest.json').read_text())
  # Test-only grants/local fixture endpoint; shipped runtime scripts remain unchanged.
  m['host_permissions']+=['http://127.0.0.1/*','https://video.twimg.com/*']
