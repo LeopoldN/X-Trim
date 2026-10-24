@@ -1,6 +1,6 @@
 # X Trim
 
-**v0.5.3** · Firefox / Zen 140+
+**v0.6.0** · Firefox / Zen 140+ · Chrome 116+
 
 Tidy up X: hide promotions, ads, sidebar items and Explore page sections, stay on Following, filter posts by words or Premium replies, change column widths, customize profiles, pick a theme (including X’s retired Dim), change the font, post text size and spacing, add your own CSS, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
@@ -13,6 +13,8 @@ Open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on**, t
 - **Source:** download and extract the repo, or clone it, then select `manifest.json` inside the project folder.
 
 Open or reload [x.com](https://x.com), allow site access if asked, and open the extension’s toolbar popup. To add links from X’s More menu, open that menu first, then click **Refresh** under **Add from More** on the popup’s Sidebar tab.
+
+**Chrome:** unzip [`x-trim-chrome.zip`](dist/x-trim-chrome.zip), open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and pick the unzipped folder. The same ZIP is what the Chrome Web Store takes.
 
 Temporary installs last until the browser restarts. Load it again next time. These packages are unsigned; normal permanent installation in Firefox requires Mozilla signing. See [Mozilla’s temporary installation guide](https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/).
 
@@ -80,7 +82,8 @@ shared/            data-consent.js, loaded by both the background page and the p
 popup/             Toolbar popup page, theme presets and the media permission button
 gif-converter/     Temporary extension tab that converts GIF MP4s locally
 vendor/gif.js/     Unmodified gif.js 0.2.0 npm release (runtime uses dist/ and LICENSE only)
-dist/              Built x-trim.xpi, x-trim.zip and x-trim-source.zip
+chrome/            Chrome-only manifest, icons and shims (not in the Firefox packages)
+dist/              Built x-trim.xpi, x-trim.zip (Firefox), x-trim-chrome.zip (Chrome) and x-trim-source.zip
 tests/             Node and Playwright checks (run each with `node tests/<name>.cjs`)
 scripts/           package.py, which rebuilds everything in dist/
 review/            AMO listing, reviewer notes, check results and lint output
@@ -89,6 +92,17 @@ review/            AMO listing, reviewer notes, check results and lint output
 ## Building and review
 
 Submission materials: [privacy policy](PRIVACY.md), [proposed AMO listing](review/AMO-LISTING.md), [reviewer notes](review/REVIEWER-NOTES.md), and [check results](review/CHECKS.md). Rebuild unsigned packages with `python3 scripts/package.py`.
+
+### Chrome build
+
+`manifest.json` is the Firefox manifest. `chrome/manifest.json` is the Chrome one, and `scripts/package.py` puts it in `dist/x-trim-chrome.zip` as `manifest.json` (the build fails if the two manifests drift apart). Chrome differs in four ways:
+
+- **X's API replies:** Chrome extensions can't read responses like Firefox's `filterResponseData`, so `chrome/page-hook.js` watches X's own XHR/fetch replies in the page and `chrome/page-bridge.js` passes them to the same background readers. It changes and stores nothing.
+- **Background:** `chrome/service-worker.js` loads the same background scripts in one service worker. Chrome stops it when idle, so in-memory caches can reset.
+- **API names:** `chrome/browser-compat.js` maps the `browser.*` calls onto `chrome.*`, including promise replies to messages.
+- **Data consent:** Chrome has no built-in data-collection consent, so the popup's enable buttons and switches record it in X Trim's own storage. Turning a feature off stops its requests.
+
+The Chrome ZIP also swaps the popup's few Firefox-specific sentences for Chrome ones.
 
 ## License & credits
 

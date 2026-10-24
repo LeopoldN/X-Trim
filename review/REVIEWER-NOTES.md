@@ -1,10 +1,10 @@
-# X Trim 0.5.3 — reviewer notes
+# X Trim 0.6.0 — reviewer notes
 
 ## Code and packaging
 
 All executable code is packaged in the XPI. No runtime code downloads, eval, CSP-header modification, native messaging, external conversion services, or analytics. First-party code is readable JavaScript with no compilation. Rebuild with Python 3: `python3 scripts/package.py`. This uses an explicit runtime file list, fixed archive timestamps and sorted members. Archives are written to `dist/`. The source ZIP includes original vendor source and source maps, tests, notices, and packaging script. It excludes tool installations and browser downloads.
 
-Source layout: `content/` holds the content scripts and styles for x.com (loaded in manifest order), `background/` the background page scripts, `shared/data-consent.js` the consent checks used by both the background page and the popup, `popup/` the toolbar popup, `gif-converter/` the local GIF conversion tab, and `vendor/gif.js/` the unmodified gif.js release.
+Source layout: `content/` holds the content scripts and styles for x.com (loaded in manifest order), `background/` the background page scripts, `shared/data-consent.js` the consent checks used by both the background page and the popup, `popup/` the toolbar popup, `gif-converter/` the local GIF conversion tab, and `vendor/gif.js/` the unmodified gif.js release. `chrome/` holds the separate Chrome Web Store build's manifest, icons and shims; none of it is in the Firefox XPI.
 
 The optional Theme → Custom CSS box (empty by default) puts only CSS the user typed into a `<style>` element on X pages. `@import` rules are removed so it cannot load remote stylesheets, and it never runs script.
 
