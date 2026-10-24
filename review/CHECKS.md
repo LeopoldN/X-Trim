@@ -1,4 +1,16 @@
-# Submission checks — X Trim 0.4.4
+# Submission checks — X Trim 0.5.0
+
+## Rerun for 0.5.0
+
+Checked October 24, 2026. 0.5.0 = 0.4.4 plus Explore page options on the popup's Trim tab: hide the Sports scores and league row, Today's News, trends and topics, Who to follow, or Posts for you on the main Explore tab. All five are off by default. These are local pre-update checks, not Mozilla approval.
+
+- New content script `content/explore.js` and style `content/explore.css`, appended to the existing content script lists. The script labels each Explore timeline cell with its section from X's test IDs and structure (never its text), and the style hides labelled cells behind root flags set only on the Explore tab. It sends no requests and reads no responses. Permissions, host permissions, optional permissions, CSP, `data_collection_permissions` and the extension ID are unchanged.
+- New `tests/explore.cjs` checks every section on a fixture that follows the live Explore page, including spacers, cells X drops while scrolling, a popup over Explore, the master switch and the other Explore tabs. `python3 scripts/package.py` rebuilt `x-trim.xpi`, `x-trim.zip` and `x-trim-source.zip`.
+- Mozilla web-ext **10.8.0** lint of the extracted rebuilt XPI: **0 errors, 0 notices, 1 warning**, the same gif.js `platform.name` false positive as before. Output is in `review/lint.json`.
+- All first-party JavaScript passes `node --check` with Node.js 22, and all `tests/*.cjs` files pass. The build has not been run in Firefox in this environment.
+
+The 0.4.4 and earlier notes below still apply.
+
 
 ## Rerun for 0.4.4
 

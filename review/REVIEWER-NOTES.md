@@ -1,4 +1,4 @@
-# X Trim 0.4.4 — reviewer notes
+# X Trim 0.5.0 — reviewer notes
 
 ## Code and packaging
 
@@ -37,5 +37,6 @@ Install the unsigned XPI temporarily through about:debugging, or load manifest.j
 8. With Posts → Block button enabled (default), click the button beside Grok on a post. X's own Block confirmation for that author opens; cancelling it leaves the account unblocked. The extension never confirms the dialog itself. Already-blocked authors show a red button.
 
 9. Usability (all off by default; Trim, Feed, Layout, Posts, Profile and Filters tabs). `content/usability.js` changes only what each switch names. Keep Following sorted by Recent wraps X's page `XMLHttpRequest.open`/`send` through Firefox's `exportFunction` and, only for X's own `HomeLatestTimeline` request, sets the `enableRanking` variable to false; it adds no request and changes nothing else. Fast block (Posts) clicks X's own `confirmationSheetConfirm` button only within 3 seconds after the user chooses a Block menu item. The daily limit counts visible, focused X time in the background page and stores only today's total (`usageToday`). The `commands` entry is the rebindable Alt+Shift+F focus-mode shortcut.
+10. Explore page (all off by default; Trim tab). Open x.com/explore and switch on any of the five Explore tiles: that section of the Explore tab disappears, and the Trending, News, Sports and Entertainment tabs stay unchanged. `content/explore.js` only sets `data-xtrim-explore` labels on X's timeline cells and root flags; `content/explore.css` hides labelled cells. No requests.
 
 Automated fixture tests use local/synthetic responses and isolated browser profiles. They do not validate a live signed-in X account. Real X API availability/rate limits remain external dependencies. The checked results and any linter warnings are recorded in review/CHECKS.md.

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "X Trim",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "description": "Customize X\u2019s layout and themes, show optional account details, and save images, MP4 videos, and locally converted GIFs.",
   "permissions": [
     "storage",
@@ -33,7 +33,8 @@
         "content/geo-timeline.js",
         "content/post-block.js",
         "content/theme-extras.js",
-        "content/usability.js"
+        "content/usability.js",
+        "content/explore.js"
       ],
       "run_at": "document_start",
       "css": [
@@ -42,7 +43,8 @@
         "content/media-download.css",
         "content/geo-timeline.css",
         "content/post-block.css",
-        "content/usability.css"
+        "content/usability.css",
+        "content/explore.css"
       ]
     }
   ],
