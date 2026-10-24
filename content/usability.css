@@ -15,6 +15,10 @@ html[data-xtrim-hide-counts] [aria-modal="true"] [role="group"] > div:has(> a[hr
 html[data-xtrim-hide-counts] [data-xtrim-views]{display:none!important}
 html[data-xtrim-hide-actions] article[data-testid="tweet"] [role="group"]:has([data-testid="reply"]){display:none!important}
 
+/* Grok button beside a post's More menu. Its wrapper goes too, so the control group's gap closes. */
+html[data-xtrim-hide-post-grok] article[data-testid="tweet"] :is(button,[role="button"])[aria-label*="Grok"],
+html[data-xtrim-hide-post-grok] article[data-testid="tweet"] div:has(> :is(button,[role="button"])[aria-label*="Grok"]):not(:has([data-testid="caret"])){display:none!important}
+
 /* Focus and writer modes. */
 html[data-xtrim-focus] header[role="banner"],
 html[data-xtrim-focus] [data-testid="sidebarColumn"],

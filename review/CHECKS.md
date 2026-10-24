@@ -1,4 +1,15 @@
-# Submission checks — X Trim 0.5.0
+# Submission checks — X Trim 0.5.1
+
+## Rerun for 0.5.1
+
+Checked October 24, 2026. 0.5.1 = 0.5.0 plus one option on the popup's Posts tab: hide the Grok button beside each post's More menu. It is off by default. These are local pre-update checks, not Mozilla approval.
+
+- `content/usability.js` sets one more root flag from the new `hidePostGrok` preference, and `content/usability.css` hides the post's "Grok actions" button and its wrapper behind that flag. No new files in the package, no new requests. `content/post-block.js` sizes its Block button from the More button when the Grok button is hidden. Permissions, host permissions, optional permissions, CSP, `data_collection_permissions` and the extension ID are unchanged.
+- New `tests/post-grok.cjs` checks the hiding, the Block button's size and spacing beside More, and that turning the option or X Trim off restores Grok, on a fixture that follows the live post header. `python3 scripts/package.py` rebuilt `x-trim.xpi`, `x-trim.zip` and `x-trim-source.zip`.
+- Mozilla web-ext **10.8.0** lint of the extracted rebuilt XPI: **0 errors, 0 notices, 1 warning**, the same gif.js `platform.name` false positive as before. Output is in `review/lint.json`.
+- All first-party JavaScript passes `node --check` with Node.js 22, and all `tests/*.cjs` files pass. The build has not been run in Firefox in this environment.
+
+The 0.5.0 and earlier notes below still apply.
 
 ## Rerun for 0.5.0
 

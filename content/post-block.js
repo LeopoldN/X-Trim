@@ -47,8 +47,9 @@
         button.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();start(article,button).catch(()=>notify('Could not open Block. Use the post’s More menu.'));});
       }
       // Measuring forces a layout, so do it once per button rather than on every scan.
+      // A hidden Grok button (Posts › Hide the Grok button) has no box, so use the caret's.
       if(!button.style.getPropertyValue('--xtrim-block-size')) {
-        const size=grok.getBoundingClientRect().height;
+        const size=grok.getBoundingClientRect().height||article.querySelector('[data-testid="caret"]')?.getBoundingClientRect().height;
         if(size>0)button.style.setProperty('--xtrim-block-size',Math.min(size,34)+'px');
       }
       const blocked=blockedAccounts.get(handle.toLowerCase())===true;

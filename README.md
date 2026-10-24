@@ -1,6 +1,6 @@
 # X Trim
 
-**v0.5.0** · Firefox / Zen 140+
+**v0.5.1** · Firefox / Zen 140+
 
 Tidy up X: hide promotions, ads, sidebar items and Explore page sections, stay on Following, filter posts by words or Premium replies, change column widths, customize profiles, pick a theme (including X’s retired Dim), change the font, post text size and spacing, add your own CSS, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
@@ -24,6 +24,7 @@ Everything here is off until you switch it on.
 - **Trim › Explore page:** hide the Sports scores (and the league row under them), Today’s News, trends and topics, Who to follow, or Posts for you on the main Explore tab. The Trending, News, Sports and Entertainment tabs stay as X shows them. Sections are recognized by X’s structure, not their words, so this works in any language.
 - **Feed:** hide the For you tab, open Home on Following, keep Following sorted by Recent, auto-load or hide X’s *Show N posts* bar, show exact counts (1,234 instead of 1.2K), show dates and times instead of “2h”, use a 24-hour clock, and set a daily time limit. Auto-load only clicks the bar while you are at the top of Home. The limit counts time with an X tab in front and covers X with a reminder, with a *5 more minutes* button.
 - **Layout › Focus:** focus mode hides the side navigation and right column; writer mode also hides the Home timeline, leaving the composer. **Alt+Shift+F** toggles focus mode (change it in Firefox › Add-ons › Manage Extension Shortcuts).
+- **Posts › Hide the Grok button:** removes the Grok icon beside each post’s More (⋯) menu on timelines and opened posts. The Block button then sits beside More.
 - **Posts › Fast block:** skips X’s Block confirmation after you choose Block.
 - **Profile › Media tab:** opens a profile’s Media tab on Photos instead of Videos, by picking Photos from X’s own tab menu.
 - **Filters:** collapse, highlight or fully hide posts matching words or `/regular expressions/`, Home posts without a photo, video or GIF, and replies (and optionally feed posts) from paid blue-check accounts. The opened post, its author, accounts you follow and business or government checks are never filtered as Premium.
@@ -44,7 +45,7 @@ Near-visible authors are looked up sequentially, using the same 24-hour local ca
 
 ## Block button
 
-The Block button to the left of Grok (on by default) opens X’s native Block confirmation for the post author. X handles the block after you confirm. Toggle the shortcut under Posts. No additional credential handling or API requests are performed by this shortcut.
+The Block button to the left of Grok (or of More when Grok is hidden; on by default) opens X’s native Block confirmation for the post author. X handles the block after you confirm. Toggle the shortcut under Posts. No additional credential handling or API requests are performed by this shortcut.
 
 ## Sidebar navigation
 
