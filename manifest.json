@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "X Trim",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Customize X\u2019s layout and themes, show optional account details, and save images, MP4 videos, and locally converted GIFs.",
   "permissions": [
     "storage",

@@ -6,14 +6,20 @@
   let preferences={enabled:true,themeMode:'default',themeCustom:preset.dark},active=false;
   const sheet=document.createElement('style');document.documentElement.append(sheet);
   const metaOriginals=new Map();
-  // X's chat drawer renders inside an open shadow root that redeclares its own --x-* palette,
-  // so page-level rules cannot reach it; a style element inside each root carries the theme.
-  const shadowHosts='[data-testid="xchatEmbedDrawer"],[data-testid="xchatEmbedOverlays"]';
+  // X's embedded apps (chat drawer, Chat and Calls pages, their popover portals) render inside open
+  // shadow roots whose [data-theme] element redeclares the --x-* palette, so page-level rules cannot
+  // reach them; a style element inside each root carries the theme. Hosts X names xchat*/xcalls* are
+  // always themed; other body-level roots only once they hold X's [data-theme] wrapper.
+  const appHosts='[data-testid^="xchat"],[data-testid^="xcalls"]';
   const shadowSheets=new WeakMap();
+  function shadowRoots() {
+    const roots=new Set();
+    document.querySelectorAll(appHosts).forEach(host=>{if(host.shadowRoot)roots.add(host.shadowRoot);});
+    for(const host of document.body?.children||[])if(host.shadowRoot?.querySelector('[data-theme]'))roots.add(host.shadowRoot);
+    return roots;
+  }
   function syncShadows(css) {
-    document.querySelectorAll(shadowHosts).forEach(host=>{
-      const root=host.shadowRoot;
-      if(!root)return;
+    shadowRoots().forEach(root=>{
       let style=shadowSheets.get(root);
       if(!style){if(!css)return;style=document.createElement('style');shadowSheets.set(root,style);}
       if(style.parentNode!==root)root.append(style);
@@ -215,20 +221,22 @@
       css+=`${engagement},${engagement} *{color:${icons} !important;}${engagement} svg{fill:currentColor !important;}${selected},${selected} *,${engagement}:hover,${engagement}:hover *,${engagement}:focus-visible,${engagement}:focus-visible *{color:${palette.accent} !important;}${engagement}:is(:hover,:focus-visible) svg{background-color:color-mix(in srgb, ${palette.accent} 12%, transparent) !important;border-radius:50%;}`;
     }
     const floatingSelector=['GrokDrawerHeader','chat-drawer-main'].map(id=>`html[data-xtrim-theme] [data-testid="${id}"]`);
-    const grok='html[data-xtrim-theme] :is([data-testid="GrokDrawer"],[data-xtrim-grok-page],[data-testid="chat-drawer-root"],[data-testid="xchatEmbedDrawer"],[data-testid="xchatEmbedOverlays"])';
+    const grok=`html[data-xtrim-theme] :is([data-testid="GrokDrawer"],[data-xtrim-grok-page],[data-testid="chat-drawer-root"],${appHosts})`;
     const grokHover=`color-mix(in srgb, ${palette.text} 8%, ${palette.background})`;
     const grokVars={
       '--x-fg-primary':palette.text,'--x-fg-secondary':palette.muted,'--x-fg-tertiary':palette.muted,
       '--x-fg-brand':palette.accent,'--x-fg-inverted':palette.background,
       '--x-bg-primary':palette.background,'--x-bg-secondary':palette.surface,'--x-bg-tertiary':palette.surface,
       '--x-bg-inputs':palette.surface,'--x-bg-modal':palette.surface,
-      '--x-border-normal':palette.border,'--x-border-elevated':palette.border,'--x-border-active':palette.accent,
-      '--x-btn-ghost-hover':grokHover,'--x-btn-ghost-pressed':palette.surface,
-      '--x-btn-primary':buttonBackground,'--x-btn-secondary':palette.surface
+      '--x-border-normal':palette.border,'--x-border-elevated':palette.border,'--x-border-active':palette.accent,'--x-border-divider':palette.border,
+      '--x-hover-subtle':grokHover,'--x-btn-ghost-hover':grokHover,'--x-btn-ghost-pressed':palette.surface,
+      '--x-btn-primary':buttonBackground,'--x-btn-secondary':palette.surface,
+      '--x-btn-secondary-hover':`color-mix(in srgb, ${palette.text} 8%, ${palette.surface})`,'--x-btn-secondary-pressed':`color-mix(in srgb, ${palette.text} 14%, ${palette.surface})`
     };
     css+=`${grok},${grok} *{${Object.entries(grokVars).map(([key,value])=>`${key}:${value} !important;`).join('')}}`;
     const shadowVars=Object.entries(grokVars).map(([key,value])=>`${key}:${value} !important;`).join('');
-    const shadowCss=`:host,*{${shadowVars}color-scheme:${luminance>.5?'light':'dark'} !important;}.text-primary{color:${palette.text} !important;}.text-secondary,.text-muted-foreground{color:${palette.muted} !important;}[contenteditable="true"]{color:${palette.text} !important;caret-color:${palette.accent} !important;}svg{color:${icons} !important;}.bg-primary.rounded-2xl{border-color:${palette.border} !important;}`;
+    // Set the palette where X declares it, so components that locally remap a token (secondary buttons) keep working.
+    const shadowCss=`:host,[data-theme],.dark-theme,.light-theme{${shadowVars}color-scheme:${luminance>.5?'light':'dark'} !important;}.text-primary{color:${palette.text} !important;}.text-secondary,.text-muted-foreground{color:${palette.muted} !important;}[contenteditable="true"]{color:${palette.text} !important;caret-color:${palette.accent} !important;}svg{color:${icons} !important;}.bg-primary.rounded-2xl{border-color:${palette.border} !important;}`;
     css+=`${grok}{background:${palette.background} !important;color:${palette.text} !important;border-color:${palette.border} !important;}${grok} .text-primary{color:${palette.text} !important;}${grok} .text-secondary,${grok} .text-muted-foreground{color:${palette.muted} !important;}${grok} [contenteditable="true"]{color:${palette.text} !important;caret-color:${palette.accent} !important;}${grok} [data-testid="GrokDrawerHeader"]{background:${customColor('tabBackground',palette.background)} !important;}${grok} [data-testid="GrokDrawerHeader"] div{background-color:transparent !important;}${grok} [data-testid="GrokDrawerHeader"] button:hover{background-color:${grokHover} !important;}${grok} svg{color:${icons} !important;}`;
     // Floating controls use translucent/glass fills which the opaque neutral-color mapper skips.
     css+=`${floatingSelector.join(',')}{background:${palette.surface} !important;border-color:${palette.border} !important;color:${icons} !important;box-shadow:0 2px 12px rgba(0,0,0,.18) !important;backdrop-filter:none !important;}${floatingSelector.map(selector=>selector+' svg').join(',')}{color:${icons} !important;fill:currentColor !important;}${floatingSelector.map(selector=>selector+' svg path:not([fill="none"])').join(',')}{color:${icons} !important;fill:currentColor !important;}`;
