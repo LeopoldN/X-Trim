@@ -12,7 +12,7 @@ Remote features require optional Firefox consent. Open X Trim → Posts → Enab
 
 A Block button beside Grok on posts is on by default. It opens X's own Block confirmation for the post's author; X performs the block after you confirm. It sends no extra requests. Turn it off under Posts.
 
-Usability options, all off by default: hide the For you tab or open Home on Following and keep it sorted by Recent; hide promoted posts, Paid partnership posts and #ad posts; hide reply, like and view counts or the whole action bar; show exact counts and absolute or 24-hour times; filter posts by words, regular expressions, missing media or Premium replies; focus and writer modes with an Alt+Shift+F shortcut; auto-load or hide X’s Show posts bar; fast block; a daily time limit; and open a profile’s Media tab on Photos. These work locally and send nothing.
+Usability options, all off by default: hide the For you tab or open Home on Following and keep it sorted by Recent; hide promoted posts, Paid partnership posts and #ad posts; hide reply, like and view counts, the whole action bar or the Grok button on posts; show exact counts and absolute or 24-hour times; filter posts by words, regular expressions, missing media or Premium replies; focus and writer modes with an Alt+Shift+F shortcut; auto-load or hide X’s Show posts bar; fast block; a daily time limit; and open a profile’s Media tab on Photos. These work locally and send nothing.
 
 Local layout, theme, usability and Block shortcut features work without remote-feature consent.
 

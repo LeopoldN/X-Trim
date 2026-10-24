@@ -1,11 +1,11 @@
 (() => {
   // Feed and post usability: Following tab, ads and sponsored posts, counts, exact numbers
   // and times, keyword / Premium filters, focus mode, new-post loading, fast block, the
-  // daily limit and the profile Media tab. Static hiding is CSS behind root attributes
+  // Grok button on posts, the daily limit and the profile Media tab. Static hiding is CSS behind root attributes
   // (usability.css); posts are handled one at a time as X adds or changes them.
   // Several ideas follow Control Panel for Twitter by Jonny Buchanan (MIT, see
   // THIRD_PARTY_NOTICES.txt); the code here is X Trim's own.
-  const defaults={enabled:true,hidden:[],hideForYou:false,stayFollowing:false,followingRecent:false,newPosts:'default',hidePromoted:false,hideSponsored:false,hideAdHashtags:false,hideCounts:false,hideActionBar:false,exactCounts:false,timeFormat:'relative',clock24:false,focusMode:false,writerMode:false,keywordFilters:'',hideNoMedia:false,premiumReplies:false,premiumFeeds:false,filterMode:'hide',fastBlock:false,usageLimit:false,usageMinutes:60,mediaPhotos:false};
+  const defaults={enabled:true,hidden:[],hideForYou:false,stayFollowing:false,followingRecent:false,newPosts:'default',hidePromoted:false,hideSponsored:false,hideAdHashtags:false,hideCounts:false,hideActionBar:false,exactCounts:false,timeFormat:'relative',clock24:false,focusMode:false,writerMode:false,keywordFilters:'',hideNoMedia:false,premiumReplies:false,premiumFeeds:false,filterMode:'hide',fastBlock:false,hidePostGrok:false,usageLimit:false,usageMinutes:60,mediaPhotos:false};
   const keys=Object.keys(defaults);
   let settings={...defaults},loaded=false;
   const root=document.documentElement;
@@ -319,7 +319,7 @@
   }
   function applyRoot() {
     const active=loaded&&settings.enabled!==false;
-    const flags={'hide-foryou':active&&settings.hideForYou,'hide-ads':active&&settings.hidePromoted,'hide-counts':active&&settings.hideCounts,'hide-actions':active&&settings.hideActionBar,'focus':active&&(settings.focusMode||settings.writerMode),'writer':active&&settings.writerMode,'hide-new-posts':active&&settings.newPosts==='hide',
+    const flags={'hide-foryou':active&&settings.hideForYou,'hide-ads':active&&settings.hidePromoted,'hide-counts':active&&settings.hideCounts,'hide-actions':active&&settings.hideActionBar,'hide-post-grok':active&&settings.hidePostGrok,'focus':active&&(settings.focusMode||settings.writerMode),'writer':active&&settings.writerMode,'hide-new-posts':active&&settings.newPosts==='hide',
       // The X Money button on your own profile follows the Sidebar › Money switch.
       'hide-money':active&&Array.isArray(settings.hidden)&&settings.hidden.includes('/i/money')};
     for(const [name,value] of Object.entries(flags))root.toggleAttribute('data-xtrim-'+name,!!value);
