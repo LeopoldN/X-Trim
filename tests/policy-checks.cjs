@@ -4,16 +4,25 @@ const root=require('node:path').resolve(__dirname,'..');
 function evaluate(file,context){vm.runInContext(fs.readFileSync(root+'/'+file,'utf8'),context,{filename:file});}
 function event(){return {listeners:[],addListener(fn){this.listeners.push(fn);}};}
 async function accountChecks(){
- let allowed=true,fetches=0;const writes=[];
+ let allowed=true,fetches=0,failFetch=false,relayed=[];const writes=[];
+ const about={data:{user_result_by_screen_name:{result:{core:{screen_name:'example'},about_profile:{account_based_in:'Earth',source:'Web'}}}}};
  const store={enabled:true,profileAbout:true,postAbout:false,aboutCache:{},aboutCooldown:0};
- const browser={storage:{local:{get:async defaults=>({...defaults,...store}),set:async value=>{writes.push(value);Object.assign(store,value);}},onChanged:event()},permissions:{contains:async()=>allowed,onAdded:event(),onRemoved:event()},tabs:{onRemoved:event()},webRequest:{onBeforeSendHeaders:event()},runtime:{onMessage:event()}};
- const context=vm.createContext({browser,URL,Map,Set,Date,Promise,setTimeout,clearTimeout,AbortController,fetch:async()=>{fetches++;return {ok:true,status:200,json:async()=>({data:{user_result_by_screen_name:{result:{core:{screen_name:'example'},about_profile:{account_based_in:'Earth',source:'Web'}}}}})};}});
+ const browser={storage:{local:{get:async defaults=>({...defaults,...store}),set:async value=>{writes.push(value);Object.assign(store,value);}},onChanged:event()},permissions:{contains:async()=>allowed,onAdded:event(),onRemoved:event()},tabs:{onRemoved:event(),sendMessage:async(id,message)=>{relayed.push(message);return relayReply;}},webRequest:{onBeforeSendHeaders:event()},runtime:{onMessage:event()}};
+ let relayReply=null;
+ const context=vm.createContext({browser,URL,Map,Set,Date,Promise,setTimeout,clearTimeout,AbortController,console:{warn(){}},JSON,fetch:async()=>{fetches++;if(failFetch)throw new TypeError('NetworkError when attempting to fetch resource.');return {ok:true,status:200,headers:{get:()=>null},text:async()=>JSON.stringify(about)};}});
  evaluate('shared/data-consent.js',context);evaluate('background/account-details.js',context);
  const sender={url:'https://x.com/example',tab:{id:4,url:'https://x.com/example',incognito:true}};
  const message={handle:'example',csrf:'a'.repeat(32)};
  assert.equal((await context.lookupAbout(message,sender)).ok,true);
  assert.equal(writes.length,0,'private account responses must not write to disk');
  sender.tab.incognito=false;assert.equal((await context.lookupAbout(message,sender)).ok,true);assert.equal(fetches,2);assert.equal(writes.filter(v=>v.aboutCache).length,1);
+ // A blocked background request is retried from the X tab, then reported as unreachable if that fails too.
+ failFetch=true;relayReply={status:200,body:JSON.stringify(about)};
+ assert.equal((await context.lookupAbout({...message,refresh:true},sender)).ok,true);
+ assert.match(relayed.at(-1).url,/^https:\/\/x\.com\/i\/api\/graphql\/[^/]+\/AboutAccountQuery\?/);assert.equal(relayed.at(-1).headers['x-csrf-token'],message.csrf);
+ relayReply=null;assert.equal((await context.lookupAbout({...message,refresh:true},sender)).error,'network-error');
+ relayReply={status:200,body:'<html>'};assert.equal((await context.lookupAbout({...message,refresh:true},sender)).error,'bad-response');
+ failFetch=false;
  allowed=false;const before=fetches;assert.equal((await context.lookupAbout({...message,refresh:true},sender)).error,'consent-required');assert.equal(fetches,before);
  const parsed=context.parseAbout({data:{user_result_by_screen_name:{result:{core:{screen_name:'example',name:'Example'},rest_id:'42',about_profile:{username_changes:{count:0}},legacy:{followers_count:0,friends_count:-1,statuses_count:123},is_blue_verified:true}}}},'example');
  assert.equal(parsed.followers,0);assert.equal(parsed.following,null);assert.equal(parsed.handleChanges,0);assert.equal(parsed.verification,'Blue');assert.equal(parsed.connectedVia,null);

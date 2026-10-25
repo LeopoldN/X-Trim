@@ -1,7 +1,7 @@
 (() => {
   let enabled = false, activeHandle = null, preferences = {enabled:true,profileAbout:false,postAbout:false};
   const results = new Map();
-  const errors = { 'consent-required':'Open X Trim and re-enable account details to allow requests to X.', 'sign-in':'Sign in to X to load account details.', 'rate-limited':'X rate limit reached. Try again later.', 'request-rejected':'X rejected the request. Open About this account once, then refresh.', 'account-mismatch':'X returned a different account. Details were not displayed.', 'timeout':'X took too long to respond.', 'not-available':'X has not provided account details.', 'invalid-page':'The account lookup did not match the current page. Reload X and try again.', 'disabled':'Enable account details for this page in the extension.', 'endpoint-changed':'X’s account-details endpoint has changed.', 'http-error':'X returned an error.', 'network-error':'The account-details request could not reach X.', 'extension-error':'The extension lookup failed. Reload X and try again.', 'unavailable':'Account details could not be loaded.' };
+  const errors = { 'consent-required':'Open X Trim and re-enable account details to allow requests to X.', 'sign-in':'Sign in to X to load account details.', 'rate-limited':'X rate limit reached. Try again later.', 'request-rejected':'X rejected the request. Open About this account once, then refresh.', 'account-mismatch':'X returned a different account. Details were not displayed.', 'timeout':'X took too long to respond.', 'not-available':'X has not provided account details.', 'invalid-page':'The account lookup did not match the current page. Reload X and try again.', 'disabled':'Enable account details for this page in the extension.', 'endpoint-changed':'X’s account-details endpoint has changed.', 'http-error':'X returned an error.', 'network-error':'The account-details request could not reach X.', 'bad-response':'X sent an unexpected reply. Reload X and try again.', 'extension-error':'The extension lookup failed. Reload X and try again.', 'unavailable':'Account details could not be loaded.' };
   function currentProfile() {
     const parts = xtrimPagePath().split('/').filter(Boolean);
     if (!/^[a-z0-9_]{1,15}$/i.test(parts[0] || '') || ['home','explore','notifications','messages','i','settings','search','compose'].includes(parts[0].toLowerCase())) return null;
@@ -128,4 +128,18 @@
   let queued=false;
   new MutationObserver(()=>{if(queued)return;queued=true;setTimeout(()=>{queued=false;render();},100);}).observe(document.documentElement,{childList:true,subtree:true});
   window.addEventListener('popstate',render);
+  // Fallback for the background lookup: make X's About request as the page itself, same origin and X's own cookies.
+  browser.runtime.onMessage.addListener(message => {
+    if (message?.type !== 'about-fetch') return;
+    const url = new URL(String(message.url), location.origin);
+    if (url.origin !== location.origin || !/^\/i\/api\/graphql\/[A-Za-z0-9_-]+\/AboutAccountQuery$/.test(url.pathname)) return Promise.resolve(null);
+    const headers = Object.fromEntries(Object.entries(message.headers || {}).filter(([name, value]) => /^(authorization|x-csrf-token|x-twitter-[a-z-]+)$/.test(name) && typeof value === 'string'));
+    // Firefox runs a content script's own fetch as the extension; content.fetch runs it as the page.
+    const pageFetch = typeof content === 'object' && content?.fetch && typeof cloneInto === 'function'
+      ? (href, init) => content.fetch(href, cloneInto(init, window))
+      : fetch;
+    return pageFetch(url.href, {method:'GET', credentials:'include', headers}).then(async response => ({
+      status:response.status, reset:response.headers.get('x-rate-limit-reset'), retry:response.headers.get('retry-after'), body:response.ok ? await response.text() : ''
+    })).catch(() => null);
+  });
 })();
