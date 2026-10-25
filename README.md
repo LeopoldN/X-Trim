@@ -16,7 +16,7 @@ Want the newest changes before they reach Firefox Add-ons? Open `about:debugging
 - **ZIP:** select [`x-trim.zip`](dist/x-trim.zip) directly.
 - **Source:** download and extract the repo, or clone it, then select `manifest.json` inside the project folder.
 
-Open or reload [x.com](https://x.com), allow site access if asked, and open the extension’s toolbar popup. To add links from X’s More menu, open that menu first, then click **Refresh** under **Add from More** on the popup’s Sidebar tab.
+Open or reload [x.com](https://x.com), allow site access if asked (if X Trim only works after you click its button, open the popup and choose **Always allow on X**), and open the extension’s toolbar popup. To add links from X’s More menu, open that menu first, then click **Refresh** under **Add from More** on the popup’s Sidebar tab.
 
 The popup opens on **Home**, with presets (Default, Clean, Focus, Zen) and quick toggles such as Focus mode and No ads. Presets only change what X Trim hides and Focus mode; your theme, filters and layout stay. The search box at the top finds any setting and lets you change it right in the results (press `/` to jump to it). **Trim** shows a small map of X’s page: pick a part, then choose Show or Hide for each item, and hidden parts appear hatched on the map. **Theme** keeps a preview post at the top that recolors as you change palette, font, size and spacing.
 

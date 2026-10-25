@@ -82,7 +82,8 @@
       "background/gif-conversion.js",
       "background/post-block.js",
       "background/usability.js",
-      "background/media-download.js"
+      "background/media-download.js",
+      "background/site-access.js"
     ]
   },
   "commands": {

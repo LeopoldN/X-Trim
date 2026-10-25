@@ -10,5 +10,6 @@ importScripts(
   '/background/post-block.js',
   '/background/usability.js',
   '/background/media-download.js',
+  '/background/site-access.js',
   '/chrome/page-responses.js'
 );

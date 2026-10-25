@@ -300,6 +300,19 @@ document.getElementById('read-more').onclick = async () => {
  } catch { document.getElementById('status').textContent = 'Open or reload X first.'; }
 };
 document.getElementById('reset').onclick = async () => { await browser.storage.local.set(defaults); await init(); };
+const xSiteAccess={origins:['https://x.com/*','https://twitter.com/*']};
+browser.permissions.contains(xSiteAccess).then(allowed=>{document.getElementById('access').hidden=allowed;}).catch(()=>{});
+document.getElementById('allow-x').onclick=async()=>{
+ try{
+   // Request directly inside the click handler to keep the user gesture.
+   const request=browser.permissions.request(xSiteAccess);
+   if(!await request){document.getElementById('status').textContent='X access stays click-only. Use Always allow on X whenever you want.';return;}
+   document.getElementById('access').hidden=true;
+   const [tab]=await browser.tabs.query({active:true,currentWindow:true});
+   if(tab&&/^https:\/\/(x|twitter)\.com\//.test(tab.url||''))browser.tabs.reload(tab.id);
+   document.getElementById('status').textContent='X Trim now runs on X every time.';
+ }catch{document.getElementById('status').textContent='Could not change X access. Try again.';}
+};
 // Everything that mirrors settings outside its own control: counts, presets, quick toggles, the page map and the theme preview.
 function renderState() {
  if (!settings) return;
