@@ -1,4 +1,11 @@
-# Submission checks — X Trim 0.7.2
+# Submission checks — X Trim 0.7.3
+
+## Rerun for 0.7.3
+
+Checked October 25, 2026. 0.7.3 = 0.7.2 plus a fix in `content/theme.js`. These are local pre-update checks, not Mozilla approval.
+
+- Community Notes header: every page under `/i/communitynotes` now gets the same themed sticky header as other pages. X paints that header with a translucent blurred layer the color mapper skips, so a custom theme left it light grey with unreadable text. The Community Notes tabs use the themed tab bar, and accent pills inside any themed header keep their fill.
+- No new permissions, requests, hosts or data destinations.
 
 ## Rerun for 0.7.2
 
