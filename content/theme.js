@@ -247,6 +247,8 @@
     const accountRow='html[data-xtrim-theme] [data-xtrim-account-section] a[role="tab"]';
     const accountHover=`color-mix(in srgb, ${palette.text} 8%, ${palette.background})`;
     css+=`${accountRow}{transition:background-color .2s ease;}${accountRow}:hover,${accountRow}:focus-visible{background-color:${accountHover} !important;}${accountRow}:hover [data-xtrim-theme-bg],${accountRow}:focus-visible [data-xtrim-theme-bg]{background-color:transparent !important;}@media(prefers-reduced-motion:reduce){${accountRow}{transition:none !important;}}`;
+    // The account card keeps its own colors so X's global light tokens cannot leak into a dark palette.
+    css+=`html[data-xtrim-theme] .xtrim-account-card{--account-bg:${palette.surface} !important;--account-surface:color-mix(in srgb, ${palette.text} 6%, ${palette.surface}) !important;--account-text:${palette.text} !important;--account-muted:${palette.muted} !important;--account-border:${palette.border} !important;--account-brand:${palette.accent} !important;color-scheme:${luminance>.5?'light':'dark'};}`;
     const manage='html[data-xtrim-theme] [data-testid="primaryColumn"] button[aria-label="Manage timelines"]';
     const manageWrapper='html[data-xtrim-theme] [data-testid="primaryColumn"] div:has(> button[aria-label="Manage timelines"])';
     css+=`${manageWrapper},${manage}{background:${customColor('tabBackground',palette.background)} !important;box-shadow:none !important;}${manage} *{background-color:transparent !important;background-image:none !important;color:${icons} !important;}${manage} svg{fill:currentColor !important;}`;
