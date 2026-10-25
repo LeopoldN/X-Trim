@@ -1,118 +1,156 @@
+<div align="center">
+
+<img src="icons/x-trim.svg" width="84" height="84" alt="X Trim icon">
+
 # X Trim
 
-**v0.7.2** · Firefox / Zen 140+ · Chrome 116+
+A cleaner, calmer X. Hide what you don't want, theme the rest.
 
-Tidy up X: hide promotions, ads, sidebar items and Explore page sections, stay on Following, filter posts by words or Premium replies, change column widths, customize profiles, pick a theme (including X’s retired Dim), change the font, post text size and spacing, add your own CSS, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
+[![Firefox Add-ons](https://img.shields.io/amo/v/x-trim?label=Firefox%20Add-ons&logo=firefoxbrowser&logoColor=white&color=FF7139)](https://addons.mozilla.org/en-US/firefox/addon/x-trim/)
+[![Chrome 116+](https://img.shields.io/badge/Chrome-116%2B-4285F4?logo=googlechrome&logoColor=white)](#install)
+[![License: CC0](https://img.shields.io/badge/license-CC0%201.0-2ea44f)](LICENSE)
+
+[Install](#install) · [Features](#features) · [Privacy](#privacy) · [Development](#development) · [Follow along](#follow-along)
+
+<br>
+
+<a href="https://addons.mozilla.org/en-US/firefox/addon/x-trim/"><img src="docs/screenshots/1-home.png" width="860" alt="X Trim popup on the Home tab with the Clean preset selected, next to a tidied X home timeline"></a>
+
+</div>
 
 ## Install
 
-**Firefox / Zen:** get the stable version from [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/x-trim/). It stays installed and updates on its own.
+**Firefox and Zen (140+, Android 142+):** get it from **[Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/x-trim/)**. Stable, and it updates on its own.
 
-## Try the experimental build
+**Chrome (116+):** unzip [`x-trim-chrome.zip`](dist/x-trim-chrome.zip), open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and pick the unzipped folder.
 
-Want the newest changes before they reach Firefox Add-ons? Open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on**, then choose one:
+Then open [x.com](https://x.com) and click the X Trim button in your toolbar. If X Trim only works after you click it, choose **Always allow on X** in the popup.
 
-- **XPI:** select [`x-trim.xpi`](dist/x-trim.xpi). No extraction needed.
-- **ZIP:** select [`x-trim.zip`](dist/x-trim.zip) directly.
-- **Source:** download and extract the repo, or clone it, then select `manifest.json` inside the project folder.
+<details>
+<summary><b>Try the experimental build</b> (newest changes, unsigned)</summary>
 
-Open or reload [x.com](https://x.com), allow site access if asked (if X Trim only works after you click its button, open the popup and choose **Always allow on X**), and open the extension’s toolbar popup. To add links from X’s More menu, open that menu first, then click **Refresh** under **Add from More** on the popup’s Sidebar tab.
+<br>
 
-The popup opens on **Home**, with presets (Default, Clean, Focus, Zen) and quick toggles such as Focus mode and No ads. Presets only change what X Trim hides and Focus mode; your theme, filters and layout stay. The search box at the top finds any setting and lets you change it right in the results (press `/` to jump to it). **Trim** shows a small map of X’s page: pick a part, then choose Show or Hide for each item, and hidden parts appear hatched on the map. **Theme** keeps a preview post at the top that recolors as you change palette, font, size and spacing.
+Open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on**, then choose one:
 
-**Chrome:** unzip [`x-trim-chrome.zip`](dist/x-trim-chrome.zip), open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and pick the unzipped folder. The same ZIP is what the Chrome Web Store takes.
+- **XPI:** [`x-trim.xpi`](dist/x-trim.xpi), no extraction needed.
+- **ZIP:** [`x-trim.zip`](dist/x-trim.zip), selected directly.
+- **Source:** clone or download this repo and select `manifest.json`.
 
-Temporary installs last until the browser restarts. Load it again next time. These packages are unsigned; for a permanent install, use [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/x-trim/). See [Mozilla’s temporary installation guide](https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/).
+Temporary installs last until the browser restarts. See [Mozilla's guide](https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/) for details.
 
-## Usability
+</details>
 
-Everything here is off until you switch it on.
+## Features
 
-- **Trim › Timeline:** hide promoted posts (ads), posts X labels as a Paid partnership, posts tagged #ad or #sponsored, the reply / repost / like / bookmark / view numbers, or the whole action bar.
-- **Trim › Explore page:** hide the Sports scores (and the league row under them), Today’s News, trends and topics, Who to follow, or Posts for you on the main Explore tab. The Trending, News, Sports and Entertainment tabs stay as X shows them. Sections are recognized by X’s structure, not their words, so this works in any language.
-- **Feed:** hide the For you tab, open Home on Following, keep Following sorted by Recent, auto-load or hide X’s *Show N posts* bar, show exact counts (1,234 instead of 1.2K), show dates and times instead of “2h”, use a 24-hour clock, and set a daily time limit. Auto-load only clicks the bar while you are at the top of Home. The limit counts time with an X tab in front and covers X with a reminder, with a *5 more minutes* button.
-- **Layout › Chat and Calls:** give X’s full Chat page and Calls page their own width instead of filling the window. Each has its own switch and slider (480–1600 px), the page stays centered, and small windows shrink it to fit.
-- **Layout › Focus:** focus mode hides the side navigation and right column; writer mode also hides the Home timeline, leaving the composer. **Alt+Shift+F** toggles focus mode (change it in Firefox › Add-ons › Manage Extension Shortcuts).
-- **Posts › Hide the Grok button:** removes the Grok icon beside each post’s More (⋯) menu on timelines and opened posts. The Block button then sits beside More.
-- **Posts › Fast block:** skips X’s Block confirmation after you choose Block.
-- **Profile › Media tab:** opens a profile’s Media tab on Photos instead of Videos, by picking Photos from X’s own tab menu.
-- **Filters:** collapse, highlight or fully hide posts matching words or `/regular expressions/`, Home posts without a photo, video or GIF, and replies (and optionally feed posts) from paid blue-check accounts. The opened post, its author, accounts you follow and business or government checks are never filtered as Premium.
+Everything lives in one toolbar popup. Start from a preset (**Default**, **Clean**, **Focus** or **Zen**), then fine-tune. Press <kbd>/</kbd> to search every setting. Changes apply to X right away.
 
-Ads, Paid partnership labels and verification come from X’s own responses as they load, with X’s visible labels as a fallback, so nothing extra is requested. Paid partnership relies on the author adding X’s label.
+### Clean up
 
-## Account details
+- **Trim:** hide ads, paid partnerships, Grok, Who to follow, trends, floating buttons, Explore page sections and any sidebar item.
+- **Filters:** collapse, highlight or hide posts by keyword or `/regex/`, Premium replies, posts without media, or the author's country.
+- **Sidebar:** pick which links X's side navigation shows, including Calls, Money and anything from the More menu.
 
-Enable account details under Profile or Posts. The compact flag and connection-source badge opens a theme-aware account card with location, connection source, account creation date, user ID and affiliation. Missing values are not inferred. Escape or an outside click closes the card; Refresh details requests fresh account information.
+<p align="center"><img src="docs/screenshots/3-filter.png" width="720" alt="Filters tab collapsing posts from chosen countries on the X home timeline"></p>
 
-The card is independently implemented with visual inspiration from the xaitax reference linked under License & credits. No reference source code is bundled; no project-wide license was present in its repository at inspection. Requests go directly to X, with a local cache and rate-limit backoff. No community service is used.
+### Look
 
-## Timeline country filtering
+- **Theme:** Dim, Tokyo Night, Rosé Pine, Catppuccin, Dracula, Nord, Gruvbox or your own colors. Change the font, post text size and spacing, or add custom CSS.
+- **Layout:** Chat and Calls page widths, Focus mode (<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd>) and Writer mode.
+- **Profile:** square profile pictures, post count beside Followers, Media opening on Photos, and a card showing where an account is based.
 
-Open the **Filters** tab in the toolbar popup. Enter comma-separated country names or two-letter country codes, then enable filtering and approve Firefox’s account-data consent. Choose collapse with **Show post**, highlight with the theme’s accent border, or **Fully hide** without a placeholder, and optionally list exempt handles under **Always show**. Region names match X’s reported label exactly; they do not expand into member countries.
+<p align="center"><img src="docs/screenshots/2-theme.png" width="720" alt="Theme tab with the Gruvbox Dark palette applied to X"></p>
 
-Near-visible authors are looked up sequentially, using the same 24-hour local cache and rate-limit backoff as account cards. Unknown locations remain visible. Opened posts are highlighted rather than collapsed. Show post reveals that post for the current page session. Quoted accounts are not independently filtered. Disabling filtering restores the posts. Requests go only to X; no community cache is used.
+<p align="center"><img src="docs/screenshots/4-profile.png" width="720" alt="Profile with a square picture, post count and the account details card"></p>
 
-## Block button
+### Behavior
 
-The Block button to the left of Grok (or of More when Grok is hidden; on by default) opens X’s native Block confirmation for the post author. X handles the block after you confirm. Toggle the shortcut under Posts. No additional credential handling or API requests are performed by this shortcut.
+- **Feed:** open Home on Following sorted by Recent, auto-load new posts, show exact counts and real timestamps, and set a daily time limit.
+- **Posts:** a one-click Block button, fast block, and downloads for original images, MP4 videos and GIFs.
 
-## Sidebar navigation
+<details>
+<summary><b>More on account details, country filtering and downloads</b></summary>
 
-Calls and Money are available in Sidebar navigation, including when your cached navigation predates X’s rollout. Uncheck either item to hide it; uncheck Money to remove the dollar icon from the sidebar and the dollar button on profiles.
+#### Account details
 
-## Local GIF conversion
+Turn it on under Profile or Posts. A small flag and connection badge opens a card with location, connection source, creation date, user ID and affiliation. Missing values stay missing; nothing is guessed.
 
-X GIF MP4s (`/tweet_video/`) save as looping `.gif` files. Conversion runs in the extension using bundled gif.js 0.2.0; no conversion service or runtime code downloads are used. Ordinary videos remain MP4s. GIFs use up to 480 pixels on the longest edge and 12 frames per second; longer/larger clips may be scaled further to bound memory. Sources are limited to 32 MB and 30 seconds, with one conversion at a time. GIF files may be larger and have fewer colors than the MP4. The button shows fetching, frame extraction, encoding, and saving progress; these stages are not a time estimate.
+#### Country filtering
 
-Bundled encoder: [gif.js](https://github.com/jnordberg/gif.js), v0.2.0, MIT (see `vendor/gif.js/LICENSE`). The unchanged npm release's source, build script, package metadata, and source maps are retained in the repository for review. Runtime packages include only its two distribution scripts and license. To reproduce the vendor files, extract `https://registry.npmjs.org/gif.js/-/gif.js-0.2.0.tgz`; the upstream MIT license is included separately. No build step is used for X Trim's own code.
+Open **Filters**, enter country names or two-letter codes, and turn filtering on. Choose **Collapse**, **Highlight** or **Fully hide**, and list accounts that should always show. Region names match X's label exactly. Unknown locations, opened posts and quoted accounts are never hidden.
 
-GIF setup: open the X Trim toolbar popup → Posts → Enable media downloads, then approve Firefox’s permission prompt for `video.twimg.com`. This is optional and normally only needed once; declining leaves the other features available. If you revoke access later, the same button lets you enable it again.
+#### Downloads and GIFs
 
-Zen compatibility: GIF conversion opens a temporary extension tab with a video preview, because decoding in the hidden background page can fail on macOS. Keep it open until saving completes; it closes automatically afterward. Closing it during conversion cancels the operation.
+Turn on downloads under **Posts** and approve access to `video.twimg.com` once. Images save at original size and videos as the best available MP4. HLS-only videos aren't supported. Reload a post after enabling so X Trim can see its video data.
 
-## Privacy & rough edges
+X GIFs convert on your device to looping `.gif` files: up to 480 px, 12 fps, 32 MB and 30 seconds per clip, one at a time. In Zen, conversion opens a short-lived tab; keep it open until the file saves.
 
-Settings stay in your browser. No analytics. Media downloads require optional website-content consent; account details require separate optional website-content, browsing-activity, and authentication-information consent. Optional account details use your signed-in X session and are cached locally for 24 hours; authentication headers stay in memory and requests go only to X. Downloads use the browser’s Save As dialog.
+</details>
 
-X changes often, so some controls may break. Promotion matching works best in English. Video downloads read existing X GraphQL responses locally to find the best available MP4, including when playback uses a blob URL. Reload the post after installing or enabling downloads so metadata can be captured. HLS-only videos are not supported. A filling button shows byte progress when Firefox reports the file size; otherwise it shows an indeterminate animation. Video URLs are cached only in memory, up to 100 per tab, and cleared when downloads are disabled or the tab closes. Report bugs with steps to reproduce.
+## Privacy
 
-## Project structure
+- Settings stay in your browser. No analytics, no tracking, no third-party servers.
+- Account details, country filtering and downloads are off until you turn them on and approve consent. They talk only to X, and results are cached locally for 24 hours.
+- Ads and labels are spotted in data X already sends, so nothing extra is requested.
 
-Plain JavaScript and CSS with no build step. Folders follow where the code runs, and a feature keeps the same file name in each folder it uses.
+Full details in [PRIVACY.md](PRIVACY.md).
+
+> [!NOTE]
+> X changes often, so a setting can break now and then. Ad matching works best in English. If something stops working, [open an issue](https://github.com/LeopoldN/X-Trim/issues) with steps to reproduce.
+
+## Development
+
+Plain JavaScript and CSS. No build step, no dependencies to install.
 
 ```
-manifest.json      Extension manifest (stays at the root)
-icons/             Firefox toolbar and add-on icon (x-trim.svg)
-content/           Content scripts and styles that run on x.com, in manifest order
-background/        Background page scripts (X response reading, downloads, GIF jobs, counters)
-shared/            data-consent.js, loaded by both the background page and the popup
-popup/             Toolbar popup page, theme presets and the media permission button
-gif-converter/     Temporary extension tab that converts GIF MP4s locally
-vendor/gif.js/     Unmodified gif.js 0.2.0 npm release (runtime uses dist/ and LICENSE only)
-chrome/            Chrome-only manifest, icons and shims (not in the Firefox packages)
-dist/              Built x-trim.xpi, x-trim.zip (Firefox), x-trim-chrome.zip (Chrome) and x-trim-source.zip
-tests/             Node and Playwright checks (run each with `node tests/<name>.cjs`)
-scripts/           package.py, which rebuilds everything in dist/
-review/            AMO listing, reviewer notes, check results and lint output
+content/         Scripts and styles that run on x.com
+background/      Reads X's responses, handles downloads, GIF jobs and counters
+popup/           The toolbar popup
+shared/          Code used by both the background and the popup
+gif-converter/   Tab that converts GIFs locally
+chrome/          Chrome manifest, icons and shims
+vendor/gif.js/   Unmodified gif.js 0.2.0
+tests/           Node, Playwright and Firefox checks
+scripts/         package.py builds everything in dist/
 ```
 
-## Building and review
+```sh
+python3 scripts/package.py      # rebuild dist/
+node tests/<name>.cjs           # run a test
+npx web-ext@10.8.0 lint         # lint the Firefox build
+```
 
-Submission materials: [privacy policy](PRIVACY.md), [proposed AMO listing](review/AMO-LISTING.md), [reviewer notes](review/REVIEWER-NOTES.md), and [check results](review/CHECKS.md). Rebuild unsigned packages with `python3 scripts/package.py`.
+<details>
+<summary><b>How the Chrome build differs</b></summary>
 
-### Chrome build
+`manifest.json` is for Firefox and `chrome/manifest.json` is for Chrome. `scripts/package.py` puts the Chrome one in `dist/x-trim-chrome.zip` and fails if the two drift apart.
 
-`manifest.json` is the Firefox manifest. `chrome/manifest.json` is the Chrome one, and `scripts/package.py` puts it in `dist/x-trim-chrome.zip` as `manifest.json` (the build fails if the two manifests drift apart). Chrome differs in four ways:
+- **X's API replies:** Chrome can't read responses like Firefox's `filterResponseData`, so `chrome/page-hook.js` watches X's own requests in the page and `chrome/page-bridge.js` passes them to the same background readers. It changes and stores nothing.
+- **Background:** `chrome/service-worker.js` loads the same background scripts. Chrome stops it when idle, so in-memory caches can reset.
+- **API names:** `chrome/browser-compat.js` maps `browser.*` calls onto `chrome.*`.
+- **Data consent:** Chrome has no built-in consent prompt, so the popup records it in X Trim's own storage.
 
-- **X's API replies:** Chrome extensions can't read responses like Firefox's `filterResponseData`, so `chrome/page-hook.js` watches X's own XHR/fetch replies in the page and `chrome/page-bridge.js` passes them to the same background readers. It changes and stores nothing.
-- **Background:** `chrome/service-worker.js` loads the same background scripts in one service worker. Chrome stops it when idle, so in-memory caches can reset.
-- **API names:** `chrome/browser-compat.js` maps the `browser.*` calls onto `chrome.*`, including promise replies to messages.
-- **Data consent:** Chrome has no built-in data-collection consent, so the popup's enable buttons and switches record it in X Trim's own storage. Turning a feature off stops its requests.
+</details>
 
-The Chrome ZIP also swaps the popup's few Firefox-specific sentences for Chrome ones.
+**gif.js:** `vendor/gif.js/` is the unchanged npm release ([tarball](https://registry.npmjs.org/gif.js/-/gif.js-0.2.0.tgz)), kept with its source, build script and source maps for review. Packages include only its two `dist/` scripts and license.
+
+**Store and review:** [AMO listing](review/AMO-LISTING.md), [reviewer notes](review/REVIEWER-NOTES.md) and [check results](review/CHECKS.md).
+
+## Follow along
+
+<!-- Replace YOUR_HANDLE in each link below with your own handles. Delete any you don't use. -->
+
+[![X](https://img.shields.io/badge/X-@YOUR__HANDLE-000000?logo=x&logoColor=white)](https://x.com/YOUR_HANDLE)
+[![Bluesky](https://img.shields.io/badge/Bluesky-@YOUR__HANDLE-1185FE?logo=bluesky&logoColor=white)](https://bsky.app/profile/YOUR_HANDLE.bsky.social)
+[![Mastodon](https://img.shields.io/badge/Mastodon-@YOUR__HANDLE-6364FF?logo=mastodon&logoColor=white)](https://mastodon.social/@YOUR_HANDLE)
+[![GitHub](https://img.shields.io/badge/GitHub-LeopoldN-24292f?logo=github&logoColor=white)](https://github.com/LeopoldN)
+
+Like X Trim? A ⭐ on this repo or a review on [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/x-trim/reviews/) helps others find it.
 
 ## License & credits
 
-Original project code and documentation are dedicated to the public domain under [CC0 1.0](LICENSE). Use, change, share, or sell them; no credit required. Third-party work keeps its own terms.
+Original code and docs are public domain under [CC0 1.0](LICENSE). Use, change, share or sell them, no credit required. Third-party work keeps its own terms.
 
-Palette credits: [Tokyo Night](https://github.com/folke/tokyonight.nvim), [Rosé Pine](https://rosepinetheme.com/palette/), [Catppuccin](https://catppuccin.com/palette/), [Dracula](https://draculatheme.com/contribute), [Nord](https://www.nordtheme.com/docs/colors-and-palettes/), [Gruvbox](https://github.com/morhetz/gruvbox). Account-details reference: [xaitax](https://github.com/xaitax/x-account-location-device). Several usability features follow approaches from [Control Panel for Twitter](https://github.com/insin/control-panel-for-twitter) by Jonny Buchanan (MIT; notice in `THIRD_PARTY_NOTICES.txt`).
+Palettes: [Tokyo Night](https://github.com/folke/tokyonight.nvim), [Rosé Pine](https://rosepinetheme.com/palette/), [Catppuccin](https://catppuccin.com/palette/), [Dracula](https://draculatheme.com/contribute), [Nord](https://www.nordtheme.com/docs/colors-and-palettes/), [Gruvbox](https://github.com/morhetz/gruvbox). GIF encoding: [gif.js](https://github.com/jnordberg/gif.js) 0.2.0 (MIT). The account details card is independently written, with visual inspiration from [xaitax](https://github.com/xaitax/x-account-location-device); no reference code is bundled. Several usability features follow approaches from [Control Panel for Twitter](https://github.com/insin/control-panel-for-twitter) by Jonny Buchanan (MIT). Notices are in [`THIRD_PARTY_NOTICES.txt`](THIRD_PARTY_NOTICES.txt).
+
+<sub>X Trim is an independent project and isn't affiliated with or endorsed by X Corp.</sub>
