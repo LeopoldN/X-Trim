@@ -1,6 +1,6 @@
 # X Trim
 
-**v0.6.1** · Firefox / Zen 140+ · Chrome 116+
+**v0.7.0** · Firefox / Zen 140+ · Chrome 116+
 
 Tidy up X: hide promotions, ads, sidebar items and Explore page sections, stay on Following, filter posts by words or Premium replies, change column widths, customize profiles, pick a theme (including X’s retired Dim), change the font, post text size and spacing, add your own CSS, and download images, GIFs, and MP4 videos discovered in X’s metadata. Everything is controlled from the toolbar popup.
 
@@ -17,6 +17,8 @@ Want the newest changes before they reach Firefox Add-ons? Open `about:debugging
 - **Source:** download and extract the repo, or clone it, then select `manifest.json` inside the project folder.
 
 Open or reload [x.com](https://x.com), allow site access if asked, and open the extension’s toolbar popup. To add links from X’s More menu, open that menu first, then click **Refresh** under **Add from More** on the popup’s Sidebar tab.
+
+The popup opens on **Home**, with presets (Default, Clean, Focus, Zen) and quick toggles such as Focus mode and No ads. Presets only change what X Trim hides and Focus mode; your theme, filters and layout stay. The search box at the top finds any setting and lets you change it right in the results (press `/` to jump to it). **Trim** shows a small map of X’s page: pick a part, then choose Show or Hide for each item, and hidden parts appear hatched on the map. **Theme** keeps a preview post at the top that recolors as you change palette, font, size and spacing.
 
 **Chrome:** unzip [`x-trim-chrome.zip`](dist/x-trim-chrome.zip), open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and pick the unzipped folder. The same ZIP is what the Chrome Web Store takes.
 

@@ -1,4 +1,11 @@
-# Submission checks — X Trim 0.6.1
+# Submission checks — X Trim 0.7.0
+
+## Rerun for 0.7.0
+
+Checked October 25, 2026. 0.7.0 = 0.6.1 plus a redesigned toolbar popup. These are local pre-update checks, not Mozilla approval.
+
+- Only `popup/popup.html`, `popup/popup.css` and `popup/popup.js` changed, plus version numbers and README. The popup is now 680×560 with a labelled section list, a Home tab (presets and quick toggles), settings search, a Show/Hide map on Trim and a live theme preview. Every setting keeps its storage key and element ID, so saved preferences carry over.
+- Presets and quick toggles write the same storage keys as the existing switches. Search only filters the popup's own controls. No new permissions, requests or host permissions; CSP, `data_collection_permissions` and the extension ID are unchanged.
 
 ## Rerun for 0.6.1
 

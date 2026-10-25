@@ -1,13 +1,15 @@
 const defaults = { postBlock:true, geoBlocking:false, geoCountries:"", geoAllowed:"", geoMode:"hide", enabled: true, premium: true, hideRightColumn: false, follow: true, trends: false, floatingGrok: false, floatingMessages: false, twitterLogo: false, settingsShortcut: false, moreOptions: [], added: [], mediaDownloads: true, postAbout: false, profileAbout: false, profileCustomWidth: false, profileWidth: 800, profileFont: "default", profilePostCount: false, profileSquareAvatar: false, profileAvatarBorder: false, profileAvatarBorderColor: "#1DA1F2", chatCustomWidth: false, chatWidth: 1000, callsCustomWidth: false, callsWidth: 900, customWidths: false, navWidth: 272, feedWidth: 600, rightWidth: 350, hidden: [], siteFont: "default", textSize: 100, density: "default", hideDividers: false, followColors: false, plainText: false, customCss: "", hideForYou: false, stayFollowing: false, followingRecent: false, newPosts: "default", hidePromoted: false, hideSponsored: false, hideAdHashtags: false, hideCounts: false, hideActionBar: false, exactCounts: false, timeFormat: "relative", clock24: false, focusMode: false, writerMode: false, keywordFilters: "", hideNoMedia: false, premiumReplies: false, premiumFeeds: false, filterMode: "hide", fastBlock: false, hidePostGrok: false, usageLimit: false, usageMinutes: 60, mediaPhotos: false, exploreSports: false, exploreNews: false, exploreTrends: false, exploreFollow: false, explorePosts: false, themePreset: "", themeMode: "default", themeCustom: {"background": "#000000", "surface": "#16181C", "text": "#E7E9EA", "muted": "#71767B", "border": "#2F3336", "accent": "#1D9BF0", "tabBackground": "#000000", "tabText": "#71767B", "tabActive": "#E7E9EA", "tabIndicator": "#1D9BF0", "icons": "#E7E9EA", "buttonBackground": "#1D9BF0", "buttonText": "#FFFFFF", "buttonAutoContrast": true, "engagementColors": false, "gradient": false, "gradientEnd": "#15202B", "gradientAngle": 135} };
 let settings;
 async function save() {
+ renderState();
  try { await browser.storage.local.set(settings); document.getElementById('status').textContent = 'Saved. Changes apply on X immediately.'; }
  catch { document.getElementById('status').textContent = 'Could not save settings. Please try again.'; }
 }
 async function initTabs() {
  const tabs = [...document.querySelectorAll('[role="tab"]')];
- const saved = await browser.storage.local.get({ popupTab: 'trim' });
+ const saved = await browser.storage.local.get({ popupTab: 'home' });
  function select(tab) {
+   clearSearch();
    for (const other of tabs) {
      const selected = other === tab;
      other.setAttribute('aria-selected', selected); other.tabIndex = selected ? 0 : -1;
@@ -30,6 +32,7 @@ async function initTabs() {
      next.click(); next.focus();
    };
  }
+ for (const link of document.querySelectorAll('[data-goto]')) link.onclick = () => document.getElementById('tab-' + link.dataset.goto).click();
  select(tabs.find(tab => tab.dataset.tab === saved.popupTab) || tabs[0]);
 }
 const usabilitySwitches=['hidePromoted','hideSponsored','hideAdHashtags','hideCounts','hideActionBar','hideForYou','stayFollowing','followingRecent','exactCounts','clock24','usageLimit','focusMode','writerMode','fastBlock','hidePostGrok','hideNoMedia','premiumReplies','premiumFeeds','mediaPhotos','exploreSports','exploreNews','exploreTrends','exploreFollow','explorePosts'];
@@ -97,6 +100,11 @@ async function init() {
  renderWidths();
  renderProfile();
  renderUsability();
+ await initParts();
+ initShowHide();
+ initHome();
+ initSearch();
+ renderState();
 
  const entries = new Map(discovered.map(item => [/^calls$/i.test(item.label) ? 'Calls' : item.key, item.label]));
  // Keep new rollout items available even when the cached sidebar predates them.
@@ -288,4 +296,116 @@ document.getElementById('read-more').onclick = async () => {
  } catch { document.getElementById('status').textContent = 'Open or reload X first.'; }
 };
 document.getElementById('reset').onclick = async () => { await browser.storage.local.set(defaults); await init(); };
+// Everything that mirrors settings outside its own control: counts, presets, quick toggles, the page map and the theme preview.
+function renderState() {
+ if (!settings) return;
+ syncShowHide(); renderCounts(); renderHome(); renderPreview();
+ for (const part of document.querySelectorAll('.page-map [data-hide]')) part.classList.toggle('off', !!settings[part.dataset.hide]);
+}
+const trimKeys=['premium','follow','trends','hideRightColumn','floatingGrok','floatingMessages','hidePromoted','hideSponsored','hideAdHashtags','hideCounts','hideActionBar','exploreSports','exploreNews','exploreTrends','exploreFollow','explorePosts'];
+function renderCounts() {
+ const filters=['premiumReplies','premiumFeeds','hideNoMedia','geoBlocking'].filter(name=>settings[name]).length+(settings.keywordFilters.trim()?1:0);
+ for (const [id,count] of [['trim',trimKeys.filter(name=>settings[name]).length],['filters',filters],['sidebar',settings.hidden.length]]) document.getElementById('count-'+id).textContent=count||'';
+}
+// Show / Hide pairs drive the original checkbox so popup.js keeps one save path per setting.
+function syncShowHide() {
+ for (const button of document.querySelectorAll('[data-hide-for]')) button.setAttribute('aria-pressed', String(document.getElementById(button.dataset.hideFor).checked === (button.dataset.value === '1')));
+}
+function initShowHide() {
+ for (const button of document.querySelectorAll('[data-hide-for]')) button.onclick = () => {
+   const input = document.getElementById(button.dataset.hideFor), hide = button.dataset.value === '1';
+   if (input.checked !== hide) { input.checked = hide; input.dispatchEvent(new Event('change')); }
+ };
+}
+async function initParts() {
+ const saved = await browser.storage.local.get({ popupPart: 'timeline' });
+ const select = part => {
+   for (const section of document.querySelectorAll('.part')) section.hidden = section.dataset.part !== part;
+   for (const button of document.querySelectorAll('button[data-part]')) button.setAttribute('aria-pressed', String(button.dataset.part === part));
+ };
+ for (const button of document.querySelectorAll('button[data-part]')) button.onclick = () => {
+   select(button.dataset.part);
+   browser.storage.local.set({ popupPart: button.dataset.part }).catch(() => {});
+ };
+ select(saved.popupPart);
+}
+function setValues(values) {
+ Object.assign(settings, values);
+ for (const name of Object.keys(values)) { const input = document.getElementById(name); if (input && input.type === 'checkbox') input.checked = values[name]; }
+ renderMaster(); renderWidths(); save();
+}
+const presetKeys=['premium','follow','trends','hideRightColumn','floatingGrok','floatingMessages','hidePromoted','hideSponsored','hideAdHashtags','hidePostGrok','exploreFollow','explorePosts','hideCounts','focusMode','writerMode'];
+const cleanPreset={premium:true,follow:true,trends:true,floatingGrok:true,hidePromoted:true,hideSponsored:true,hideAdHashtags:true,hidePostGrok:true,exploreFollow:true,explorePosts:true};
+const presets={default:{},clean:cleanPreset,focus:{...cleanPreset,focusMode:true},zen:{...cleanPreset,focusMode:true,hideCounts:true,floatingMessages:true}};
+const presetValues=id=>Object.fromEntries(presetKeys.map(name=>[name,presets[id][name]??defaults[name]]));
+const quickToggles={focus:['focusMode'],ads:['hidePromoted','hideSponsored','hideAdHashtags'],grok:['floatingGrok','hidePostGrok'],right:['hideRightColumn'],foryou:['hideForYou'],writer:['writerMode']};
+function initHome() {
+ for (const input of document.querySelectorAll('input[name="preset"]')) input.onchange = () => setValues(presetValues(input.value));
+ for (const button of document.querySelectorAll('[data-quick]')) button.onclick = () => {
+   const names = quickToggles[button.dataset.quick], on = names.every(name => settings[name]);
+   setValues(Object.fromEntries(names.map(name => [name, !on])));
+ };
+}
+function renderHome() {
+ const match = Object.keys(presets).find(id => presetKeys.every(name => settings[name] === presetValues(id)[name]));
+ for (const input of document.querySelectorAll('input[name="preset"]')) input.checked = input.value === match;
+ document.getElementById('preset-status').textContent = match ? 'Presets change what X Trim hides and Focus mode. Your theme, filters and layout stay as they are.' : 'Your own mix. Pick a preset to start over from it; theme, filters and layout stay as they are.';
+ for (const button of document.querySelectorAll('[data-quick]')) button.setAttribute('aria-pressed', String(quickToggles[button.dataset.quick].every(name => settings[name])));
+}
+const previewFonts={default:'system-ui,-apple-system,"Segoe UI",sans-serif',system:'system-ui,sans-serif',arial:'Arial,Helvetica,sans-serif',serif:'Georgia,serif',mono:'ui-monospace,SFMono-Regular,Menlo,monospace'};
+const nativeColors={default:['#000000','#16181C','#E7E9EA','#71767B','#2F3336'],dark:['#000000','#16181C','#E7E9EA','#71767B','#2F3336'],light:['#FFFFFF','#EFF3F4','#0F1419','#536471','#EFF3F4']};
+const readableOn=hex=>{const [r,g,b]=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));return r*.2126+g*.7152+b*.0722>150?'#0F1419':'#FFFFFF';};
+function renderPreview() {
+ const x = document.getElementById('live-x'), custom = settings.themeCustom, isCustom = settings.themeMode === 'custom';
+ const [background,surface,text,muted,border] = isCustom ? [custom.background,custom.surface,custom.text,custom.muted,custom.border] : nativeColors[settings.themeMode] || nativeColors.default;
+ const accent = isCustom ? custom.accent : '#1D9BF0';
+ const colors = {bg:isCustom && custom.gradient ? `linear-gradient(${custom.gradientAngle ?? 135}deg,${background},${custom.gradientEnd})` : background, surface, text, muted, border,
+   icons:isCustom ? custom.icons || muted : muted, like:isCustom && custom.engagementColors ? accent : '#F91880',
+   'tab-bg':isCustom ? custom.tabBackground : background, 'tab-text':isCustom ? custom.tabText : muted, 'tab-active':isCustom ? custom.tabActive : text, 'tab-indicator':isCustom ? custom.tabIndicator : accent,
+   'follow-bg':settings.followColors ? accent : text, 'follow-text':settings.followColors ? readableOn(accent) : background};
+ for (const [name, value] of Object.entries(colors)) x.style.setProperty('--l-' + name, value);
+ x.style.fontFamily = previewFonts[settings.siteFont] || previewFonts.default;
+ x.style.setProperty('--l-size', 15 * settings.textSize / 100 + 'px');
+ x.style.setProperty('--l-pad', {compact:'8px',roomy:'18px'}[settings.density] || '12px');
+ x.classList.toggle('no-dividers', settings.hideDividers); x.classList.toggle('no-counts', settings.hideCounts);
+ document.getElementById('live-acts').hidden = settings.hideActionBar;
+ document.getElementById('live-foryou').hidden = settings.hideForYou;
+ for (const count of x.querySelectorAll('.live-n')) count.textContent = count.dataset.n.split('|')[settings.exactCounts ? 1 : 0];
+ document.getElementById('live-meta').textContent = '@handle · ' + (settings.timeFormat === 'absolute' ? (settings.clock24 ? '25 Oct, 13:04' : 'Oct 25, 1:04 PM') : '2h');
+}
+// Search hides every setting that does not match, across all sections, and restores the open tab when cleared.
+const searchBlocks='.row,.seg-row,.color-row,.choice,.slider,.fonts,.callout,.field,main textarea:not(.field textarea)';
+function clearSearch() {
+ const input = document.getElementById('search');
+ if (input.value) { input.value = ''; input.oninput?.(); }
+}
+function initSearch() {
+ const input = document.getElementById('search'), main = document.querySelector('main');
+ let restore = null;
+ input.oninput = () => {
+   const query = input.value.trim().toLowerCase(), panels = [...main.querySelectorAll('section.panel')];
+   if (query && !restore) restore = { panels: panels.map(panel => panel.hidden), parts: [...main.querySelectorAll('.part')].map(part => part.hidden) };
+   document.body.classList.toggle('searching', !!query);
+   if (!query) {
+     if (restore) { panels.forEach((panel, i) => panel.hidden = restore.panels[i]); [...main.querySelectorAll('.part')].forEach((part, i) => part.hidden = restore.parts[i]); restore = null; }
+     document.getElementById('search-empty').hidden = true;
+     return;
+   }
+   panels.forEach(panel => panel.hidden = false);
+   main.querySelectorAll('.part').forEach(part => part.hidden = false);
+   for (const block of main.querySelectorAll(searchBlocks)) {
+     let heading = block.previousElementSibling;
+     while (heading && !/^H[23]$/.test(heading.tagName) && !heading.classList.contains('heading-row')) heading = heading.previousElementSibling;
+     const words = (block.textContent + ' ' + (heading?.textContent || '') + ' ' + (block.querySelector('[aria-label]')?.getAttribute('aria-label') || '')).toLowerCase();
+     block.classList.toggle('nomatch', !words.includes(query));
+   }
+   for (const panel of panels) panel.hidden = ![...panel.querySelectorAll(searchBlocks)].some(block => block.getClientRects().length);
+   document.getElementById('search-empty').hidden = panels.some(panel => !panel.hidden);
+   main.scrollTop = 0;
+ };
+ input.onkeydown = event => { if (event.key === 'Escape' && input.value) { event.preventDefault(); clearSearch(); } };
+ document.onkeydown = event => {
+   if (event.key === '/' && !event.target.closest('input,textarea')) { event.preventDefault(); input.focus(); }
+ };
+}
 init();
