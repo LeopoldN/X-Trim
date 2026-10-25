@@ -1,4 +1,12 @@
-# Submission checks — X Trim 0.7.1
+# Submission checks — X Trim 0.7.2
+
+## Rerun for 0.7.2
+
+Checked October 25, 2026. 0.7.2 = 0.7.1 plus fixes in `content/account-details.css`, `content/account-details.js` and `content/theme.js`. These are local pre-update checks, not Mozilla approval.
+
+- Account card colors: X now defines its `--x-*` color tokens globally with light values, so the card mixed X's light text and row colors into its own dark background. The card now uses only its own `--account-*` colors, and `content/theme.js` sets them from the X Trim custom theme palette.
+- Opened posts: the author's account details find the opened post by any link under its own `/status/<id>` path, and fall back to X's focused post article when there is no such link.
+- No new permissions, requests, hosts or data destinations.
 
 ## Rerun for 0.7.1
 

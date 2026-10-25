@@ -20,11 +20,12 @@
     const route = location.pathname.match(/^\/([a-z0-9_]{1,15})\/status\/(\d+)(?:\/(?:photo|video)\/\d+)?\/?$/i);
     if (!route) return null;
     const statusPath = '/' + route[1] + '/status/' + route[2];
-    const tweets = document.querySelectorAll('[data-testid="primaryColumn"] article[data-testid="tweet"]');
-    for (const tweet of tweets) {
-      const permalink = [...tweet.querySelectorAll('a[href*="/status/"]')].find(link =>
-        new URL(link.href).pathname.toLowerCase() === statusPath.toLowerCase() && link.closest('article[data-testid="tweet"]') === tweet);
-      if (!permalink) continue;
+    const tweets = [...document.querySelectorAll('[data-testid="primaryColumn"] article[data-testid="tweet"]')];
+    const ownPath = path => {path = path.toLowerCase().replace(/\/$/, '');return path === statusPath.toLowerCase() || path.startsWith(statusPath.toLowerCase() + '/');};
+    const linked = tweets.filter(tweet => [...tweet.querySelectorAll('a[href*="/status/"]')].some(link =>
+      ownPath(new URL(link.href).pathname) && link.closest('article[data-testid="tweet"]') === tweet));
+    // The opened post is the focusable article; X does not always link it to its own permalink.
+    for (const tweet of linked.length ? linked : tweets.filter(tweet => tweet.getAttribute('tabindex') === '-1')) {
       const name = tweet.querySelector('[data-testid="User-Name"]');
       const author = name?.querySelector('a[href]');
       const handle = author ? new URL(author.href).pathname.split('/').filter(Boolean)[0] : null;
