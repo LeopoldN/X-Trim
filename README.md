@@ -140,9 +140,7 @@ npx web-ext@10.8.0 lint         # lint the Firefox build
 
 <!-- Replace YOUR_HANDLE in each link below with your own handles. Delete any you don't use. -->
 
-[![X](https://img.shields.io/badge/X-@YOUR__HANDLE-000000?logo=x&logoColor=white)](https://x.com/YOUR_HANDLE)
-[![Bluesky](https://img.shields.io/badge/Bluesky-@YOUR__HANDLE-1185FE?logo=bluesky&logoColor=white)](https://bsky.app/profile/YOUR_HANDLE.bsky.social)
-[![Mastodon](https://img.shields.io/badge/Mastodon-@YOUR__HANDLE-6364FF?logo=mastodon&logoColor=white)](https://mastodon.social/@YOUR_HANDLE)
+[![X](https://img.shields.io/badge/X-@LeopoldNick-000000?logo=x&logoColor=white)](https://x.com/LeopoldNick)
 [![GitHub](https://img.shields.io/badge/GitHub-LeopoldN-24292f?logo=github&logoColor=white)](https://github.com/LeopoldN)
 
 Like X Trim? A ⭐ on this repo or a review on [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/x-trim/reviews/) helps others find it.
