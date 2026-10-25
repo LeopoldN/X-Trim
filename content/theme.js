@@ -145,6 +145,11 @@
     const notificationsHeader=/^\/notifications(?:\/mentions)?\/?$/.test(pagePath);
     const historyHeader=/^\/i\/history(?:\/likes)?\/?$/.test(pagePath);
     const communitiesHeader=/^\/(?:i|[a-z0-9_]{1,15})\/communities(?:\/explore)?\/?$/i.test(pagePath);
+    // Community Notes is a small app of its own: every page under it shares one sticky header,
+    // with a back button on some pages and the Needs your help / New / Rated helpful tabs on the home page.
+    const communityNotesHeader=/^\/i\/communitynotes(?:\/|$)/.test(pagePath);
+    // Pages whose header may have no back button, so the walk starts from the column's first heading.
+    const headingHeader=notificationsHeader||historyHeader||communitiesHeader||communityNotesHeader;
     document.querySelectorAll('[data-xtrim-account-section]').forEach(node=>node.removeAttribute('data-xtrim-account-section'));
     if(/^\/settings(?:\/|$)/.test(pagePath)) {
       // Settings has two independently labelled sections instead of a primaryColumn.
@@ -159,10 +164,10 @@
         }
       });
     }
-    if(/\/status\/\d+/.test(pagePath)||profileHeader||aboutHeader||notificationsHeader||historyHeader||communitiesHeader) {
+    if(/\/status\/\d+/.test(pagePath)||profileHeader||aboutHeader||headingHeader) {
       const column=document.querySelector?.('[data-testid="primaryColumn"]');
       const back=column?.querySelector('button[aria-label="Back"],[role="button"][aria-label="Back"]');
-      const heading=(notificationsHeader||historyHeader||communitiesHeader)?column?.querySelector('h2[role="heading"]'):null;
+      const heading=headingHeader?column?.querySelector('h2[role="heading"]'):null;
       for(let node=(back||heading)?.parentElement;node&&node!==column;node=node.parentElement) {
         if(node.querySelector('article'))break;
         if(node.querySelector('h2,[role="heading"]'))node.setAttribute('data-xtrim-post-header','');
@@ -171,7 +176,7 @@
     }
     document.querySelectorAll('[data-xtrim-feed-tabs]').forEach(node=>node.removeAttribute('data-xtrim-feed-tabs'));
     document.querySelectorAll('[data-xtrim-feed-tab-chrome]').forEach(node=>node.removeAttribute('data-xtrim-feed-tab-chrome'));
-    if(/^\/home\/?$/.test(pagePath)||/^\/i\/lists\/\d+\/?$/.test(pagePath)||notificationsHeader||historyHeader||communitiesHeader) {
+    if(/^\/home\/?$/.test(pagePath)||/^\/i\/lists\/\d+\/?$/.test(pagePath)||headingHeader) {
       const tabsSelector=communitiesHeader?'[data-testid="primaryColumn"] nav[aria-label="My Communities"] [role="tablist"]':historyHeader?'[data-testid="primaryColumn"] nav[aria-label="History timelines"] [role="tablist"]':'[data-testid="primaryColumn"] [role="tablist"]';
       document.querySelectorAll(tabsSelector).forEach(list=>{
         if(list.closest('[data-testid="toolBar"]'))return;
@@ -242,7 +247,7 @@
     css+=`${floatingSelector.join(',')}{background:${palette.surface} !important;border-color:${palette.border} !important;color:${icons} !important;box-shadow:0 2px 12px rgba(0,0,0,.18) !important;backdrop-filter:none !important;}${floatingSelector.map(selector=>selector+' svg').join(',')}{color:${icons} !important;fill:currentColor !important;}${floatingSelector.map(selector=>selector+' svg path:not([fill="none"])').join(',')}{color:${icons} !important;fill:currentColor !important;}`;
     const postSelector=['SideNav_NewTweet_Button','tweetButton','tweetButtonInline'].map(id=>`html[data-xtrim-theme] [data-testid="${id}"]`);
     css+=`${postSelector.join(',')}{background-color:${buttonBackground} !important;background-image:none !important;}${postSelector.flatMap(selector=>[selector,selector+' *']).join(',')}{color:${buttonText} !important;}`;
-    css+=`html[data-xtrim-theme] [data-xtrim-post-header]{background:${customColor('tabBackground',palette.background)} !important;backdrop-filter:none !important;}html[data-xtrim-theme] [data-xtrim-post-header] [data-xtrim-theme-bg]{background-color:transparent !important;}`;
+    css+=`html[data-xtrim-theme] [data-xtrim-post-header]{background:${customColor('tabBackground',palette.background)} !important;backdrop-filter:none !important;}html[data-xtrim-theme] [data-xtrim-post-header] [data-xtrim-theme-bg]:not([data-xtrim-theme-bg="accent"]){background-color:transparent !important;}`;
     // Native light-mode hover fills otherwise flash white against a custom dark palette.
     const accountRow='html[data-xtrim-theme] [data-xtrim-account-section] a[role="tab"]';
     const accountHover=`color-mix(in srgb, ${palette.text} 8%, ${palette.background})`;
