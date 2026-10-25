@@ -1,4 +1,10 @@
-# Submission checks — X Trim 0.7.0
+# Submission checks — X Trim 0.7.1
+
+## Rerun for 0.7.1
+
+Checked October 25, 2026. 0.7.1 = 0.7.0 plus a fix in `popup/popup.js`. These are local pre-update checks, not Mozilla approval.
+
+- Sidebar tab: opening the popup on a page that shows only part of X's sidebar (Chat, Calls or a narrow window) replaced the saved list with that short one. The popup now merges each visit into the saved list, and keeps listing links you switched off. Search also finds sidebar links by their section name. No other changes; no new permissions or requests.
 
 ## Rerun for 0.7.0
 
