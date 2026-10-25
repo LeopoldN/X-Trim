@@ -1,4 +1,4 @@
-# X Trim 0.7.0 — reviewer notes
+# X Trim 0.7.1 — reviewer notes
 
 ## Code and packaging
 
@@ -21,7 +21,7 @@ Only gif.js 0.2.0 (released npm package) is used. The two runtime scripts are by
 - X/Twitter host access: content scripts and the X-only functions above.
 - Optional `video.twimg.com` host access: user-initiated credential-free GIF MP4 fetch.
 
-No required data transmission. Optional `websiteContent` consent gates media downloads. Optional `websiteContent`, `browsingActivity`, `authenticationInfo` consent gates account details and timeline country filtering, both when enabled in the popup and again in background request handlers. Both are off by default. Country filtering is the one feature that looks up accounts the user did not open: while it is enabled with a nonempty country list, authors of posts near the viewport are queried one at a time through the same About request, with the same cache, spacing and rate-limit backoff. The Block shortcut (on by default) sends no requests and needs no data consent: it clicks X's own More menu and Block item, and X shows its own confirmation and performs the block. Declining/revoking consent leaves local features usable and prevents the relevant requests. Existing users with enabled account-detail preferences must re-enable those features to grant consent. The included privacy policy explains destinations, session headers/cookies and retention. Private-window account results are not persisted. See PRIVACY.md and the proposed listing.
+No required data transmission. Optional `websiteContent` consent gates media downloads. Optional `websiteContent`, `browsingActivity`, `authenticationInfo` consent gates account details and timeline country filtering, both when enabled in the popup and again in background request handlers. Both are off by default. Country filtering is the one feature that looks up accounts the user did not open: while it is enabled with a nonempty country list, authors of posts near the viewport are queried one at a time through the same About request, with the same cache, spacing and rate-limit backoff. The Block shortcut (on by default) sends no requests and needs no data consent: it clicks X's own More menu and Block item, and X shows its own confirmation and performs the block. If the background About request cannot reach X, the background asks the X tab's content script to send the identical request to the same X address as the page (only that exact same-origin AboutAccountQuery path is accepted), after the same consent checks. Declining/revoking consent leaves local features usable and prevents the relevant requests. Existing users with enabled account-detail preferences must re-enable those features to grant consent. The included privacy policy explains destinations, session headers/cookies and retention. Private-window account results are not persisted. See PRIVACY.md and the proposed listing.
 
 ## Testing
 

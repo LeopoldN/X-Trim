@@ -103,16 +103,33 @@ async function lookupAbout(message, sender) {
     url.searchParams.set('variables', JSON.stringify({screenName:handle}));
     const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 12000);
     try {
-      const response = await fetch(url.href, {method:'GET',credentials:'include',headers,signal:controller.signal});
-      if (response.status === 429) {
-        const reset = Number(response.headers.get('x-rate-limit-reset')) * 1000;
-        const retry = Number(response.headers.get('retry-after')) * 1000;
+      let reply;
+      try {
+        const response = await fetch(url.href, {method:'GET',credentials:'include',headers,signal:controller.signal});
+        reply = {status:response.status, reset:response.headers.get('x-rate-limit-reset'), retry:response.headers.get('retry-after'), body:response.ok ? await response.text() : ''};
+      } catch (error) {
+        if (error.name === 'AbortError') return {ok:false,error:'timeout'};
+        // Privacy settings or other extensions can block this background request while X's own tab still reaches X.
+        // Ask the tab to make the same request as the page, to the same address with the same headers.
+        console.warn('X Trim: account-details request failed in the background, retrying from the X tab.', error);
+        reply = await Promise.race([
+          browser.tabs.sendMessage(sender.tab.id, {type:'about-fetch', url:url.href, headers}, {frameId:0}).catch(() => null),
+          new Promise(resolve => setTimeout(() => resolve({timeout:true}), 12000))
+        ]);
+        if (reply?.timeout) return {ok:false,error:'timeout'};
+        if (!reply || typeof reply.status !== 'number') return {ok:false,error:'network-error'};
+      }
+      if (reply.status === 429) {
+        const reset = Number(reply.reset) * 1000;
+        const retry = Number(reply.retry) * 1000;
         accountCooldown=Math.max(Date.now() + 60000, Number.isFinite(reset) ? reset : 0, Date.now() + (Number.isFinite(retry) ? retry : 0));
         if(!privateWindow)await browser.storage.local.set({aboutCooldown:accountCooldown});
         return {ok:false,error:'rate-limited'};
       }
-      if (!response.ok) return {ok:false,httpStatus:response.status,error:response.status === 401 ? 'sign-in' : response.status === 403 ? 'request-rejected' : response.status === 404 ? 'endpoint-changed' : 'http-error'};
-      const result = {...parseAbout(await response.json(), handle), fetchedAt:Date.now()};
+      if (reply.status < 200 || reply.status > 299) return {ok:false,httpStatus:reply.status,error:reply.status === 401 ? 'sign-in' : reply.status === 403 ? 'request-rejected' : reply.status === 404 ? 'endpoint-changed' : 'http-error'};
+      let data;
+      try { data = JSON.parse(reply.body); } catch { return {ok:false,error:'bad-response'}; }
+      const result = {...parseAbout(data, handle), fetchedAt:Date.now()};
       if(privateWindow)return {ok:true,...result,...accountProfiles.get(sender.tab.id)?.get(handle.toLowerCase())};
       const current = await browser.storage.local.get({aboutCache:{}});
       current.aboutCache[key] = result;
@@ -120,7 +137,8 @@ async function lookupAbout(message, sender) {
       await browser.storage.local.set({aboutCache:Object.fromEntries(entries)});
       return {ok:true,...result,...accountProfiles.get(sender.tab.id)?.get(handle.toLowerCase())};
     } catch (error) {
-      return {ok:false,error:['account-mismatch','not-available','request-rejected'].includes(error.message) ? error.message : error.name === 'AbortError' ? 'timeout' : 'network-error'};
+      if (!['account-mismatch','not-available','request-rejected'].includes(error.message)) console.warn('X Trim: account-details lookup failed.', error);
+      return {ok:false,error:['account-mismatch','not-available','request-rejected'].includes(error.message) ? error.message : 'unavailable'};
     } finally {clearTimeout(timeout);}
   });
   pending.set(pendingKey,operation); queue = operation.catch(()=>{});

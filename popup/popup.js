@@ -83,16 +83,18 @@ async function init() {
  let discovered = [];
  try {
    const [tab] = await browser.tabs.query({active:true,currentWindow:true});
-   if (tab) discovered = await browser.tabs.sendMessage(tab.id, {type:'navigation'});
-   if (discovered.length) await browser.storage.local.set({ navigationCache: discovered });
+   if (tab) discovered = await browser.tabs.sendMessage(tab.id, {type:'navigation'}) || [];
  } catch { document.getElementById('status').textContent = 'Open or reload X to discover your navigation items.'; }
- if (!discovered.length) {
-   const cached = await browser.storage.local.get({ navigationCache: [] });
-   discovered = cached.navigationCache;
-   document.getElementById('status').textContent = discovered.length
-     ? 'Showing navigation from your last X visit. Open X to refresh it.'
-     : 'Open or reload X, then reopen this popup to load your navigation.';
- }
+ // Pages like Chat and Calls, or a narrow window, show only part of X's sidebar.
+ // Merge each visit into the cache so a short sidebar never drops items from the list.
+ const { navigationCache } = await browser.storage.local.get({ navigationCache: [] });
+ const known = new Map(navigationCache.map(item => [item.key, item]));
+ for (const item of discovered) known.set(item.key, item);
+ if (discovered.length) await browser.storage.local.set({ navigationCache: [...known.values()] });
+ else document.getElementById('status').textContent = known.size
+   ? 'Showing navigation from your last X visit. Open X to refresh it.'
+   : 'Open or reload X, then reopen this popup to load your navigation.';
+ discovered = [...known.values()];
  renderMaster();
  renderTheme();
  renderLook();
@@ -110,6 +112,8 @@ async function init() {
  // Keep new rollout items available even when the cached sidebar predates them.
  if(!entries.has('Calls'))entries.set('Calls','Calls');
  if(!entries.has('/i/money'))entries.set('/i/money','Money');
+ // A link you switched off stays listed even if X no longer shows it, so it can be switched back on.
+ for(const key of settings.hidden)if(!entries.has(key))entries.set(key,key.split('/').filter(Boolean).pop()?.replace(/[_-]+/g,' ').replace(/^./,c=>c.toUpperCase())||key);
  const container = document.getElementById('navigation'); container.replaceChildren();
  for (const [key,label] of entries) {
    container.append(switchRow(label, !settings.hidden.includes(key), checked => {
@@ -296,6 +300,19 @@ document.getElementById('read-more').onclick = async () => {
  } catch { document.getElementById('status').textContent = 'Open or reload X first.'; }
 };
 document.getElementById('reset').onclick = async () => { await browser.storage.local.set(defaults); await init(); };
+const xSiteAccess={origins:['https://x.com/*','https://twitter.com/*']};
+browser.permissions.contains(xSiteAccess).then(allowed=>{document.getElementById('access').hidden=allowed;}).catch(()=>{});
+document.getElementById('allow-x').onclick=async()=>{
+ try{
+   // Request directly inside the click handler to keep the user gesture.
+   const request=browser.permissions.request(xSiteAccess);
+   if(!await request){document.getElementById('status').textContent='X access stays click-only. Use Always allow on X whenever you want.';return;}
+   document.getElementById('access').hidden=true;
+   const [tab]=await browser.tabs.query({active:true,currentWindow:true});
+   if(tab&&/^https:\/\/(x|twitter)\.com\//.test(tab.url||''))browser.tabs.reload(tab.id);
+   document.getElementById('status').textContent='X Trim now runs on X every time.';
+ }catch{document.getElementById('status').textContent='Could not change X access. Try again.';}
+};
 // Everything that mirrors settings outside its own control: counts, presets, quick toggles, the page map and the theme preview.
 function renderState() {
  if (!settings) return;
@@ -394,8 +411,12 @@ function initSearch() {
    panels.forEach(panel => panel.hidden = false);
    main.querySelectorAll('.part').forEach(part => part.hidden = false);
    for (const block of main.querySelectorAll(searchBlocks)) {
-     let heading = block.previousElementSibling;
-     while (heading && !/^H[23]$/.test(heading.tagName) && !heading.classList.contains('heading-row')) heading = heading.previousElementSibling;
+     let heading = block.previousElementSibling, inside = block;
+     for (;;) {
+       while (heading && !/^H[23]$/.test(heading.tagName) && !heading.classList.contains('heading-row')) heading = heading.previousElementSibling;
+       if (heading || inside.parentElement.matches('section.panel,.part')) break;
+       inside = inside.parentElement; heading = inside.previousElementSibling;
+     }
      const words = (block.textContent + ' ' + (heading?.textContent || '') + ' ' + (block.querySelector('[aria-label]')?.getAttribute('aria-label') || '')).toLowerCase();
      block.classList.toggle('nomatch', !words.includes(query));
    }

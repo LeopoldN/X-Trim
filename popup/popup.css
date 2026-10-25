@@ -226,6 +226,11 @@ textarea::placeholder{color:var(--label)}
 textarea.code{font:12px/1.45 var(--mono);white-space:pre;overflow-wrap:normal;overflow-x:auto;tab-size:2}
 h3 label{cursor:default}
 
+/* Shown while X access is limited to clicks. */
+.access{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:12px;border-radius:10px;background:var(--accent-soft);border:1px solid var(--accent-line)}
+.access p{flex:1;margin:0;font-size:12px;line-height:1.45;color:var(--muted)}.access b{display:block;color:var(--text);font-weight:600}
+.access .primary{flex:0 0 auto}
+
 /* Search shows matching settings from every section in place, so toggles work right in the results. */
 .search-empty{margin:24px 0;color:var(--muted)}
 body.searching main .panel :is(h3,.lede,.hint,.text-button,.page-map,.parts,.legend,.live,.heading-row,.schematic){display:none}

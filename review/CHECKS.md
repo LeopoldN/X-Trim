@@ -1,4 +1,13 @@
-# Submission checks — X Trim 0.7.0
+# Submission checks — X Trim 0.7.1
+
+## Rerun for 0.7.1
+
+Checked October 25, 2026. 0.7.1 = 0.7.0 plus a fix in `popup/popup.js`. These are local pre-update checks, not Mozilla approval.
+
+- Sidebar tab: opening the popup on a page that shows only part of X's sidebar (Chat, Calls or a narrow window) replaced the saved list with that short one. The popup now merges each visit into the saved list, and keeps listing links you switched off. Search also finds sidebar links by their section name.
+- Account details: when the background About request fails before reaching X (for example blocked by privacy settings or another extension), the background asks the X tab to make the same request as the page (`content.fetch` in Firefox) to the same `x.com/i/api/graphql/…/AboutAccountQuery` address with the same headers, after the same consent and preference checks. The content script only accepts that exact same-origin path. A reply that is not JSON now shows "X sent an unexpected reply" instead of the network message. `tests/policy-checks.cjs` covers the fallback, its failure and a non-JSON reply.
+- X access: the browser can keep the required x.com/twitter.com host access at "only when clicked", so X Trim did nothing on X until its toolbar button was clicked, and background requests to X failed (the likely cause of the account-details network message). New `background/site-access.js` shows a "!" badge on the toolbar button while access is limited, and the popup shows an **Always allow on X** button that calls `permissions.request` for the existing `host_permissions` origins, then reloads the open X tab. Nothing is requested without that click.
+- No new permissions, hosts or data destinations.
 
 ## Rerun for 0.7.0
 

@@ -10,7 +10,7 @@ ROOT=Path(__file__).resolve().parents[1]
 DIST=ROOT/'dist'
 RUNTIME=['manifest.json','icons/x-trim.svg','LICENSE','THIRD_PARTY_NOTICES.txt','PRIVACY.md',
  'content/page-route.js','content/layout.js','content/layout-early.css','content/account-details.js','content/account-details.css','content/theme.js','content/theme-extras.js','content/media-download.js','content/media-download.css','content/geo-timeline.js','content/geo-timeline.css','content/post-block.js','content/post-block.css','content/usability.js','content/usability.css','content/explore.js','content/explore.css',
- 'background/account-details.js','background/gif-conversion.js','background/post-block.js','background/usability.js','background/media-download.js',
+ 'background/account-details.js','background/gif-conversion.js','background/post-block.js','background/usability.js','background/media-download.js','background/site-access.js',
  'shared/data-consent.js',
  'popup/popup.html','popup/popup.js','popup/popup.css','popup/theme-presets.js','popup/media-permissions.js',
  'gif-converter/gif-converter.html','gif-converter/gif-converter.js','gif-converter/gif-converter.css','gif-converter/mp4-to-gif.js',
