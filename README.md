@@ -66,7 +66,7 @@ Everything lives in one toolbar popup. Start from a preset (**Default**, **Clean
 ### Behavior
 
 - **Feed:** open Home on Following sorted by Recent, auto-load new posts, show exact counts and real timestamps, and set a daily time limit.
-- **Posts:** a one-click Block button, fast block, and downloads for original images, MP4 videos and GIFs.
+- **Posts:** seamless multi-photo posts (photos joined into one picture, still scrollable), a one-click Block button, fast block, and downloads for original images, MP4 videos and GIFs.
 
 <details>
 <summary><b>More on account details, country filtering and downloads</b></summary>

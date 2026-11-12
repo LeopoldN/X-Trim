@@ -1,4 +1,11 @@
-# Submission checks — X Trim 0.7.2
+# Submission checks — X Trim 0.7.4
+
+## Rerun for 0.7.4
+
+Checked November 12, 2026. 0.7.4 = 0.7.2 plus an optional Posts setting, "Seamless multi-photo posts" (off by default). These are local pre-update checks, not Mozilla approval.
+
+- `content/usability.js` sets one more root flag from the new `seamlessPhotos` preference, and `content/usability.css` removes the 4px gap and the inner borders and rounded corners in X's multi-photo scroll row behind that flag. CSS only; X's own scrolling is unchanged.
+- No new files in the package, permissions, requests, hosts or data destinations.
 
 ## Rerun for 0.7.2
 
