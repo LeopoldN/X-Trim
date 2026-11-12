@@ -19,6 +19,15 @@ html[data-xtrim-hide-actions] article[data-testid="tweet"] [role="group"]:has([d
 html[data-xtrim-hide-post-grok] article[data-testid="tweet"] :is(button,[role="button"])[aria-label*="Grok"],
 html[data-xtrim-hide-post-grok] article[data-testid="tweet"] div:has(> :is(button,[role="button"])[aria-label*="Grok"]):not(:has([data-testid="caret"])){display:none!important}
 
+/* Seamless photos: X shows multi-photo posts as a sideways scroll-snap row with a 4px gap
+   and a rounded, bordered frame around each photo. Drop the gap and the frames' inner
+   corners and borders so the row reads as one picture; only its outer ends stay rounded.
+   Scrolling, snapping and the Previous/Next buttons are X's own and stay as they are. */
+html[data-xtrim-seamless-photos] article [data-testid="ScrollSnap-List"]:has(> [role="presentation"] :is([data-testid="tweetPhoto"],[data-testid="videoPlayer"])){gap:0!important;column-gap:0!important}
+html[data-xtrim-seamless-photos] article [data-testid="ScrollSnap-List"]:has(> [role="presentation"] :is([data-testid="tweetPhoto"],[data-testid="videoPlayer"])) > [role="presentation"] > div{border-radius:0!important;border-width:0!important}
+html[data-xtrim-seamless-photos] article [data-testid="ScrollSnap-List"]:has(> [role="presentation"] :is([data-testid="tweetPhoto"],[data-testid="videoPlayer"])) > [role="presentation"]:first-child > div{border-top-left-radius:8px!important;border-bottom-left-radius:8px!important}
+html[data-xtrim-seamless-photos] article [data-testid="ScrollSnap-List"]:has(> [role="presentation"] :is([data-testid="tweetPhoto"],[data-testid="videoPlayer"])) > [role="presentation"]:last-child > div{border-top-right-radius:8px!important;border-bottom-right-radius:8px!important}
+
 /* Focus and writer modes. */
 html[data-xtrim-focus] header[role="banner"],
 html[data-xtrim-focus] [data-testid="sidebarColumn"],
